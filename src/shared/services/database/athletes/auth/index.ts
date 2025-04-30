@@ -1,6 +1,6 @@
 import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
-import { IAthletesAccount } from "../../../../types/interfaces/responses/athletes/athlete.response";
+import { IAthletesAccount, AccountType } from "../../../../types/interfaces/responses/athletes/athlete.response";
 import IUserAccountModel from "./type";
 import UserAccountDto from "../../../../types/dtos/athletes/athlete.dto";
 
@@ -14,14 +14,35 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
     password: {
         type: String,
     },
-    name: {
-        type: String,
+    accountType: {
+      type: String,  
+      enum: Object.values(AccountType),  
+      required: true, 
+      
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false
+    },
+    emailOtp: {
+      type: String
+    },
+    emailOtpCreatedAt: {
+      type: Date
+    },
+    passwordOtp: {
+      type: String
+    },
+    passwordOtpCreatedAt: {
+      type: Date
     },
     updatedAt: {
-      type: String
+      type: Date,
+      default: Date.now,
     },
     createdAt: {
-      type: String
+      type: Date,
+      default: Date.now,
     },
   });
   
@@ -75,18 +96,6 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
       }
     }
 
-  updatePurchase = async (id: string, details: Partial<IAthletesAccount>) => {
-    try {
-        const data = await this.UserAccount.findByIdAndUpdate(id, {$push: details});
-        if (data) {
-          return {status: true, data: new UserAccountDto(data)};
-        } else {
-          return {status: false, error: "Unable to update user Purchase"};
-        }
-    } catch (error) {
-        return {status: false, error };
-    }
-  }
 
 }
 

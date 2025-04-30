@@ -1,11 +1,19 @@
 import { Document, Types } from 'mongoose';
-
+export enum AccountType {
+    Athlete = 'Athlete',
+    Scout = 'Scout',
+}
 export interface IAthletesAccount {
-    _id?: string;
+    _id: string;
     email: string;
     password: string;
-    name: string;
-    purchaseHistory: Types.ObjectId[];
+    accountType: AccountType,
+    name?: string;
+    emailVerified: boolean;
+    emailOtp?: string;
+    emailOtpCreatedAt?: Date;
+    passwordOtp?: string;
+    passwordOtpCreatedAt?: Date;
     updatedAt?: Date;
     createdAt?: Date;
 }

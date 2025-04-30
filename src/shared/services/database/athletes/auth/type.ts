@@ -8,7 +8,6 @@ interface IUserAccountModel {
 
     updateAccount: (id: string, details: Partial<IAthletesAccount>) => Promise<{status: boolean, error?: string | unknown, data?: UserAccountDto }>;
 
-    updatePurchase: (id: string, details: Partial<IAthletesAccount>) => Promise<{status: boolean, error?: string | unknown, data?: UserAccountDto }>;
 }
 
 export default IUserAccountModel;

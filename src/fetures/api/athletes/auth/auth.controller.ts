@@ -10,7 +10,7 @@ class AuthController {
         this._AuthService = authService;
     }
 
-    public registerAdmin = async ({body }: { body: IRegistrationRequest }, res: Response)  => {
+    public registerAdmin = async ({body}: { body: IRegistrationRequest }, res: Response)  => {
     //   const validationErrors = this._userAuthValidator.validateBeforeRegistration({ ...body });
     //   if (validationErrors.length > 0) {
     //     return sendJson(400, {

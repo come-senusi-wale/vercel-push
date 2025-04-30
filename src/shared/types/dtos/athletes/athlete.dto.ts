@@ -1,22 +1,32 @@
 import { Types } from "mongoose";
-import { IAthletesAccount } from "../../interfaces/responses/athletes/athlete.response";
+import { AccountType, IAthletesAccount } from "../../interfaces/responses/athletes/athlete.response";
 
 
 class UserAccountDto implements IAthletesAccount {
-    public id?: string;
+    public _id: string;
     public email: string;
     public password: string ;
-    public name: string;
-    public purchaseHistory: Types.ObjectId[];
+    public accountType: AccountType;
+    public name?: string;
+    public emailVerified: boolean;
+    public emailOtp?: string;
+    public emailOtpCreatedAt?: Date;
+    public passwordOtp?: string;
+    public passwordOtpCreatedAt?: Date;
     public updatedAt?: Date;
     public createdAt?: Date;
     
     constructor(userAccount: IAthletesAccount) {
-      this.id = userAccount._id;
+      this._id = userAccount._id;
       this.email = userAccount.email;
       this.password = userAccount.password;
+      this.accountType = userAccount.accountType,
       this.name = userAccount.name;
-      this.purchaseHistory = userAccount.purchaseHistory
+      this.emailVerified = userAccount.emailVerified;
+      this.emailOtp = userAccount.emailOtp;
+      this.emailOtpCreatedAt = userAccount.emailOtpCreatedAt;
+      this.passwordOtp = userAccount.passwordOtp,
+      this.passwordOtpCreatedAt= userAccount.passwordOtpCreatedAt,
       this.updatedAt = userAccount.updatedAt;
       this.createdAt = userAccount.createdAt;
 
@@ -24,11 +34,16 @@ class UserAccountDto implements IAthletesAccount {
   
     get getModel() {
       return {
-        _id: this.id,
+        _id: this._id,
         email: this.email,
         password: this.password,
+        accountType: this.accountType,
         name: this.name,
-        purchaseHistory: this.purchaseHistory,
+        emailVerified: this.emailVerified,
+        emailOtp: this.emailOtp,
+        emailOtpCreatedAt: this.emailOtpCreatedAt,
+        passwordOtp: this.passwordOtp,
+        passwordOtpCreatedAt: this.passwordOtpCreatedAt,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as IAthletesAccount
@@ -36,10 +51,11 @@ class UserAccountDto implements IAthletesAccount {
 
     get getSecureRespons() {
         return {
-          _id: this.id,
+          _id: this._id,
           email: this.email,
           name: this.name,
-          purchaseHistory: this.purchaseHistory,
+          accountType: this.accountType,
+          emailVerified: this.emailVerified,
           updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
           createdAt: this.createdAt ? new Date(this.createdAt): undefined,
         } as IAthletesAccount

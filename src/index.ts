@@ -4,7 +4,8 @@ import cors from "cors";
 import mongoose, { ConnectOptions, MongooseOptions } from "mongoose";
 import dotenv from "dotenv";
 import adminRoute from "./fetures/api/admin/auth/auth.route";
-import athleteRoute from "./fetures/api/athletes/auth/auth.route";
+import userAuthRoute from "./fetures/api/auth/auth.route";
+import scoutTrialRoute from "./fetures/api/scouts/trial/trial.route";
 
 dotenv.config();
 
@@ -22,9 +23,8 @@ app.use(
 );
 
 app.use("/api/v1/admin", adminRoute);
-app.use("/api/v1/athlete", athleteRoute);
-
-
+app.use("/api/v1/auth", userAuthRoute);
+app.use("/api/v1/scout", scoutTrialRoute);
 
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
