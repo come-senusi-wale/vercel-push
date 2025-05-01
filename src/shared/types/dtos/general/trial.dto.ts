@@ -1,6 +1,12 @@
 import { Schema, Types } from "mongoose";
 import { ITrial } from "../../interfaces/responses/general/trial.response";
 
+export interface IMultipleTrialResponse {
+  trials: ITrial[];
+  totalTrial: number,
+  hasNextPage: boolean
+}
+
 
 class TrialDto implements ITrial {
     public _id: string;
@@ -70,8 +76,26 @@ class TrialDto implements ITrial {
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as ITrial
     }
+}
 
-    
+export class MultipleTrialDto implements IMultipleTrialResponse {
+  trials: TrialDto[];
+  totalTrial: number;
+  hasNextPage: boolean;
+
+  constructor (multipleTrial: IMultipleTrialResponse) {
+    this.trials = multipleTrial.trials.map((trial) => new TrialDto(trial));
+    this.totalTrial = multipleTrial.totalTrial;
+    this.hasNextPage = multipleTrial.hasNextPage;
+  }
+
+  get getResponse() {
+    return {
+      trials: this.trials.map((trial) => trial.getModel ),
+      totalTrial: this.totalTrial,
+      hasNextPage: this.hasNextPage
+    } as IMultipleTrialResponse;
+  }
 }
 
 export default TrialDto;

@@ -1,10 +1,11 @@
 import { body, query, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 
-export const registerParams = [
-    body("email").isEmail(),
-    body("password").notEmpty(),
+export const pagination = [
+    query("page").notEmpty(),
+    query("limit").notEmpty(),
 ];
+
 
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
@@ -14,7 +15,8 @@ export const validateFormData = (req: Request, res: Response, next: NextFunction
     next();
 };
 
-export const AdminAuthValidation = {
+export const AthleteTrialValidation = {
     validateFormData,
-    registerParams,
+    pagination,
+    
 }

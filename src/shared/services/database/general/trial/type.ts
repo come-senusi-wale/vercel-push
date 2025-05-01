@@ -1,5 +1,5 @@
 import { ITrial } from "../../../../types/interfaces/responses/general/trial.response";
-import TrialDto from "../../../../types/dtos/general/trial.dto";
+import TrialDto, { MultipleTrialDto } from "../../../../types/dtos/general/trial.dto";
 
 interface ITrialModel {
     create: (details: Partial<ITrial>) => Promise<{status: boolean, error?: string | unknown, data?: TrialDto }>;
@@ -7,6 +7,8 @@ interface ITrialModel {
     checkIfExist: (details: Partial<ITrial>) => Promise<{status: boolean, error?: string | unknown, data?: TrialDto }>;
 
     update: (id: string, details: Partial<ITrial>) => Promise<{status: boolean, error?: string | unknown, data?: TrialDto }>;
+
+    getAll: (details : Partial<ITrial>, option: { page: number, limit: number }) => Promise<{status: boolean, error?: string | unknown, data?: MultipleTrialDto }>;
 
 }
 

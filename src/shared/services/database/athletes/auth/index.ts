@@ -11,6 +11,9 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
       unique: true,
       required: true
     },
+    name: {
+      type: String,
+    },
     password: {
         type: String,
     },

@@ -2,7 +2,7 @@ import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
 import { ITrial } from "../../../../types/interfaces/responses/general/trial.response";
 import ITrialModel from "./type";
-import TrialDto from "../../../../types/dtos/general/trial.dto";
+import TrialDto, { MultipleTrialDto } from "../../../../types/dtos/general/trial.dto";
 
 
 const TrialSchema = new Schema<ITrial>({
@@ -74,57 +74,75 @@ const TrialSchema = new Schema<ITrial>({
       type: Date,
       default: Date.now,
     },
-  });
+});
   
-  TrialSchema.plugin(mongoosePaginate);
-  
-  export const Trial = model<ITrial, PaginateModel<ITrial>>("Trials", TrialSchema)
+TrialSchema.plugin(mongoosePaginate);
 
-  class  TrialModel implements  ITrialModel {
-    Trial: typeof Trial;
+export const Trial = model<ITrial, PaginateModel<ITrial>>("Trials", TrialSchema)
+
+class  TrialModel implements  ITrialModel {
+  Trial: typeof Trial;
     
-    constructor() {
-        this.Trial =  Trial;
-    }
+  constructor() {
+      this.Trial =  Trial;
+  }
 
-    create = async (details: Partial<ITrial>) => {
-        try {
-            const data = await this.Trial.create(details);
-            if (data) {
-              return {status: true, data: new TrialDto(data)};
-            } else {
-              return {status: false, error: "Couldn't create trial"};
-            }
-        } catch (error) {
-            return {status: false, error };
-        }
-    }
-
-    checkIfExist = async (details: Partial<ITrial>) => {
-        try {
-            const data = await this.Trial.findOne(details);
-            if (data) {
-              return {status: true, data: new TrialDto(data)};
-            } else {
-              return {status: false, error: "No Trial find"};
-            }
-        } catch (error) {
-            return {status: false, error };
-        }
-    }
-
-    update = async (id: string, details: Partial<ITrial>) => {
+  create = async (details: Partial<ITrial>) => {
       try {
-          const data = await this.Trial.findOneAndUpdate({_id: id}, details, {new: true});
+          const data = await this.Trial.create(details);
           if (data) {
             return {status: true, data: new TrialDto(data)};
           } else {
-            return {status: false, error: "Unable to update configuration"};
+            return {status: false, error: "Couldn't create trial"};
           }
       } catch (error) {
           return {status: false, error };
       }
+  }
+
+  checkIfExist = async (details: Partial<ITrial>) => {
+      try {
+          const data = await this.Trial.findOne(details);
+          if (data) {
+            return {status: true, data: new TrialDto(data)};
+          } else {
+            return {status: false, error: "No Trial find"};
+          }
+      } catch (error) {
+          return {status: false, error };
+      }
+  }
+
+  update = async (id: string, details: Partial<ITrial>) => {
+    try {
+        const data = await this.Trial.findOneAndUpdate({_id: id}, details, {new: true});
+        if (data) {
+          return {status: true, data: new TrialDto(data)};
+        } else {
+          return {status: false, error: "Unable to update configuration"};
+        }
+    } catch (error) {
+        return {status: false, error };
     }
+  }
+
+  getAll = async (details: Partial<ITrial>, option: { page: number, limit: number }) => {
+    try {
+      const data = await this.Trial.paginate(details, {...option, sort: {createdAt: -1}});
+      if (data) {
+        return {status: true,
+          data: new MultipleTrialDto({
+            trials : data.docs,
+            totalTrial: data.totalDocs,
+            hasNextPage: data.hasNextPage
+        })};
+      } else {
+        return {status: false, error: "Unable to update configuration"};
+      }
+    } catch (error) {
+        return {status: false, error };
+    }
+  }
 
 
 }
