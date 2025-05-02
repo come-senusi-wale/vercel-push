@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import TrialService from "./trial.service";
+import { ITrialApplicationRequest } from "../../../../shared/types/interfaces/requests/athletes/trial.request";
 
 
 class TrialController {
@@ -80,6 +81,85 @@ class TrialController {
         status: true
       });
     }
+
+    public applyForTrial = async (req: Request, res: Response)  => {
+      const body: ITrialApplicationRequest = req.body;
+      const file = req.file;
+      const userId = req.user?._id
+
+      const { result, errors } = await this._TrialService.applyForTrial({trial: body, userId, file});
+
+      if (errors && errors.length > 0) return res.status(401).json({
+          error: errors,
+          code: 401,
+          status: false
+        });
+
+        if (result === null) return res.status(401).json({
+          code: 401,
+          status: false
+        });
+
+        return res.status(201).json({
+          data: result,
+          code: 201,
+          status: true
+        });
+    }
+
+    public getUrTrial = async (req: Request, res: Response)  => {
+
+      const query: any = req.query;
+      const userId = req.user?._id
+  
+      const { result, errors } = await this._TrialService.getUrTrial({...query, userId});
+
+      if (errors && errors.length > 0) return res.status(401).json({
+          error: errors,
+          code: 401,
+          status: false
+        });
+
+        if (result === null) return res.status(401).json({
+          code: 401,
+          status: false
+        });
+
+        return res.status(201).json({
+          data: result,
+          code: 201,
+          status: true
+        });
+    }
+
+    public getUrSingleTrial = async (req: Request, res: Response)  => {
+
+      const {trialId}: any = req.params;
+      const userId = req.user?._id
+      console.log("trialId", trialId)
+      console.log("userId", userId)
+  
+      const { result, errors } = await this._TrialService.getUrSingleTrial({trial: trialId, userId});
+
+      if (errors && errors.length > 0) return res.status(401).json({
+          error: errors,
+          code: 401,
+          status: false
+        });
+
+        if (result === null) return res.status(401).json({
+          code: 401,
+          status: false
+        });
+
+        return res.status(201).json({
+          data: result,
+          code: 201,
+          status: true
+        });
+    }
 }
+
+
 
 export default TrialController;

@@ -5,15 +5,21 @@ import TrialService from "./trial.service";
 import { AthleteTrialValidation } from "./trial.validation";
 import TrialModel from "../../../../shared/services/database/general/trial/index";
 import { isAthleteAuthenticated } from "../../../../shared/services/middleware/user.middleware";
+import TrialApplicationModel from "../../../../shared/services/database/athletes/trialApplication/index";
+import { singleFileUpload } from "../../../../shared/services/middleware/fileUpload.middleware";
 
 
 
 const trailModel = new TrialModel()
-const trialService = new TrialService({ trailModel })
+const trialApplicationModel = new TrialApplicationModel()
+const trialService = new TrialService({ trailModel, trialApplicationModel })
 const trialController = new TrialController({trialService})
 
 router.get("/trials", isAthleteAuthenticated, AthleteTrialValidation.pagination, AthleteTrialValidation.validateFormData, trialController.allPaginatedTrial);
 router.get("/trials/search", isAthleteAuthenticated, trialController.searchTrial);
+router.post("/trials/apply", isAthleteAuthenticated, singleFileUpload('picture', ['image']), AthleteTrialValidation.applyTrial, AthleteTrialValidation.validateFormData, trialController.applyForTrial);
+router.get("/trials/activity", isAthleteAuthenticated, AthleteTrialValidation.pagination, AthleteTrialValidation.validateFormData, trialController.getUrTrial);
+router.get("/trials/activity/:trialId", isAthleteAuthenticated, trialController.getUrSingleTrial);
 router.get("/trials/:trialId", isAthleteAuthenticated, trialController.singleTrial);
 
 

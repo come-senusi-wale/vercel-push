@@ -6,6 +6,13 @@ export const pagination = [
     query("limit").notEmpty(),
 ];
 
+export const applyTrial = [
+    body("trial").notEmpty(),
+    body("name").notEmpty(),
+    body("contactInfo").notEmpty(),
+    body("position").notEmpty(),
+];
+
 
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
@@ -18,5 +25,6 @@ export const validateFormData = (req: Request, res: Response, next: NextFunction
 export const AthleteTrialValidation = {
     validateFormData,
     pagination,
+    applyTrial
     
 }
