@@ -1,7 +1,7 @@
 import { Document, Schema, Types } from 'mongoose';
 export enum PerformanceVisibility {
     Public = 'Public',
-    Private = 'Public',
+    Private = 'Private',
 }
 export interface IPerformance {
     _id: string;
