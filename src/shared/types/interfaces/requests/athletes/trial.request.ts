@@ -4,3 +4,8 @@ export interface ITrialApplicationRequest {
     contactInfo: string;
     position: string;
 }
+
+export enum AthleteSearchType {
+    Scout = 'scout',
+    Trial = 'trial',
+}

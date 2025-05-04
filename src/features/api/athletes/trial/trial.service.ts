@@ -3,11 +3,12 @@ import ITrailModel from "../../../../shared/services/database/general/trial/type
 import { Trial } from "../../../../shared/services/database/general/trial/index";
 import TrialDto, { MultipleTrialDto } from "../../../../shared/types/dtos/general/trial.dto";
 import ITrialApplicationModel from "../../../../shared/services/database/athletes/trialApplication/type";
-import { ITrialApplicationRequest } from "../../../../shared/types/interfaces/requests/athletes/trial.request";
+import { AthleteSearchType, ITrialApplicationRequest } from "../../../../shared/types/interfaces/requests/athletes/trial.request";
 import TrialApplicationDto from "../../../../shared/types/dtos/athletes/trialApplication.dto";
 import cloudinary from "../../../../shared/services/cloudinary/bocket";
 import { TrialApplicationStatus } from "../../../../shared/types/interfaces/responses/athletes/trialApplication.rseponse";
 import { TrialApplication } from "../../../../shared/services/database/athletes/trialApplication/index";
+import { UserAccount } from "../../../../shared/services/database/athletes/auth/index";
 
 
 class TrialService {
@@ -37,12 +38,15 @@ class TrialService {
         return { trial: trial.data?.getModel };
     }
 
-    public searchTrial = async (query: { page?: string, limit?: string, name?: string, location?: string, type?: string, free?: boolean, eligibility?: string}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {
+    public searchTrial = async (query: { searchType?: AthleteSearchType, page?: string, limit?: string, name?: string, location?: string, type?: string, free?: boolean, eligibility?: string, gender?: string}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {
         const filter: any = {};
 
         const page: number = parseInt(query.page!) || 1; // or get from query params
         const limit: number = parseInt(query.limit!) || 50;
         const skip = (page - 1) * limit;
+
+        // OR logic: build conditions dynamically
+        const orConditions: any[] = [];
 
         // Case-insensitive partial match for name
         if (query.name) {
@@ -50,35 +54,54 @@ class TrialService {
         }
 
         if (query.type) {
-            filter.trialType = query.type;
+            // filter.trialType = query.type;
+            orConditions.push({ trialType: query.type });
+        }
+
+        if (query.gender) {
+            orConditions.push({ gender: query.gender });
         }
 
         if (query.location) {
-            filter.location = query.location;
+            // filter.location = query.location;
+            orConditions.push({ location: { $regex: query.location, $options: 'i' } });
         }
 
         if (query.eligibility) {
-            filter.eligibility = query.eligibility;
+            // filter.eligibility = query.eligibility;
+            orConditions.push({ eligibility: { $regex: query.eligibility, $options: 'i' } });
         }
 
         if (typeof query.free === 'boolean') {
-            filter.free = query.free;
+            // filter.free = query.free;
+            orConditions.push({ free: query.free });
         }
 
         if (typeof query.free === 'string') {
-            filter.free = query.free === 'true';
+            const checkFree = filter.free = query.free === 'true';
+            orConditions.push({ free: checkFree });
         }
 
         console.log("filter", filter)
 
-        const trial = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
-        const total = await Trial.countDocuments(filter)
+        let result: any = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
+        let total = await Trial.countDocuments(filter)
+
+        if (query.searchType == AthleteSearchType.Scout) {
+            result = await UserAccount.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
+            total = await UserAccount.countDocuments(filter)
+        }else{
+            result = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
+            total = await Trial.countDocuments(filter)
+        }
+
+    
         
         return { result: {
             totalPages: Math.ceil(total / limit),
             currentPage: page,
             total,
-            trial
+            result
         } };
     }
 
