@@ -6,8 +6,10 @@ import dotenv from "dotenv";
 import adminRoute from "./features/api/admin/auth/auth.route";
 import userAuthRoute from "./features/api/auth/auth.route";
 import scoutTrialRoute from "./features/api/scouts/trial/trial.route";
+import scoutAthleteRoute from "./features/api/scouts/athlete/athlete.route";
 import athleteTrialRoute from "./features/api/athletes/trial/trial.route";
 import athletePerformanceRoute from "./features/api/athletes/performanace/performance.route";
+
 
 dotenv.config();
 
@@ -26,7 +28,7 @@ app.use(
 
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/auth", userAuthRoute);
-app.use("/api/v1/scout", scoutTrialRoute);
+app.use("/api/v1/scout", [scoutTrialRoute, scoutAthleteRoute]);
 app.use("/api/v1/athlete", [athleteTrialRoute, athletePerformanceRoute]);
 // app.use("/api/v1/athlete", athletePerformanceRoute);
 

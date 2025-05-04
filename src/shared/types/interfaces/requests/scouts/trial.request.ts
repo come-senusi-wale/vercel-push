@@ -15,3 +15,8 @@ export interface ICreateTrialRequest {
     description: string;
     equipmentNeeded: string[]; 
 }
+
+export enum ScoutSearchType {
+    Athlete = 'athlete',
+    Trial = 'trial',
+}

@@ -14,6 +14,8 @@ const trialService = new TrialService({ trailModel })
 const trialController = new TrialController({trialService})
 
 router.post("/create-trial", isScoutAuthenticated, singleFileUpload('picture', ['image']), TrialValidation.createTrialParams, TrialValidation.validateFormData, trialController.create);
+router.get("/trials", isScoutAuthenticated, TrialValidation.pagination, TrialValidation.validateFormData, trialController.getAllTrial);
+router.get("/trial/:trialId", isScoutAuthenticated, trialController.getSingleTrial);
 
 
 export default router;

@@ -20,6 +20,11 @@ export const createTrialParams = [
  
 ];
 
+export const pagination = [
+    query("page").notEmpty(),
+    query("limit").notEmpty(),
+];
+
 
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
@@ -32,5 +37,5 @@ export const validateFormData = (req: Request, res: Response, next: NextFunction
 export const TrialValidation = {
     validateFormData,
     createTrialParams,
-    
+    pagination,
 }

@@ -1,19 +1,18 @@
 import { Request, Response } from "express";
-import TrialService from "./trial.service";
-import { ICreateTrialRequest } from "../../../../shared/types/interfaces/requests/scouts/trial.request";
+import AthleteService from "./athlete.service";
 
-class TrialController {
-  private _TrialService: TrialService;
+
+class AthleteController {
+  private _AthleteService: AthleteService;
   
-  constructor({ trialService } : {trialService: TrialService, }) {
-      this._TrialService = trialService;
+  constructor({ athleteService } : {athleteService: AthleteService, }) {
+      this._AthleteService = athleteService;
   }
 
-  public create = async (req: Request, res: Response)  => {
-      const body: ICreateTrialRequest = req.body;
-      const file = req.file;
+  public getAllAthlete = async (req: Request, res: Response)  => {
+      const query: any = req.query;
       const userId = req.user?._id
-      const { trial, errors } = await this._TrialService.create(body, file, userId);
+      const { result, errors } = await this._AthleteService.getAllAthlete({...query});
 
   if (errors && errors.length > 0) return res.status(401).json({
       error: errors,
@@ -21,22 +20,22 @@ class TrialController {
       status: false
     });
 
-    if (trial === null) return res.status(401).json({
+    if (result === null) return res.status(401).json({
       code: 401,
       status: false
     });
 
     return res.status(201).json({
-      data: trial,
+      data: result,
       code: 201,
       status: true
     });
   }
 
-  public getAllTrial = async (req: Request, res: Response)  => {
-    const query = req.query;
+  public getSingleAthlete = async (req: Request, res: Response)  => {
+    const {athleteId} = req.params;
     const userId = req.user?._id
-    const { result, errors } = await this._TrialService.getAllTrial({userId, ...query});
+    const { result, errors } = await this._AthleteService.getSingleAthlete({athlete: athleteId});
 
     if (errors && errors.length > 0) return res.status(401).json({
       error: errors,
@@ -56,11 +55,10 @@ class TrialController {
     });
   }
 
-  public getSingleTrial = async (req: Request, res: Response)  => {
-    const {trialId} = req.params;
-   
+  public search = async (req: Request, res: Response)  => {
+    const query: any = req.query;
     const userId = req.user?._id
-    const { result, errors } = await this._TrialService.getSingleTrial({trial: trialId, userId});
+    const { result, errors } = await this._AthleteService.search({...query});
 
     if (errors && errors.length > 0) return res.status(401).json({
       error: errors,
@@ -82,4 +80,4 @@ class TrialController {
 
 }
 
-export default TrialController;
+export default AthleteController;
