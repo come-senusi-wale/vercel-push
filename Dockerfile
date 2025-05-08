@@ -12,7 +12,7 @@ COPY package*.json ./
 RUN npm install
 
 # # Make sure that .env file exists
-COPY .env ./.env
+# COPY .env ./.env
 
 # # Copy the rest of the application code to the working directory
 COPY ./ ./
