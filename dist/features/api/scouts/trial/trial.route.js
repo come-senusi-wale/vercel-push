@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const trial_controller_1 = __importDefault(require("./trial.controller"));
+const trial_service_1 = __importDefault(require("./trial.service"));
+const trial_validation_1 = require("./trial.validation");
+const index_1 = __importDefault(require("../../../../shared/services/database/general/trial/index"));
+const fileUpload_middleware_1 = require("../../../../shared/services/middleware/fileUpload.middleware");
+const user_middleware_1 = require("../../../../shared/services/middleware/user.middleware");
+const trailModel = new index_1.default();
+const trialService = new trial_service_1.default({ trailModel });
+const trialController = new trial_controller_1.default({ trialService });
+router.post("/create-trial", user_middleware_1.isScoutAuthenticated, (0, fileUpload_middleware_1.singleFileUpload)('picture', ['image']), trial_validation_1.TrialValidation.createTrialParams, trial_validation_1.TrialValidation.validateFormData, trialController.create);
+router.get("/trials", user_middleware_1.isScoutAuthenticated, trial_validation_1.TrialValidation.pagination, trial_validation_1.TrialValidation.validateFormData, trialController.getAllTrial);
+router.get("/trial/:trialId", user_middleware_1.isScoutAuthenticated, trialController.getSingleTrial);
+exports.default = router;

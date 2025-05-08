@@ -1,0 +1,25 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const trial_controller_1 = __importDefault(require("./trial.controller"));
+const trial_service_1 = __importDefault(require("./trial.service"));
+const trial_validation_1 = require("./trial.validation");
+const index_1 = __importDefault(require("../../../../shared/services/database/general/trial/index"));
+const user_middleware_1 = require("../../../../shared/services/middleware/user.middleware");
+const index_2 = __importDefault(require("../../../../shared/services/database/athletes/trialApplication/index"));
+const fileUpload_middleware_1 = require("../../../../shared/services/middleware/fileUpload.middleware");
+const trailModel = new index_1.default();
+const trialApplicationModel = new index_2.default();
+const trialService = new trial_service_1.default({ trailModel, trialApplicationModel });
+const trialController = new trial_controller_1.default({ trialService });
+router.get("/trials", user_middleware_1.isAthleteAuthenticated, trial_validation_1.AthleteTrialValidation.pagination, trial_validation_1.AthleteTrialValidation.validateFormData, trialController.allPaginatedTrial);
+router.get("/trials/search", user_middleware_1.isAthleteAuthenticated, trialController.searchTrial);
+router.post("/trials/apply", user_middleware_1.isAthleteAuthenticated, (0, fileUpload_middleware_1.singleFileUpload)('picture', ['image']), trial_validation_1.AthleteTrialValidation.applyTrial, trial_validation_1.AthleteTrialValidation.validateFormData, trialController.applyForTrial);
+router.get("/trials/activity", user_middleware_1.isAthleteAuthenticated, trial_validation_1.AthleteTrialValidation.pagination, trial_validation_1.AthleteTrialValidation.validateFormData, trialController.getUrTrial);
+router.get("/trials/activity/:trialId", user_middleware_1.isAthleteAuthenticated, trialController.getUrSingleTrial);
+router.get("/trials/:trialId", user_middleware_1.isAthleteAuthenticated, trialController.singleTrial);
+exports.default = router;

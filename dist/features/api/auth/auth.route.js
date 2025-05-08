@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const index_1 = __importDefault(require("../../../shared/services/encryption/index"));
+const index_2 = __importDefault(require("../../../shared/services/database/athletes/auth/index"));
+const auth_controller_1 = __importDefault(require("./auth.controller"));
+const auth_service_1 = __importDefault(require("./auth.service"));
+const auth_validation_1 = require("./auth.validation");
+const authModel = new index_2.default();
+const encryption = new index_1.default();
+const authService = new auth_service_1.default({ authModel, encryption });
+const authController = new auth_controller_1.default({ authService });
+router.post("/signup", auth_validation_1.AuthValidation.registerParams, auth_validation_1.AuthValidation.validateFormData, authController.register);
+router.post("/resend-email", auth_validation_1.AuthValidation.resendEmailParams, auth_validation_1.AuthValidation.validateFormData, authController.resendEmail);
+router.post("/verify-email", auth_validation_1.AuthValidation.verifyEmailParams, auth_validation_1.AuthValidation.validateFormData, authController.verifyEmail);
+router.post("/login", auth_validation_1.AuthValidation.loginParams, auth_validation_1.AuthValidation.validateFormData, authController.login);
+router.post("/forgot-password", auth_validation_1.AuthValidation.forgotPasswordParams, auth_validation_1.AuthValidation.validateFormData, authController.forgotPassword);
+router.post("/reset-password", auth_validation_1.AuthValidation.resetPasswordParams, auth_validation_1.AuthValidation.validateFormData, authController.resetPassword);
+exports.default = router;

@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const performance_controller_1 = __importDefault(require("./performance.controller"));
+const performance_service_1 = __importDefault(require("./performance.service"));
+const performance_validation_1 = require("./performance.validation");
+const user_middleware_1 = require("../../../../shared/services/middleware/user.middleware");
+const index_1 = __importDefault(require("../../../../shared/services/database/athletes/performance/index"));
+const fileUpload_middleware_1 = require("../../../../shared/services/middleware/fileUpload.middleware");
+const performanceModel = new index_1.default();
+const performanceService = new performance_service_1.default({ performanceModel });
+const performanceController = new performance_controller_1.default({ performanceService });
+router.post("/performance", user_middleware_1.isAthleteAuthenticated, (0, fileUpload_middleware_1.singleFileUpload)('picture', ['image']), performance_validation_1.AthletePerformanceValidation.postPerformance, performance_validation_1.AthletePerformanceValidation.validateFormData, performanceController.postPerformance);
+router.get("/performance", user_middleware_1.isAthleteAuthenticated, performance_validation_1.AthletePerformanceValidation.pagination, performance_validation_1.AthletePerformanceValidation.validateFormData, performanceController.getAllPerformance);
+router.get("/performance/ur", user_middleware_1.isAthleteAuthenticated, performance_validation_1.AthletePerformanceValidation.pagination, performance_validation_1.AthletePerformanceValidation.validateFormData, performanceController.getAllUrPerformance);
+router.get("/performance/ur/:performanceId", user_middleware_1.isAthleteAuthenticated, performanceController.getUrSingleTrial);
+exports.default = router;
