@@ -5,7 +5,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'communicationsyawa@gmail.com', // Replace with your Gmail email address
-    pass: 'rtlu plki zldb qwdr', // Replace with your Gmail password
+    pass: 'rtluplkizldbqwdr', // Replace with your Gmail password
   },
 });
 
@@ -151,6 +151,26 @@ async function sendVerificationEmail(
   }
 }
 
+export async function sendForgotPasswordEmail(
+  email: string,
+  resetPasswordToken: number,
+): Promise<void> {
+  try {
+    // Send mail with defined transport object
+    const html = emailTemplates.forgotPassword(resetPasswordToken);
+    await transporter.sendMail({
+      from: '"Confluex TEAM" <info@Confluex.com>', // Replace with your app name and your Gmail email address
+      to: email,
+      subject: 'Forgot Password Verification Code',
+      html,
+    });
+    
+    console.log('Forgot password email sent successfully');
+  } catch (error) {
+    console.error('Error sending forgot password email:', error);
+  }
+}
+
 async function sendWelcomeEmail(email: string): Promise<void> {
   try {
     const html = emailTemplates.welcome();
@@ -167,25 +187,7 @@ async function sendWelcomeEmail(email: string): Promise<void> {
 }
 
 
-export async function sendForgotPasswordEmail(
-  email: string,
-  resetPasswordToken: number,
-): Promise<void> {
-  try {
-    // Send mail with defined transport object
-    const html = emailTemplates.forgotPassword(resetPasswordToken);
-    await transporter.sendMail({
-      from: '"Confluex TEAM" <info@yawa.com>', // Replace with your app name and your Gmail email address
-      to: email,
-      subject: 'Forgot Password Verification Code',
-      html,
-    });
-    
-    console.log('Forgot password email sent successfully');
-  } catch (error) {
-    console.error('Error sending forgot password email:', error);
-  }
-}
+
 
 
 export {
