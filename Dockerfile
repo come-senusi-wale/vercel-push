@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM node:v20.10.0-alpine3.17
+FROM node:18.16.0-alpine3.17
 
 # Set the working directory in the container
 RUN mkdir -p /opt/app
