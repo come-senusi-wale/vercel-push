@@ -1,12 +1,12 @@
-import AuthDto from "../../../shared/types/dtos/athletes/athlete.dto";
-import EncryptionInterface, { TokenType } from "../../../shared/services/encryption/index";
-import IAUthRespository from "../../../shared/services/database/athletes/auth/type";
-import ErrorInterface from "../../../shared/types/interfaces/responses/error";
-import { generateOTP } from "../../../shared/constant/otp";
-import { sendForgotPasswordEmail, sendVerificationEmail } from "../../../shared/services/email/nodeMailer";
-import { checkTime } from "../../../shared/constant/checkTime";
-import { AccountType } from "../../../shared/types/interfaces/responses/athletes/athlete.response";
-import { generateToken } from "../../../shared/constant/token";
+import AuthDto from "../../../../shared/types/dtos/athletes/athlete.dto";
+import EncryptionInterface, { TokenType } from "../../../../shared/services/encryption/index";
+import IAUthRespository from "../../../../shared/services/database/athletes/auth/type";
+import ErrorInterface from "../../../../shared/types/interfaces/responses/error";
+import { generateOTP } from "../../../../shared/constant/otp";
+import { sendForgotPasswordEmail, sendVerificationEmail } from "../../../../shared/services/email/nodeMailer";
+import { checkTime } from "../../../../shared/constant/checkTime";
+import { AccountType } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
+import { generateToken } from "../../../../shared/constant/token";
 
 const ERROR_TO_SAVE_ADMIN: ErrorInterface = {
     message: 'unable to create admin',

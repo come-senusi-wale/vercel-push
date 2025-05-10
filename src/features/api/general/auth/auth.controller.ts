@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import AuthService from "./auth.service";
 
-import { IForgotPasswordRequest, ILoginRequest, IRegistrationRequest, IResendEmailRequest, IResetPasswordRequest, IVerifyEmailRequest } from "../../../shared/types/interfaces/requests/athletes/auth.request";
+import { IForgotPasswordRequest, ILoginRequest, IRegistrationRequest, IResendEmailRequest, IResetPasswordRequest, IVerifyEmailRequest } from "../../../../shared/types/interfaces/requests/athletes/auth.request";
 
 class AuthController {
     private _AuthService: AuthService;

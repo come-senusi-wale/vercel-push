@@ -38,7 +38,6 @@ class TrialService {
       
             trialFile = uploadResult.url;
         }
-          
 
         // if (file) {
         //     const filename = uuidv4();

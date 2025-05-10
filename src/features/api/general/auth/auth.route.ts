@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
-import Encryption from "../../../shared/services/encryption/index";
-import AuthModel from "../../../shared/services/database/athletes/auth/index";
+import Encryption from "../../../../shared/services/encryption/index";
+import AuthModel from "../../../../shared/services/database/athletes/auth/index";
 import AuthController from "./auth.controller";
 import AuthService from "./auth.service";
 import { AuthValidation } from "./auth.validation";
