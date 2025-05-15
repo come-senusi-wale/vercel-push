@@ -14,6 +14,9 @@ export interface IAthletesAccount {
     emailOtpCreatedAt?: Date;
     passwordOtp?: string;
     passwordOtpCreatedAt?: Date;
+    pushNotification: boolean;
+    emailNotification: boolean,
+    soundVibration: boolean,
     updatedAt?: Date;
     createdAt?: Date;
 }

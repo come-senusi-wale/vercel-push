@@ -25,6 +25,18 @@ export const pagination = [
     query("limit").notEmpty(),
 ];
 
+export const acceptTrial = [
+    body("trialId").notEmpty(),
+    body("athleteId").notEmpty(),
+];
+
+export const TrialApplicationByStatus = [
+    query("page").notEmpty(),
+    query("limit").notEmpty(),
+    query("status").notEmpty(),
+    query("trialId").notEmpty(),
+];
+
 
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
@@ -38,4 +50,6 @@ export const TrialValidation = {
     validateFormData,
     createTrialParams,
     pagination,
+    acceptTrial,
+    TrialApplicationByStatus
 }

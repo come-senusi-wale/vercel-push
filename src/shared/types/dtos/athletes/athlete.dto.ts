@@ -13,6 +13,9 @@ class UserAccountDto implements IAthletesAccount {
     public emailOtpCreatedAt?: Date;
     public passwordOtp?: string;
     public passwordOtpCreatedAt?: Date;
+    pushNotification: boolean;
+    emailNotification: boolean;
+    soundVibration: boolean;
     public updatedAt?: Date;
     public createdAt?: Date;
     
@@ -26,7 +29,10 @@ class UserAccountDto implements IAthletesAccount {
       this.emailOtp = userAccount.emailOtp;
       this.emailOtpCreatedAt = userAccount.emailOtpCreatedAt;
       this.passwordOtp = userAccount.passwordOtp,
-      this.passwordOtpCreatedAt= userAccount.passwordOtpCreatedAt,
+      this.passwordOtpCreatedAt= userAccount.passwordOtpCreatedAt;
+      this.pushNotification = userAccount.pushNotification;
+      this.emailNotification = userAccount.emailNotification;
+      this.soundVibration = userAccount.soundVibration;
       this.updatedAt = userAccount.updatedAt;
       this.createdAt = userAccount.createdAt;
 
@@ -44,6 +50,9 @@ class UserAccountDto implements IAthletesAccount {
         emailOtpCreatedAt: this.emailOtpCreatedAt,
         passwordOtp: this.passwordOtp,
         passwordOtpCreatedAt: this.passwordOtpCreatedAt,
+        pushNotification: this.pushNotification,
+        emailNotification: this.emailNotification,
+        soundVibration: this.soundVibration,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as IAthletesAccount
@@ -56,6 +65,9 @@ class UserAccountDto implements IAthletesAccount {
           name: this.name,
           accountType: this.accountType,
           emailVerified: this.emailVerified,
+          pushNotification: this.pushNotification,
+          emailNotification: this.emailNotification,
+          soundVibration: this.soundVibration,
           updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
           createdAt: this.createdAt ? new Date(this.createdAt): undefined,
         } as IAthletesAccount

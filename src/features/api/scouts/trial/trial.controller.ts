@@ -57,10 +57,84 @@ class TrialController {
   }
 
   public getSingleTrial = async (req: Request, res: Response)  => {
-    const {trialId} = req.params;
+
+    const {page, limit, trialId}: any = req.query;
    
     const userId = req.user?._id
-    const { result, errors } = await this._TrialService.getSingleTrial({trial: trialId, userId});
+    const { result, errors } = await this._TrialService.getSingleTrial({trial: trialId, userId, page, limit});
+
+    if (errors && errors.length > 0) return res.status(401).json({
+      error: errors,
+      code: 401,
+      status: false
+    });
+
+    if (result === null) return res.status(401).json({
+      code: 401,
+      status: false
+    });
+
+    return res.status(201).json({
+      data: result,
+      code: 201,
+      status: true
+    });
+  }
+
+  public getApplicantOnTrial = async (req: Request, res: Response)  => {
+
+    const {page, limit, trialId, status}: any = req.query;
+   
+    const userId = req.user?._id
+    const { result, errors } = await this._TrialService.getApplicantOnTrial({trial: trialId, userId, page, limit, status});
+
+    if (errors && errors.length > 0) return res.status(401).json({
+      error: errors,
+      code: 401,
+      status: false
+    });
+
+    if (result === null) return res.status(401).json({
+      code: 401,
+      status: false
+    });
+
+    return res.status(201).json({
+      data: result,
+      code: 201,
+      status: true
+    });
+  }
+
+  public acceptApplicant = async (req: Request, res: Response)  => {
+    const {trialId, athleteId} = req.body;
+   
+    const userId = req.user?._id
+    const { result, errors } = await this._TrialService.acceptApplicant({trial: trialId, athleteId: athleteId, userId});
+
+    if (errors && errors.length > 0) return res.status(401).json({
+      error: errors,
+      code: 401,
+      status: false
+    });
+
+    if (result === null) return res.status(401).json({
+      code: 401,
+      status: false
+    });
+
+    return res.status(201).json({
+      data: result,
+      code: 201,
+      status: true
+    });
+  }
+
+  public rejectApplicant = async (req: Request, res: Response)  => {
+    const {trialId, athleteId} = req.body;
+   
+    const userId = req.user?._id
+    const { result, errors } = await this._TrialService.rejectApplicant({trial: trialId, athleteId: athleteId, userId});
 
     if (errors && errors.length > 0) return res.status(401).json({
       error: errors,
@@ -81,5 +155,7 @@ class TrialController {
   }
 
 }
+
+
 
 export default TrialController;

@@ -9,19 +9,24 @@ import cloudinary from "../../../../shared/services/cloudinary/bocket";
 import { TrialApplicationStatus } from "../../../../shared/types/interfaces/responses/athletes/trialApplication.rseponse";
 import { TrialApplication } from "../../../../shared/services/database/athletes/trialApplication/index";
 import { UserAccount } from "../../../../shared/services/database/athletes/auth/index";
+import INotificationModel from "../../../../shared/services/database/general/notification/type";
 
 
 class TrialService {
     private _trailModel: ITrailModel;
     private _trialApplicationModel: ITrialApplicationModel
+    private _notificationModel: INotificationModel
+
     
     constructor (
-      { trailModel, trialApplicationModel} : {
+      { trailModel, trialApplicationModel, notificationModel} : {
         trailModel: ITrailModel;
         trialApplicationModel: ITrialApplicationModel
+        notificationModel: INotificationModel
       }){
         this._trailModel = trailModel;
         this._trialApplicationModel = trialApplicationModel
+        this._notificationModel = notificationModel
     }
   
     public allPaginatedTrial = async (option: { page: number, limit: number }) : Promise<{ errors?: ErrorInterface[]; trials?: MultipleTrialDto | any }> => {
@@ -106,6 +111,9 @@ class TrialService {
     }
 
     public applyForTrial = async (payload: { trial: ITrialApplicationRequest, userId: any, file: any }) : Promise<{ errors?: ErrorInterface[]; result?: TrialApplicationDto | any }> => {
+        const checkTrial = await this._trailModel.checkIfExist({_id: payload.trial.trial})
+        if (!checkTrial.status) return { errors: [{message: "Trial not found"}] };
+
         const checkApplication = await this._trialApplicationModel.checkIfExist({athlete: payload.userId, trial: payload.trial.trial})
         if (checkApplication.status) return { errors: [{message: "You had applied for this trial"}] };
 
@@ -135,6 +143,28 @@ class TrialService {
 
         const apply = await this._trialApplicationModel.create(trailPayload)
         if (!apply.status) return { errors: [{message: apply.error}] };
+
+        const athlete = await UserAccount.findOne({_id: payload.userId})
+
+        await this._notificationModel.create({
+            user: payload.userId,
+            title: `You have successfully registered for ${checkTrial.data?.name}`,
+            description: `Thank you for registering for the ${checkTrial.data?.name} happening on ${checkTrial.data?.trialDate}. Venue ${checkTrial.data?.location}. Please arrive 30 minutes early`
+        })
+
+        await this._notificationModel.create({
+            user: checkTrial.data?.scout,
+            title: `${athlete?.name} applied for Your ${checkTrial.data?.name}`,
+            description: `${athlete?.name} applied for the ${checkTrial.data?.name} happening on ${checkTrial.data?.trialDate}. Please view their profile and video submissions for evaluation`
+        })
+
+        const newApplicant = await TrialApplication.countDocuments({trial: payload.trial.trial, status: TrialApplicationStatus.Pending})
+
+        await this._notificationModel.create({
+            user: checkTrial.data?.scout,
+            title: `Your Trial ${checkTrial.data?.name} now has ${newApplicant} pending application`,
+            description: `You have ${newApplicant} new application for ${checkTrial.data?.name} review and shortlist candidates before ${checkTrial.data?.trialDate}`
+        })
         
         return { result: apply.data?.getModel };
     }

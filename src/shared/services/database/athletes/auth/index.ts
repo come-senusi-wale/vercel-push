@@ -39,6 +39,18 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
     passwordOtpCreatedAt: {
       type: Date
     },
+    pushNotification: {
+      type: Boolean,
+      default: true
+    },
+    emailNotification: {
+      type: Boolean,
+      default: true
+    },
+    soundVibration: {
+      type: Boolean,
+      default: true
+    },
     updatedAt: {
       type: Date,
       default: Date.now,

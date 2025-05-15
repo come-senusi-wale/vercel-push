@@ -4,6 +4,7 @@ import TrialController from "./trial.controller";
 import TrialService from "./trial.service";
 import { AthleteTrialValidation } from "./trial.validation";
 import TrialModel from "../../../../shared/services/database/general/trial/index";
+import NotificationModel from "../../../../shared/services/database/general/notification/index";
 import { isAthleteAuthenticated } from "../../../../shared/services/middleware/user.middleware";
 import TrialApplicationModel from "../../../../shared/services/database/athletes/trialApplication/index";
 import { singleFileUpload } from "../../../../shared/services/middleware/fileUpload.middleware";
@@ -12,7 +13,8 @@ import { singleFileUpload } from "../../../../shared/services/middleware/fileUpl
 
 const trailModel = new TrialModel()
 const trialApplicationModel = new TrialApplicationModel()
-const trialService = new TrialService({ trailModel, trialApplicationModel })
+const notificationModel = new NotificationModel()
+const trialService = new TrialService({ trailModel, trialApplicationModel, notificationModel })
 const trialController = new TrialController({trialService})
 
 router.get("/trials", isAthleteAuthenticated, AthleteTrialValidation.pagination, AthleteTrialValidation.validateFormData, trialController.allPaginatedTrial);
