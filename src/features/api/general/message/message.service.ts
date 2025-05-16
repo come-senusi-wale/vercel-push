@@ -24,7 +24,7 @@ class MessageService {
             path: 'receiver',  // Path to populate
             model: 'UserAccount',
             select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType' 
-          });;
+          });
    
         return { result: messages };
     }

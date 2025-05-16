@@ -106,6 +106,44 @@ class AthleteService {
             result
         } };
     }
+
+    public getAllPerformance = async (query : {page: any, limit: any}) : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const page: number = parseInt(query.page!) || 1; // or get from query params
+        const limit: number = parseInt(query.limit!) || 50;
+        const skip = (page - 1) * limit;
+
+        const performances = await Performance.find().skip(skip).limit(limit).sort({createdAt: -1})
+        .populate({
+            path: 'athlete',  // Path to populate
+            model: 'UserAccount',  // Explicitly specifying the model is optional but sometimes necessary
+            select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType' 
+        });
+        
+        const total = await Performance.countDocuments()
+        
+        return { result: {
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            total,
+            performances
+        } };
+
+    }
+
+
+    public getSinglePerformance = async (query : {performance: any}) : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const performance = await Performance.findOne({_id: query.performance})
+        .populate({
+            path: 'athlete',  // Path to populate
+            model: 'UserAccount',  // Explicitly specifying the model is optional but sometimes necessary
+            select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType' 
+        });
+
+        if (!performance) return { errors: [{message: "Activity not found"}] };
+        
+        return { result: performance};
+
+    }
 }
 
 export default AthleteService;

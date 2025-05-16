@@ -17,4 +17,8 @@ router.get("/athlete/:athleteId", isScoutAuthenticated, athleteController.getSin
 router.get("/search", isScoutAuthenticated, athleteController.search);
 
 
+router.get("/athletes/activity", isScoutAuthenticated,  AthleteValidation.pagination, AthleteValidation.validateFormData, athleteController.getAllPerformance);
+router.get("/athlete/activity/:performanceId", isScoutAuthenticated, athleteController.getSinglePerformance);
+
+
 export default router;
