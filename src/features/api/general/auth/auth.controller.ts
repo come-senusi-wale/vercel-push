@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import AuthService from "./auth.service";
 
-import { IForgotPasswordRequest, ILoginRequest, IRegistrationRequest, IResendEmailRequest, IResetPasswordRequest, IVerifyEmailRequest } from "../../../../shared/types/interfaces/requests/athletes/auth.request";
+import { IForgotPasswordRequest, ILoginRequest, IRegistrationRequest, IResendEmailRequest, IResetPasswordRequest, IVerifyEmailRequest, IVerifyPasswordOtpRequest } from "../../../../shared/types/interfaces/requests/athletes/auth.request";
 
 class AuthController {
     private _AuthService: AuthService;
@@ -102,7 +102,7 @@ class AuthController {
         const { email } = body;
         const { user, errors } = await this._AuthService.forgotPassword(email);
   
-      if (errors && errors.length > 0) return res.status(401).json({
+        if (errors && errors.length > 0) return res.status(401).json({
           error: errors,
           code: 401,
           status: false
@@ -120,9 +120,31 @@ class AuthController {
         });
     }
 
+    public verifyPasswordOtp = async ({body }: { body: IVerifyPasswordOtpRequest }, res: Response)  => {
+      const { email, otp } = body;
+      const { user, errors } = await this._AuthService.verifyPasswordOtp(email, otp);
+
+      if (errors && errors.length > 0) return res.status(401).json({
+        error: errors,
+        code: 401,
+        status: false
+      });
+  
+      if (user === null) return res.status(401).json({
+        code: 401,
+        status: false
+      });
+  
+      return res.status(201).json({
+        data: user,
+        code: 201,
+        status: true
+      });
+    }
+
     public resetPassword = async ({body }: { body: IResetPasswordRequest }, res: Response)  => {
-        const { email, otp, password } = body;
-        const { user, errors } = await this._AuthService.resetPassword(email, otp, password);
+        const { email, password } = body;
+        const { user, errors } = await this._AuthService.resetPassword(email, password);
   
       if (errors && errors.length > 0) return res.status(401).json({
           error: errors,

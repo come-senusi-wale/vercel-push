@@ -13,6 +13,8 @@ class UserAccountDto implements IAthletesAccount {
     public emailOtpCreatedAt?: Date;
     public passwordOtp?: string;
     public passwordOtpCreatedAt?: Date;
+    passwordOtpVerified?: boolean;
+    requestForPasswordChange?: boolean;
     pushNotification: boolean;
     emailNotification: boolean;
     soundVibration: boolean;
@@ -30,6 +32,8 @@ class UserAccountDto implements IAthletesAccount {
       this.emailOtpCreatedAt = userAccount.emailOtpCreatedAt;
       this.passwordOtp = userAccount.passwordOtp,
       this.passwordOtpCreatedAt= userAccount.passwordOtpCreatedAt;
+      this.passwordOtpVerified = userAccount.passwordOtpVerified;
+      this.requestForPasswordChange = userAccount.requestForPasswordChange;
       this.pushNotification = userAccount.pushNotification;
       this.emailNotification = userAccount.emailNotification;
       this.soundVibration = userAccount.soundVibration;
@@ -50,6 +54,8 @@ class UserAccountDto implements IAthletesAccount {
         emailOtpCreatedAt: this.emailOtpCreatedAt,
         passwordOtp: this.passwordOtp,
         passwordOtpCreatedAt: this.passwordOtpCreatedAt,
+        passwordOtpVerified: this.passwordOtpVerified,
+        requestForPasswordChange: this.requestForPasswordChange,
         pushNotification: this.pushNotification,
         emailNotification: this.emailNotification,
         soundVibration: this.soundVibration,

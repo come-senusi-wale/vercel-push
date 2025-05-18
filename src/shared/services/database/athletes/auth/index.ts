@@ -39,6 +39,14 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
     passwordOtpCreatedAt: {
       type: Date
     },
+    passwordOtpVerified: {
+      type: Boolean,
+      default: false
+    },
+    requestForPasswordChange: {
+      type: Boolean,
+      default: false
+    },
     pushNotification: {
       type: Boolean,
       default: true

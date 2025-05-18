@@ -26,10 +26,14 @@ export const forgotPasswordParams = [
     body("email").isEmail(),
 ];
 
+export const verifyPasswordOtpParams = [
+    body("email").isEmail(),
+    body("otp").notEmpty(),
+];
+
 export const resetPasswordParams = [
     body("email").isEmail(),
     body("password").notEmpty(),
-    body("otp").notEmpty(),
 ];
 
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
@@ -47,5 +51,6 @@ export const AuthValidation = {
     verifyEmailParams,
     loginParams,
     forgotPasswordParams,
+    verifyPasswordOtpParams,
     resetPasswordParams
 }

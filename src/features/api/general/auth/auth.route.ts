@@ -17,6 +17,7 @@ router.post("/resend-email", AuthValidation.resendEmailParams, AuthValidation.va
 router.post("/verify-email", AuthValidation.verifyEmailParams, AuthValidation.validateFormData, authController.verifyEmail);
 router.post("/login", AuthValidation.loginParams, AuthValidation.validateFormData, authController.login);
 router.post("/forgot-password", AuthValidation.forgotPasswordParams, AuthValidation.validateFormData, authController.forgotPassword);
+router.post("/verify-password-otp", AuthValidation.verifyPasswordOtpParams, AuthValidation.validateFormData, authController.verifyPasswordOtp);
 router.post("/reset-password", AuthValidation.resetPasswordParams, AuthValidation.validateFormData, authController.resetPassword);
 
 export default router;

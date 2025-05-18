@@ -102,7 +102,7 @@ class AuthService {
 
         const passwordOtp = generateOTP();
 
-        const updatePasswordOtp = await this._authModel.updateAccount(checkUser.data._id, { passwordOtp, passwordOtpCreatedAt: new Date()})
+        const updatePasswordOtp = await this._authModel.updateAccount(checkUser.data._id, { passwordOtp, passwordOtpCreatedAt: new Date(), passwordOtpVerified: false, requestForPasswordChange: true})
         if (!updatePasswordOtp.status) return { errors: [{message: updatePasswordOtp.error}] };
 
         sendForgotPasswordEmail(email, parseFloat(passwordOtp))
@@ -111,18 +111,35 @@ class AuthService {
     }
 
 
-    public resetPassword = async (email: string, otp: string, password: string) : Promise<{ errors?: ErrorInterface[]; user?: AuthDto | any }> => {
+    public verifyPasswordOtp = async (email: string, otp: string) : Promise<{ errors?: ErrorInterface[]; user?: AuthDto | any }> => {
         const checkUser = await this._authModel.checkIfExist({email})
-        if (!checkUser.status || !checkUser.data) return { errors: [{message: "Account not found"}] };
+        if (!checkUser.status || !checkUser.data) return { errors: [{message: "User not found"}] };
+
+        if (!checkUser.data.requestForPasswordChange) return { errors: [{message: "Please request for password change"}] };
 
         if (checkUser.data.passwordOtp != otp) return { errors: [{message: "Incorrect OTP"}] };
 
-        const isOtpExpired = checkTime(checkUser.data.emailOtpCreatedAt!, 15)
+        const isOtpExpired = checkTime(checkUser.data.passwordOtpCreatedAt!, 15)
         if (isOtpExpired) return { errors: [{message: "OTP has expired"}] };
+
+        const verifiedOtp = await this._authModel.updateAccount(checkUser.data._id, { passwordOtpVerified: true})
+        if (!verifiedOtp.status) return { errors: [{message: "unable to verify OTP"}] };
+   
+        return { user: verifiedOtp.data?.getSecureRespons };
+    }
+
+
+    public resetPassword = async (email: string, password: string) : Promise<{ errors?: ErrorInterface[]; user?: AuthDto | any }> => {
+        const checkUser = await this._authModel.checkIfExist({email})
+        if (!checkUser.status || !checkUser.data) return { errors: [{message: "Account not found"}] };
+
+        if (!checkUser.data.requestForPasswordChange) return { errors: [{message: "Please request for password change"}] };
+
+        if (!checkUser.data.passwordOtpVerified) return { errors: [{message: "OTP not yet verified"}] };
 
         const hashPassword = this._encryption.encryptPassword(password)
 
-        const changePassword = await this._authModel.updateAccount(checkUser.data._id, {password: hashPassword})
+        const changePassword = await this._authModel.updateAccount(checkUser.data._id, {password: hashPassword, passwordOtpVerified: false, requestForPasswordChange: false})
         if (!changePassword.status) return { errors: [{message: changePassword.error}] };
    
         return { user: changePassword.data?.getSecureRespons };
