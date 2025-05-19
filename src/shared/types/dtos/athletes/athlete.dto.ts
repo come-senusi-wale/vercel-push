@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { AccountType, IAthletesAccount } from "../../interfaces/responses/athletes/athlete.response";
+import { AccountType, IAthletesAccount, UserAchievement, UserEducation, UserExperience, UserLocation } from "../../interfaces/responses/athletes/athlete.response";
 
 
 class UserAccountDto implements IAthletesAccount {
@@ -18,6 +18,17 @@ class UserAccountDto implements IAthletesAccount {
     pushNotification: boolean;
     emailNotification: boolean;
     soundVibration: boolean;
+
+    skill?: string | undefined;
+    position?: string | undefined;
+    location?: UserLocation | undefined;
+    profileImg?: string | undefined;
+    about?: string | undefined;
+    cgp?: string[] | undefined;
+    achievement?: UserAchievement[] | undefined;
+    experience?: UserExperience[] | undefined;
+    education?: UserEducation[] | undefined;
+
     public updatedAt?: Date;
     public createdAt?: Date;
     
@@ -25,7 +36,7 @@ class UserAccountDto implements IAthletesAccount {
       this._id = userAccount._id;
       this.email = userAccount.email;
       this.password = userAccount.password;
-      this.accountType = userAccount.accountType,
+      this.accountType = userAccount.accountType;
       this.name = userAccount.name;
       this.emailVerified = userAccount.emailVerified;
       this.emailOtp = userAccount.emailOtp;
@@ -37,6 +48,17 @@ class UserAccountDto implements IAthletesAccount {
       this.pushNotification = userAccount.pushNotification;
       this.emailNotification = userAccount.emailNotification;
       this.soundVibration = userAccount.soundVibration;
+
+      this.skill = userAccount.skill;
+      this.position = userAccount.position;
+      this.location = userAccount.location;
+      this.profileImg = userAccount.profileImg;
+      this.about = userAccount.about;
+      this.cgp = userAccount.cgp;
+      this.achievement = userAccount.achievement;
+      this.experience = userAccount.experience;
+      this.education = userAccount.education;
+
       this.updatedAt = userAccount.updatedAt;
       this.createdAt = userAccount.createdAt;
 
@@ -74,6 +96,15 @@ class UserAccountDto implements IAthletesAccount {
           pushNotification: this.pushNotification,
           emailNotification: this.emailNotification,
           soundVibration: this.soundVibration,
+          skill: this.skill,
+          position: this.position,
+          location: this.location,
+          profileImg: this.profileImg,
+          about: this.about,
+          cgp: this.cgp,
+          achievement: this.achievement,
+          experience: this.experience,
+          education: this.education,
           updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
           createdAt: this.createdAt ? new Date(this.createdAt): undefined,
         } as IAthletesAccount

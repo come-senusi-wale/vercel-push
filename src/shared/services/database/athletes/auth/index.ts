@@ -1,8 +1,36 @@
 import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
-import { IAthletesAccount, AccountType } from "../../../../types/interfaces/responses/athletes/athlete.response";
+import { IAthletesAccount, AccountType, UserAchievement, UserEducation, UserExperience, UserLocation } from "../../../../types/interfaces/responses/athletes/athlete.response";
 import IUserAccountModel from "./type";
 import UserAccountDto from "../../../../types/dtos/athletes/athlete.dto";
+
+const LocationSchema = new Schema<UserLocation>({
+  country: { type: String, default: '' },
+  city: { type: String, default: '' },
+});
+
+const AchievementSchema = new Schema<UserAchievement>({
+  title: { type: String, required: true },
+  date: { type: Date, required: true },
+  sport: { type: String, required: true },
+  description: { type: String, required: true },
+});
+
+const ExperienceSchema = new Schema<UserExperience>({
+  title: { type: String, required: true },
+  date: { type: Date, required: true },
+  sport: { type: String, required: true },
+  description: { type: String, required: true },
+});
+
+const EducationSchema = new Schema<UserEducation>({
+  school: { type: String, required: true },
+  degree: { type: String, required: true },
+  field: { type: String, required: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Schema.Types.Mixed, required: true }, // Date or string
+  description: { type: String },
+});
 
 
 const UserAccountSchema = new Schema<IAthletesAccount>({
@@ -59,6 +87,17 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
       type: Boolean,
       default: true
     },
+    
+    skill: { type: String, default: '' },
+    position: { type: String, default: '' },
+    location: { type: LocationSchema, default: () => ({}) },
+    profileImg: { type: String, default: '' },
+    about: { type: String, default: '' },
+    cgp: { type: [String], default: [] },
+    achievement: { type: [AchievementSchema], default: [] },
+    experience: { type: [ExperienceSchema], default: [] },
+    education: { type: [EducationSchema], default: [] },
+
     updatedAt: {
       type: Date,
       default: Date.now,

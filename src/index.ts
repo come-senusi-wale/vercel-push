@@ -11,6 +11,7 @@ import scoutTrialRoute from "./features/api/scouts/trial/trial.route";
 import scoutAthleteRoute from "./features/api/scouts/athlete/athlete.route";
 import athleteTrialRoute from "./features/api/athletes/trial/trial.route";
 import athletePerformanceRoute from "./features/api/athletes/performanace/performance.route";
+import athleteProfileRoute from "./features/api/athletes/profile/profile.route";
 import messageRoute from "./features/api/general/message/message.route";
 import notificationRoute from "./features/api/general/notification/notification.route";
 import { ISendMessageRequest } from "./shared/types/interfaces/requests/general/meassge.request";
@@ -55,7 +56,7 @@ app.use(
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/auth", userAuthRoute);
 app.use("/api/v1/scout", [scoutTrialRoute, scoutAthleteRoute]);
-app.use("/api/v1/athlete", [athleteTrialRoute, athletePerformanceRoute]);
+app.use("/api/v1/athlete", [athleteTrialRoute, athletePerformanceRoute, athleteProfileRoute]);
 app.use("/api/v1/general", [messageRoute, notificationRoute]);
 // app.use("/api/v1/athlete", athletePerformanceRoute);
 

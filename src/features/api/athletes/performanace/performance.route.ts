@@ -14,7 +14,7 @@ const performanceService = new PerformanceService({ performanceModel })
 const performanceController = new PerformanceController({performanceService})
 
 
-router.post("/performance", isAthleteAuthenticated, singleFileUpload('picture', ['image']), AthletePerformanceValidation.postPerformance, AthletePerformanceValidation.validateFormData, performanceController.postPerformance);
+router.post("/performance", isAthleteAuthenticated, singleFileUpload('picture', ['image', 'video']), AthletePerformanceValidation.postPerformance, AthletePerformanceValidation.validateFormData, performanceController.postPerformance);
 router.get("/performance", isAthleteAuthenticated, AthletePerformanceValidation.pagination, AthletePerformanceValidation.validateFormData, performanceController.getAllPerformance);
 router.get("/performance/ur", isAthleteAuthenticated, AthletePerformanceValidation.pagination, AthletePerformanceValidation.validateFormData, performanceController.getAllUrPerformance);
 router.get("/performance/ur/:performanceId", isAthleteAuthenticated, performanceController.getUrSingleTrial);
