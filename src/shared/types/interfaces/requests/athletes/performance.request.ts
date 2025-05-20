@@ -3,4 +3,5 @@ import { PerformanceVisibility } from "../../responses/athletes/performance.resp
 export interface IPerformanceRequest {
     description: string;
     visibility: PerformanceVisibility,
+    tag?: string
 }

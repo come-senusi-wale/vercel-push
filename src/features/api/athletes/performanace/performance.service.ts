@@ -16,27 +16,39 @@ class PerformanceService {
         this._performanceModel = performanceModel;
     }
 
-    public postPerformance = async (payload: { performance: IPerformanceRequest, userId: any, file: any }) : Promise<{ errors?: ErrorInterface[]; result?: PerformanceDto | any }> => {
-        if (!payload.file && !payload.file?.buffer) return { errors: [{message: "file is required"}] };
+    private _uploadFiles = async(files: Express.Multer.File[]): Promise<{result: string[] }> => {
+        let fileUrls = []
 
-        const uploadResult = await new Promise<{ url: string }>((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-            { folder: "my_app_images" },
-            (error, result) => {
-                if (error || !result) return { errors: [{message: "unable to upload image"}] };
-                resolve({ url: result.secure_url });
-            }
-            );
-    
-            stream.write(payload.file.buffer);
-            stream.end();
-        });
-    
-        const fileUrl = uploadResult.url;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            const uploadResult = await new Promise<{ url: string }>((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                { folder: "my_app_images", resource_type: 'video',},
+                (error, result) => {
+                    if (error || !result) return { errors: [{message: "unable to upload image"}] };
+                    resolve({ url: result.secure_url });
+                }
+                );
+        
+                stream.write(file.buffer);
+                stream.end();
+            });
+
+            fileUrls.push(uploadResult.url)
+        }
+            
+        return {result: fileUrls};
+    }
+
+    public postPerformance = async (payload: { performance: IPerformanceRequest, userId: any, files: Express.Multer.File[] }) : Promise<{ errors?: ErrorInterface[]; result?: PerformanceDto | any }> => {
+        const files = payload.files;
+
+        const filesUrl = await this._uploadFiles(files)
 
         const trailPayload = {
             athlete: payload.userId,
-            image: fileUrl,
+            image: filesUrl.result,
             ...payload.performance
         }
 

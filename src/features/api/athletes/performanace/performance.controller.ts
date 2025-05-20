@@ -11,16 +11,16 @@ class PerformanceController {
     }
 
     public postPerformance = async (req: Request, res: Response)  => {
-        const body: IPerformanceRequest = req.body;
-        const file = req.file;
-        const userId = req.user?._id
-    
-        const { result, errors } = await this._PerformanceService.postPerformance({performance: body, userId, file});
+      const body: IPerformanceRequest = req.body;
+      const files = req.files as Express.Multer.File[];
+      const userId = req.user?._id
+  
+      const { result, errors } = await this._PerformanceService.postPerformance({performance: body, userId, files});
 
-    if (errors && errors.length > 0) return res.status(401).json({
-        error: errors,
-        code: 401,
-        status: false
+      if (errors && errors.length > 0) return res.status(401).json({
+          error: errors,
+          code: 401,
+          status: false
       });
   
       if (result === null) return res.status(401).json({

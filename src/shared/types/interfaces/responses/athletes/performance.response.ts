@@ -8,7 +8,8 @@ export interface IPerformance {
     athlete: Schema.Types.ObjectId;
     description: string;
     visibility: PerformanceVisibility,
-    image: string;
+    image: string[];
+    tag?: string;
     updatedAt?: Date;
     createdAt?: Date;
 }

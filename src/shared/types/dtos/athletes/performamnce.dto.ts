@@ -8,7 +8,8 @@ class PerformanceDto implements IPerformance {
     public athlete: Schema.Types.ObjectId;
     description: string;
     visibility: PerformanceVisibility;
-    image: string;
+    image: string[];
+    tag?: string ;
     public updatedAt?: Date;
     public createdAt?: Date;
     
@@ -18,6 +19,7 @@ class PerformanceDto implements IPerformance {
       this.description = performance.description;
       this.visibility = performance.visibility;
       this.image = performance.image;
+      this.tag = performance.tag;
       this.updatedAt = performance.updatedAt;
       this.createdAt = performance.createdAt;
     }
@@ -28,6 +30,7 @@ class PerformanceDto implements IPerformance {
         description: this.description,
         visibility: this.visibility,
         image: this.image,
+        tag: this.tag,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as IPerformance

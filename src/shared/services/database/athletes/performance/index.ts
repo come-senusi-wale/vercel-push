@@ -21,8 +21,12 @@ const PerformanceSchema = new Schema<IPerformance>({
         required: true, 
     },
     image: {
-      type: String,
+      type: [String],
       required: true, 
+    },
+    tag: {
+      type: String,
+      default: ""
     },
     updatedAt: {
       type: Date,
