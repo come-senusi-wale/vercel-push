@@ -1,6 +1,6 @@
 import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
-import { IAthletesAccount, AccountType, UserAchievement, UserEducation, UserExperience, UserLocation } from "../../../../types/interfaces/responses/athletes/athlete.response";
+import { IAthletesAccount, AccountType, UserAchievement, UserEducation, UserExperience, UserLocation, UserStatistic } from "../../../../types/interfaces/responses/athletes/athlete.response";
 import IUserAccountModel from "./type";
 import UserAccountDto from "../../../../types/dtos/athletes/athlete.dto";
 
@@ -31,6 +31,19 @@ const EducationSchema = new Schema<UserEducation>({
   endDate: { type: Schema.Types.Mixed, required: true }, // Date or string
   description: { type: String },
 });
+
+const StatisticSchema = new Schema<UserStatistic>({
+  height: { type: String, required: true },
+  weight: { type: String, required: true },
+  bodyFat: { type: String, required: true },
+  BMI: { type: String, required: true },
+  maxHeight: { type: String, required: true },
+  v02Max: { type: String, required: true },
+  sprintSpeed: { type: String, required: true },
+  verticalJump: { type: String, required: true },
+  agility: { type: String, required: true },
+});
+
 
 
 const UserAccountSchema = new Schema<IAthletesAccount>({
@@ -93,7 +106,7 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
     location: { type: LocationSchema, default: () => ({}) },
     profileImg: { type: String, default: '' },
     about: { type: String, default: '' },
-    cgp: { type: [String], default: [] },
+    statistic: { type: StatisticSchema, default: () => ({}) },
     achievement: { type: [AchievementSchema], default: [] },
     experience: { type: [ExperienceSchema], default: [] },
     education: { type: [EducationSchema], default: [] },

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import ProfileService from "./profile.service";
-import { IAddAchievementRequest, IAddEducationRequest, IAddExperienceRequest, IEditAchievementRequest, IEditBioRequest, IEditEducationRequest, IEditExperienceRequest } from "../../../../shared/types/interfaces/requests/athletes/profile.request";
+import { IAddAchievementRequest, IAddEducationRequest, IAddExperienceRequest, IAddStatisticRequest, IEditAchievementRequest, IEditBioRequest, IEditEducationRequest, IEditExperienceRequest } from "../../../../shared/types/interfaces/requests/athletes/profile.request";
 
 
 class ProfileController {
@@ -326,7 +326,29 @@ class ProfileController {
     }
 
    
+    public addStatistic = async (req: Request, res: Response)  => {
+        const body: IAddStatisticRequest = req.body;
+        const userId = req.user?._id
+    
+        const { result, errors } = await this._ProfileService.addStatistic({user: userId, statistic: body});
 
+        if (errors && errors.length > 0) return res.status(401).json({
+            error: errors,
+            code: 401,
+            status: false
+        });
+    
+        if (result === null) return res.status(401).json({
+            code: 401,
+            status: false
+        });
+    
+        return res.status(201).json({
+            data: result,
+            code: 201,
+            status: true
+        });
+    }
     
 }
 

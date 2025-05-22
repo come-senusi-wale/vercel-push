@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { AccountType, IAthletesAccount, UserAchievement, UserEducation, UserExperience, UserLocation } from "../../interfaces/responses/athletes/athlete.response";
+import { AccountType, IAthletesAccount, UserAchievement, UserEducation, UserExperience, UserLocation, UserStatistic } from "../../interfaces/responses/athletes/athlete.response";
 
 
 class UserAccountDto implements IAthletesAccount {
@@ -24,7 +24,7 @@ class UserAccountDto implements IAthletesAccount {
     location?: UserLocation | undefined;
     profileImg?: string | undefined;
     about?: string | undefined;
-    cgp?: string[] | undefined;
+    statistic?: UserStatistic | undefined;
     achievement?: UserAchievement[] | undefined;
     experience?: UserExperience[] | undefined;
     education?: UserEducation[] | undefined;
@@ -54,7 +54,7 @@ class UserAccountDto implements IAthletesAccount {
       this.location = userAccount.location;
       this.profileImg = userAccount.profileImg;
       this.about = userAccount.about;
-      this.cgp = userAccount.cgp;
+      this.statistic = userAccount.statistic;
       this.achievement = userAccount.achievement;
       this.experience = userAccount.experience;
       this.education = userAccount.education;
@@ -101,7 +101,7 @@ class UserAccountDto implements IAthletesAccount {
           location: this.location,
           profileImg: this.profileImg,
           about: this.about,
-          cgp: this.cgp,
+          statistic: this.statistic,
           achievement: this.achievement,
           experience: this.experience,
           education: this.education,

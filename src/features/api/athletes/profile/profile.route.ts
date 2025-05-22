@@ -30,6 +30,8 @@ router.post("/profile/add-education", isAthleteAuthenticated, AthleteProfileVali
 router.post("/profile/edit-education", isAthleteAuthenticated, AthleteProfileValidation.editEducation, AthleteProfileValidation.validateFormData, profileController.editEducation);
 router.post("/profile/remove-education", isAthleteAuthenticated, AthleteProfileValidation.removeEducation, AthleteProfileValidation.validateFormData, profileController.deleteEducation);
 
+router.post("/profile/add-statistic", isAthleteAuthenticated, AthleteProfileValidation.addStatistic, AthleteProfileValidation.validateFormData, profileController.addStatistic);
+
 
 
 export default router;

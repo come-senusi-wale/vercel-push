@@ -79,6 +79,18 @@ export const removeEducation = [
     body("educationId").notEmpty(),
 ];
 
+export const addStatistic = [
+    body("height").notEmpty(),
+    body("weight").notEmpty(),
+    body("bodyFat").notEmpty(),
+    body("BMI").notEmpty(),
+    body("maxHeight").notEmpty(),
+    body("v02Max").notEmpty(),
+    body("sprintSpeed").notEmpty(),
+    body("verticalJump").notEmpty(),
+    body("agility").notEmpty(),
+];
+
 
 
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
@@ -102,5 +114,6 @@ export const AthleteProfileValidation = {
     removeExperience,
     addEducation,
     editEducation,
-    removeEducation
+    removeEducation,
+    addStatistic,
 }

@@ -1,10 +1,10 @@
 import AuthDto from "../../../../shared/types/dtos/athletes/athlete.dto";
 import IAUthRespository from "../../../../shared/services/database/athletes/auth/type";
 import ErrorInterface from "../../../../shared/types/interfaces/responses/error";
-import { IAddAchievementRequest, IAddEducationRequest, IAddExperienceRequest, IEditAchievementRequest, IEditBioRequest, IEditEducationRequest, IEditExperienceRequest } from "../../../../shared/types/interfaces/requests/athletes/profile.request";
+import { IAddAchievementRequest, IAddEducationRequest, IAddExperienceRequest, IAddStatisticRequest, IEditAchievementRequest, IEditBioRequest, IEditEducationRequest, IEditExperienceRequest } from "../../../../shared/types/interfaces/requests/athletes/profile.request";
 import cloudinary from "../../../../shared/services/cloudinary/bocket";
 import {UserAccount} from "../../../../shared/services/database/athletes/auth/index";
-import { UserAchievement, UserEducation, UserExperience } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
+import { UserAchievement, UserEducation, UserExperience, UserStatistic } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
 
 class ProfileService {
     private _authModel: IAUthRespository;
@@ -209,6 +209,20 @@ class ProfileService {
         if (!deleteEducation) return { errors: [{message: "Unable to delete education"}] };
 
         return { result: data.educationId };
+    }
+
+    public addStatistic = async (data: {user: any, statistic: IAddStatisticRequest}) : Promise<{ errors?: ErrorInterface[]; result?: AuthDto | any }> => {
+        const newStatistic: UserStatistic = data.statistic
+
+        const addEducation = await UserAccount.findByIdAndUpdate(
+            data.user,
+            { statistic: newStatistic },
+            { new: true }
+        );
+
+        if (!addEducation) return { errors: [{message: "Unable to add statistic"}] };
+
+        return { result: newStatistic };
     }
   
     

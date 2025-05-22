@@ -54,3 +54,16 @@ export interface IEditEducationRequest {
     endDate: Date | string;
     description?: string;
 }
+
+
+export interface IAddStatisticRequest {
+    height: string;
+    weight: string;
+    bodyFat: string;
+    BMI: string;
+    maxHeight: string;
+    v02Max: string;
+    sprintSpeed: string;
+    verticalJump: string;
+    agility: string;
+}
