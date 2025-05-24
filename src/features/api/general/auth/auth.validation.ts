@@ -36,6 +36,16 @@ export const resetPasswordParams = [
     body("password").notEmpty(),
 ];
 
+export const changePasswordParams = [
+    body("oldPassword").notEmpty(),
+    body("newPassword").notEmpty(),
+];
+
+export const changeNotificationStatusParams = [
+    body("alertType").notEmpty(),
+    body("status").notEmpty(),
+];
+
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -52,5 +62,7 @@ export const AuthValidation = {
     loginParams,
     forgotPasswordParams,
     verifyPasswordOtpParams,
-    resetPasswordParams
+    resetPasswordParams,
+    changePasswordParams,
+    changeNotificationStatusParams,
 }

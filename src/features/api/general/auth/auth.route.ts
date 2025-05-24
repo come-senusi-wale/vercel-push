@@ -5,6 +5,7 @@ import AuthModel from "../../../../shared/services/database/athletes/auth/index"
 import AuthController from "./auth.controller";
 import AuthService from "./auth.service";
 import { AuthValidation } from "./auth.validation";
+import { isUserAuthenticated } from "../../../../shared/services/middleware/user.middleware";
 
 
 const authModel = new AuthModel()
@@ -19,5 +20,8 @@ router.post("/login", AuthValidation.loginParams, AuthValidation.validateFormDat
 router.post("/forgot-password", AuthValidation.forgotPasswordParams, AuthValidation.validateFormData, authController.forgotPassword);
 router.post("/verify-password-otp", AuthValidation.verifyPasswordOtpParams, AuthValidation.validateFormData, authController.verifyPasswordOtp);
 router.post("/reset-password", AuthValidation.resetPasswordParams, AuthValidation.validateFormData, authController.resetPassword);
+
+router.post("/change-password", isUserAuthenticated, AuthValidation.changePasswordParams, AuthValidation.validateFormData, authController.changePassword);
+router.post("/change-notification-status", isUserAuthenticated, AuthValidation.changeNotificationStatusParams, AuthValidation.validateFormData, authController.changeNotificationStatus);
 
 export default router;

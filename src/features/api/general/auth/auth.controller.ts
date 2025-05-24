@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import AuthService from "./auth.service";
 
-import { IForgotPasswordRequest, ILoginRequest, IRegistrationRequest, IResendEmailRequest, IResetPasswordRequest, IVerifyEmailRequest, IVerifyPasswordOtpRequest } from "../../../../shared/types/interfaces/requests/athletes/auth.request";
+import { IChangeNotificationAlertRequest, IChangePasswordRequest, IForgotPasswordRequest, ILoginRequest, IRegistrationRequest, IResendEmailRequest, IResetPasswordRequest, IVerifyEmailRequest, IVerifyPasswordOtpRequest } from "../../../../shared/types/interfaces/requests/athletes/auth.request";
 
 class AuthController {
     private _AuthService: AuthService;
@@ -143,25 +143,72 @@ class AuthController {
     }
 
     public resetPassword = async ({body }: { body: IResetPasswordRequest }, res: Response)  => {
-        const { email, password } = body;
-        const { user, errors } = await this._AuthService.resetPassword(email, password);
+      const { email, password } = body;
+      const { user, errors } = await this._AuthService.resetPassword(email, password);
   
       if (errors && errors.length > 0) return res.status(401).json({
-          error: errors,
-          code: 401,
-          status: false
-        });
+        error: errors,
+        code: 401,
+        status: false
+      });
     
-        if (user === null) return res.status(401).json({
-          code: 401,
-          status: false
-        });
+      if (user === null) return res.status(401).json({
+        code: 401,
+        status: false
+      });
+  
+      return res.status(201).json({
+        data: user,
+        code: 201,
+        status: true
+      });
+    }
+
+    public changePassword = async (req: Request, res: Response)  => {
+      const body: IChangePasswordRequest = req.body;
+      const userId = req.user?._id
+      
+      const { user, errors } = await this._AuthService.changePassword({payload: body, user: userId});
+  
+      if (errors && errors.length > 0) return res.status(401).json({
+        error: errors,
+        code: 401,
+        status: false
+      });
     
-        return res.status(201).json({
-          data: user,
-          code: 201,
-          status: true
-        });
+      if (user === null) return res.status(401).json({
+        code: 401,
+        status: false
+      });
+  
+      return res.status(201).json({
+        data: user,
+        code: 201,
+        status: true
+      });
+    }
+
+    public changeNotificationStatus = async (req: Request, res: Response)  => {
+      const body: IChangeNotificationAlertRequest = req.body;
+      const userId = req.user?._id
+      const { user, errors } = await this._AuthService.changeNotificationStatus({payload: body, user: userId});
+  
+      if (errors && errors.length > 0) return res.status(401).json({
+        error: errors,
+        code: 401,
+        status: false
+      });
+    
+      if (user === null) return res.status(401).json({
+        code: 401,
+        status: false
+      });
+  
+      return res.status(201).json({
+        data: user,
+        code: 201,
+        status: true
+      });
     }
 }
 

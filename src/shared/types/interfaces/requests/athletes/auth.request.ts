@@ -34,3 +34,19 @@ export interface IResetPasswordRequest {
     email: string;
     password: string;
 }
+
+export interface IChangePasswordRequest {
+    oldPassword: string;
+    newPassword: string;
+}
+
+export enum UserAlertType {
+    Push = 'push',
+    Email = 'email',
+    Sound = 'sound'
+}
+
+export interface IChangeNotificationAlertRequest {
+    alertType: UserAlertType;
+    status: boolean;
+}

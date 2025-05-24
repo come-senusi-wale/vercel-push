@@ -7,6 +7,7 @@ import { sendForgotPasswordEmail, sendVerificationEmail } from "../../../../shar
 import { checkTime } from "../../../../shared/constant/checkTime";
 import { AccountType } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
 import { generateToken } from "../../../../shared/constant/token";
+import { IChangeNotificationAlertRequest, IChangePasswordRequest, UserAlertType } from "../../../../shared/types/interfaces/requests/athletes/auth.request";
 
 const ERROR_TO_SAVE_ADMIN: ErrorInterface = {
     message: 'unable to create admin',
@@ -143,6 +144,42 @@ class AuthService {
         if (!changePassword.status) return { errors: [{message: changePassword.error}] };
    
         return { user: changePassword.data?.getSecureRespons };
+    }
+
+
+    public changePassword = async (data: {payload: IChangePasswordRequest, user: any}) : Promise<{ errors?: ErrorInterface[]; user?: AuthDto | any }> => {
+        const checkUser = await this._authModel.checkIfExist({_id: data.user})
+        if (!checkUser.status || !checkUser.data) return { errors: [{message: "Account not found"}] };
+
+        const checkPassword = this._encryption.comparePassword(data.payload.oldPassword, checkUser.data.password)
+        if (!checkPassword) return { errors: [{message: "Please provide the correct old password"}] };
+
+        const hashPassword = this._encryption.encryptPassword(data.payload.newPassword)
+
+        const changePassword = await this._authModel.updateAccount(checkUser.data._id, {password: hashPassword, passwordOtpVerified: false, requestForPasswordChange: false})
+        if (!changePassword.status) return { errors: [{message: changePassword.error}] };
+   
+        return { user: changePassword.data?.getSecureRespons };
+    }
+
+    public changeNotificationStatus = async (data: {payload: IChangeNotificationAlertRequest, user: any}) : Promise<{ errors?: ErrorInterface[]; user?: AuthDto | any }> => {
+        const checkUser = await this._authModel.checkIfExist({_id: data.user})
+        if (!checkUser.status || !checkUser.data) return { errors: [{message: "Account not found"}] };
+
+        if (data.payload.alertType == UserAlertType.Email) {
+            const notificationStatus = await this._authModel.updateAccount(data.user, {emailNotification: data.payload.status})
+            if (!notificationStatus.status) return { errors: [{message: "Unable to change Notification status"}] };
+        }else if (data.payload.alertType == UserAlertType.Push) {
+            const notificationStatus = await this._authModel.updateAccount(data.user, {pushNotification: data.payload.status})
+            if (!notificationStatus.status) return { errors: [{message: "Unable to change Notification status"}] };
+        }else if (data.payload.alertType == UserAlertType.Sound) {
+            const notificationStatus = await this._authModel.updateAccount(data.user, {soundVibration: data.payload.status})
+            if (!notificationStatus.status) return { errors: [{message: "Unable to change Notification status"}] };
+        }else{
+            return { errors: [{message: "Unable to change Notification status"}] };
+        }
+   
+        return { user: checkUser.data?.getSecureRespons };
     }
   
     
