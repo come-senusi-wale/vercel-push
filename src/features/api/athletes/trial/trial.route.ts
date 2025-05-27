@@ -19,7 +19,7 @@ const trialController = new TrialController({trialService})
 
 router.get("/trials", isAthleteAuthenticated, AthleteTrialValidation.pagination, AthleteTrialValidation.validateFormData, trialController.allPaginatedTrial);
 router.get("/trials/search", isAthleteAuthenticated, trialController.searchTrial);
-router.post("/trials/apply", isAthleteAuthenticated, singleFileUpload('picture', ['image']), AthleteTrialValidation.applyTrial, AthleteTrialValidation.validateFormData, trialController.applyForTrial);
+router.post("/trials/apply", isAthleteAuthenticated, singleFileUpload('picture', ['image', 'video']), AthleteTrialValidation.applyTrial, AthleteTrialValidation.validateFormData, trialController.applyForTrial);
 router.get("/trials/activity", isAthleteAuthenticated, AthleteTrialValidation.pagination, AthleteTrialValidation.validateFormData, trialController.getUrTrial);
 router.get("/trials/activity/:trialId", isAthleteAuthenticated, trialController.getUrSingleTrial);
 router.get("/trials/:trialId", isAthleteAuthenticated, trialController.singleTrial);

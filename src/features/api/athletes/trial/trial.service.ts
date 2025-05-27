@@ -121,7 +121,7 @@ class TrialService {
 
         const uploadResult = await new Promise<{ url: string }>((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
-            { folder: "my_app_images" },
+            { folder: "my_app_images", resource_type: 'video', },
             (error, result) => {
                 if (error || !result) return { errors: [{message: "unable to upload image"}] };
                 resolve({ url: result.secure_url });
