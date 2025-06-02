@@ -27,7 +27,7 @@ const transporter = nodemailer_1.default.createTransport({
 });
 // Function to create the email template with inline CSS and simple animations
 function createEmailTemplate(subject, body) {
-    const logoUrl = 'https://yawa-app.s3.eu-central-1.amazonaws.com/bf763e08-96fb-41cf-8133-897577a41e09.jpeg'; // Replace with your actual logo URL
+    const logoUrl = 'https://res.cloudinary.com/df2jfb5zp/image/upload/v1746915251/my_app_images/dixs3vro5e0coummadr5.jpg'; // Replace with your actual logo URL
     return `
   <!DOCTYPE html>
   <html>

@@ -14,9 +14,9 @@ class PerformanceController {
         this.postPerformance = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const body = req.body;
-            const file = req.file;
+            const files = req.files;
             const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-            const { result, errors } = yield this._PerformanceService.postPerformance({ performance: body, userId, file });
+            const { result, errors } = yield this._PerformanceService.postPerformance({ performance: body, userId, files });
             if (errors && errors.length > 0)
                 return res.status(401).json({
                     error: errors,

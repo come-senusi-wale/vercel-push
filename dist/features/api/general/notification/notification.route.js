@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const notification_controller_1 = __importDefault(require("./notification.controller"));
+const notification_service_1 = __importDefault(require("./notification.service"));
+const notification_validation_1 = require("./notification.validation");
+const index_1 = __importDefault(require("../../../../shared/services/database/general/notification/index"));
+const user_middleware_1 = require("../../../../shared/services/middleware/user.middleware");
+const notificationModel = new index_1.default();
+const notificationService = new notification_service_1.default({ notificationModel });
+const notificationController = new notification_controller_1.default({ notificationService });
+router.get("/notification", user_middleware_1.isUserAuthenticated, notification_validation_1.NotificationValidation.pagination, notification_validation_1.NotificationValidation.validateFormData, notificationController.getAllNotification);
+router.get("/notification/:notificationId", user_middleware_1.isUserAuthenticated, notificationController.getSingleNotification);
+router.post("/notification/read", user_middleware_1.isUserAuthenticated, notificationController.readAllNotification);
+router.post("/notification/remove/:notificationId", user_middleware_1.isUserAuthenticated, notificationController.removeNotification);
+exports.default = router;

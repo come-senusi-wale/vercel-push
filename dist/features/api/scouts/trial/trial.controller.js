@@ -58,9 +58,75 @@ class TrialController {
         });
         this.getSingleTrial = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
-            const { trialId } = req.params;
+            const { page, limit, trialId } = req.query;
             const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-            const { result, errors } = yield this._TrialService.getSingleTrial({ trial: trialId, userId });
+            const { result, errors } = yield this._TrialService.getSingleTrial({ trial: trialId, userId, page, limit });
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.getApplicantOnTrial = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const { page, limit, trialId, status } = req.query;
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+            const { result, errors } = yield this._TrialService.getApplicantOnTrial({ trial: trialId, userId, page, limit, status });
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.acceptApplicant = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const { trialId, athleteId } = req.body;
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+            const { result, errors } = yield this._TrialService.acceptApplicant({ trial: trialId, athleteId: athleteId, userId });
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.rejectApplicant = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const { trialId, athleteId } = req.body;
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+            const { result, errors } = yield this._TrialService.rejectApplicant({ trial: trialId, athleteId: athleteId, userId });
             if (errors && errors.length > 0)
                 return res.status(401).json({
                     error: errors,

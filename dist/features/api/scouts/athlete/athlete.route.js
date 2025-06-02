@@ -16,4 +16,6 @@ const athleteController = new athlete_controller_1.default({ athleteService });
 router.get("/athletes", user_middleware_1.isScoutAuthenticated, athlete_validation_1.AthleteValidation.limit, athlete_validation_1.AthleteValidation.validateFormData, athleteController.getAllAthlete);
 router.get("/athlete/:athleteId", user_middleware_1.isScoutAuthenticated, athleteController.getSingleAthlete);
 router.get("/search", user_middleware_1.isScoutAuthenticated, athleteController.search);
+router.get("/athletes/activity", user_middleware_1.isScoutAuthenticated, athlete_validation_1.AthleteValidation.pagination, athlete_validation_1.AthleteValidation.validateFormData, athleteController.getAllPerformance);
+router.get("/athlete/activity/:performanceId", user_middleware_1.isScoutAuthenticated, athleteController.getSinglePerformance);
 exports.default = router;

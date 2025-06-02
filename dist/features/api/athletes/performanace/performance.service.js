@@ -16,25 +16,32 @@ const index_1 = require("../../../../shared/services/database/athletes/performan
 const bocket_1 = __importDefault(require("../../../../shared/services/cloudinary/bocket"));
 class PerformanceService {
     constructor({ performanceModel }) {
-        this.postPerformance = (payload) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
-            if (!payload.file && !((_a = payload.file) === null || _a === void 0 ? void 0 : _a.buffer))
-                return { errors: [{ message: "file is required" }] };
-            const uploadResult = yield new Promise((resolve, reject) => {
-                const stream = bocket_1.default.uploader.upload_stream({ folder: "my_app_images" }, (error, result) => {
-                    if (error || !result)
-                        return { errors: [{ message: "unable to upload image" }] };
-                    resolve({ url: result.secure_url });
+        this._uploadFiles = (files) => __awaiter(this, void 0, void 0, function* () {
+            let fileUrls = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const uploadResult = yield new Promise((resolve, reject) => {
+                    const stream = bocket_1.default.uploader.upload_stream({ folder: "my_app_images", resource_type: 'video', }, (error, result) => {
+                        if (error || !result)
+                            return { errors: [{ message: "unable to upload image" }] };
+                        resolve({ url: result.secure_url });
+                    });
+                    stream.write(file.buffer);
+                    stream.end();
                 });
-                stream.write(payload.file.buffer);
-                stream.end();
-            });
-            const fileUrl = uploadResult.url;
-            const trailPayload = Object.assign({ athlete: payload.userId, image: fileUrl }, payload.performance);
+                fileUrls.push(uploadResult.url);
+            }
+            return { result: fileUrls };
+        });
+        this.postPerformance = (payload) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const files = payload.files;
+            const filesUrl = yield this._uploadFiles(files);
+            const trailPayload = Object.assign({ athlete: payload.userId, image: filesUrl.result }, payload.performance);
             const performance = yield this._performanceModel.create(trailPayload);
             if (!performance.status)
                 return { errors: [{ message: performance.error }] };
-            return { result: (_b = performance.data) === null || _b === void 0 ? void 0 : _b.getModel };
+            return { result: (_a = performance.data) === null || _a === void 0 ? void 0 : _a.getModel };
         });
         this.getAllPerformance = (query) => __awaiter(this, void 0, void 0, function* () {
             const page = parseInt(query.page) || 1; // or get from query params

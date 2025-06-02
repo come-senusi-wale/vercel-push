@@ -15,8 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../../../../shared/services/database/general/trial/index");
 const bocket_1 = __importDefault(require("../../../../shared/services/cloudinary/bocket"));
 const trialApplication_1 = require("../../../../shared/services/database/athletes/trialApplication");
+const trialApplication_rseponse_1 = require("../../../../shared/types/interfaces/responses/athletes/trialApplication.rseponse");
 class TrialService {
-    constructor({ trailModel }) {
+    constructor({ trailModel, trialApplicationModel, notificationModel }) {
         this.create = (trial, file, userId) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             let trialFile = "";
@@ -60,20 +61,81 @@ class TrialService {
             const trial = yield index_1.Trial.findOne({ scout: query.userId, _id: query.trial });
             if (!trial)
                 return { errors: [{ message: "Trial not Found" }] };
-            const applicant = yield trialApplication_1.TrialApplication.find({ trial: trial._id })
+            const page = parseInt(query.page) || 1; // or get from query params
+            const limit = parseInt(query.limit) || 50;
+            const skip = (page - 1) * limit;
+            const applicant = yield trialApplication_1.TrialApplication.find({ trial: trial._id, status: trialApplication_rseponse_1.TrialApplicationStatus.Pending })
+                .skip(skip).limit(limit).sort({ createdAt: -1 })
                 .populate({
                 path: 'athlete', // Path to populate
-                model: 'UserAccount' // Explicitly specifying the model is optional but sometimes necessary
+                model: 'UserAccount', // Explicitly specifying the model is optional but sometimes necessary
+                select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType'
             });
-            return { result: { trial, applicant } };
+            const total = yield trialApplication_1.TrialApplication.countDocuments({ trial: trial._id, status: trialApplication_rseponse_1.TrialApplicationStatus.Pending });
+            return { result: { trial,
+                    totalPages: Math.ceil(total / limit),
+                    currentPage: page,
+                    total,
+                    applicant
+                } };
+        });
+        this.getApplicantOnTrial = (query) => __awaiter(this, void 0, void 0, function* () {
+            const page = parseInt(query.page) || 1; // or get from query params
+            const limit = parseInt(query.limit) || 50;
+            const skip = (page - 1) * limit;
+            const Applicants = yield trialApplication_1.TrialApplication.find({ trial: query.trial, status: query.status }).skip(skip).limit(limit).sort({ createdAt: -1 })
+                .populate({
+                path: 'athlete', // Path to populate
+                model: 'UserAccount', // Explicitly specifying the model is optional but sometimes necessary
+                select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType'
+            });
+            const total = yield trialApplication_1.TrialApplication.countDocuments({ trial: query.trial, status: query.status });
+            return { result: {
+                    totalPages: Math.ceil(total / limit),
+                    currentPage: page,
+                    total,
+                    Applicants
+                } };
         });
         this.acceptApplicant = (query) => __awaiter(this, void 0, void 0, function* () {
-            return { result: "" };
+            var _a, _b, _c, _d, _e, _f;
+            const trial = yield this._trailModel.checkIfExist({ scout: query.userId, _id: query.trial });
+            if (!trial.status)
+                return { errors: [{ message: "Trial not Found" }] };
+            const checkApplication = yield this._trialApplicationModel.checkIfExist({ trial: query.trial, athlete: query.athleteId });
+            if (!checkApplication.status)
+                return { errors: [{ message: "This Athlete have not applied for this trial " }] };
+            const acceptApplicant = yield this._trialApplicationModel.update((_a = checkApplication.data) === null || _a === void 0 ? void 0 : _a._id, { status: trialApplication_rseponse_1.TrialApplicationStatus.Accepted });
+            if (!acceptApplicant.status)
+                return { errors: [{ message: "Unable to accept application" }] };
+            yield this._notificationModel.create({
+                user: query.athleteId,
+                title: `Your application for ${(_b = trial.data) === null || _b === void 0 ? void 0 : _b.name} has been accepted`,
+                description: `Congratulation! You application for the ${(_c = trial.data) === null || _c === void 0 ? void 0 : _c.name} on ${(_d = trial.data) === null || _d === void 0 ? void 0 : _d.trialDate}, has been accepted. Please check your email for further details and preparation guidelines.`
+            });
+            return { result: { trial: (_e = trial.data) === null || _e === void 0 ? void 0 : _e.getModel, application: (_f = checkApplication.data) === null || _f === void 0 ? void 0 : _f.getModel } };
         });
         this.rejectApplicant = (query) => __awaiter(this, void 0, void 0, function* () {
-            return { result: "" };
+            var _a, _b, _c, _d, _e, _f;
+            const trial = yield this._trailModel.checkIfExist({ scout: query.userId, _id: query.trial });
+            if (!trial.status)
+                return { errors: [{ message: "Trial not Found" }] };
+            const checkApplication = yield this._trialApplicationModel.checkIfExist({ trial: query.trial, athlete: query.athleteId });
+            if (!checkApplication.status)
+                return { errors: [{ message: "This Athlete have not applied for this trial " }] };
+            const rejectApplicant = yield this._trialApplicationModel.update((_a = checkApplication.data) === null || _a === void 0 ? void 0 : _a._id, { status: trialApplication_rseponse_1.TrialApplicationStatus.Rejected });
+            if (!rejectApplicant.status)
+                return { errors: [{ message: "Unable to reject application" }] };
+            yield this._notificationModel.create({
+                user: query.athleteId,
+                title: `Your application for ${(_b = trial.data) === null || _b === void 0 ? void 0 : _b.name} was rejected`,
+                description: `Sorry! You application for the ${(_c = trial.data) === null || _c === void 0 ? void 0 : _c.name} on ${(_d = trial.data) === null || _d === void 0 ? void 0 : _d.trialDate}, has been rejected. Please check your email for further Info.`
+            });
+            return { result: { trial: (_e = trial.data) === null || _e === void 0 ? void 0 : _e.getModel, application: (_f = checkApplication.data) === null || _f === void 0 ? void 0 : _f.getModel } };
         });
         this._trailModel = trailModel;
+        this._trialApplicationModel = trialApplicationModel;
+        this._notificationModel = notificationModel;
     }
 }
 exports.default = TrialService;

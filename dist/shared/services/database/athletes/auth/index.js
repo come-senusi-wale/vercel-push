@@ -17,6 +17,41 @@ const mongoose_1 = require("mongoose");
 const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
 const athlete_response_1 = require("../../../../types/interfaces/responses/athletes/athlete.response");
 const athlete_dto_1 = __importDefault(require("../../../../types/dtos/athletes/athlete.dto"));
+const LocationSchema = new mongoose_1.Schema({
+    country: { type: String, default: '' },
+    city: { type: String, default: '' },
+});
+const AchievementSchema = new mongoose_1.Schema({
+    title: { type: String, required: true },
+    date: { type: Date, required: true },
+    sport: { type: String, required: true },
+    description: { type: String, required: true },
+});
+const ExperienceSchema = new mongoose_1.Schema({
+    title: { type: String, required: true },
+    date: { type: Date, required: true },
+    sport: { type: String, required: true },
+    description: { type: String, required: true },
+});
+const EducationSchema = new mongoose_1.Schema({
+    school: { type: String, required: true },
+    degree: { type: String, required: true },
+    field: { type: String, required: true },
+    startDate: { type: Date, required: true },
+    endDate: { type: mongoose_1.Schema.Types.Mixed, required: true }, // Date or string
+    description: { type: String },
+});
+const StatisticSchema = new mongoose_1.Schema({
+    height: { type: String, required: true },
+    weight: { type: String, required: true },
+    bodyFat: { type: String, required: true },
+    BMI: { type: String, required: true },
+    maxHeight: { type: String, required: true },
+    v02Max: { type: String, required: true },
+    sprintSpeed: { type: String, required: true },
+    verticalJump: { type: String, required: true },
+    agility: { type: String, required: true },
+});
 const UserAccountSchema = new mongoose_1.Schema({
     email: {
         type: String,
@@ -49,6 +84,40 @@ const UserAccountSchema = new mongoose_1.Schema({
     },
     passwordOtpCreatedAt: {
         type: Date
+    },
+    passwordOtpVerified: {
+        type: Boolean,
+        default: false
+    },
+    requestForPasswordChange: {
+        type: Boolean,
+        default: false
+    },
+    pushNotification: {
+        type: Boolean,
+        default: true
+    },
+    emailNotification: {
+        type: Boolean,
+        default: true
+    },
+    soundVibration: {
+        type: Boolean,
+        default: true
+    },
+    skill: { type: String, default: "" },
+    position: { type: String, default: "" },
+    location: { type: LocationSchema, default: () => ({}) },
+    profileImg: { type: String, default: "" },
+    about: { type: String, default: "" },
+    statistic: { type: StatisticSchema, default: () => ({}) },
+    achievement: { type: [AchievementSchema], default: [] },
+    experience: { type: [ExperienceSchema], default: [] },
+    education: { type: [EducationSchema], default: [] },
+    accountStatus: {
+        type: String,
+        enum: Object.values(athlete_response_1.AccountStatus),
+        default: athlete_response_1.AccountStatus.Active
     },
     updatedAt: {
         type: Date,

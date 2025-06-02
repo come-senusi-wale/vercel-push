@@ -68,6 +68,9 @@ class AthleteService {
                 // filter.eligibility = query.eligibility;
                 orConditions.push({ eligibility: { $regex: query.eligibility, $options: 'i' } });
             }
+            if (orConditions.length > 1) {
+                filter.$or = orConditions;
+            }
             let result = yield index_1.UserAccount.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
             let total = yield index_1.UserAccount.countDocuments(filter);
             if (query.category == trial_request_1.ScoutSearchType.Trial) {
@@ -84,6 +87,35 @@ class AthleteService {
                     total,
                     result
                 } };
+        });
+        this.getAllPerformance = (query) => __awaiter(this, void 0, void 0, function* () {
+            const page = parseInt(query.page) || 1; // or get from query params
+            const limit = parseInt(query.limit) || 50;
+            const skip = (page - 1) * limit;
+            const performances = yield index_2.Performance.find().skip(skip).limit(limit).sort({ createdAt: -1 })
+                .populate({
+                path: 'athlete', // Path to populate
+                model: 'UserAccount', // Explicitly specifying the model is optional but sometimes necessary
+                select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType'
+            });
+            const total = yield index_2.Performance.countDocuments();
+            return { result: {
+                    totalPages: Math.ceil(total / limit),
+                    currentPage: page,
+                    total,
+                    performances
+                } };
+        });
+        this.getSinglePerformance = (query) => __awaiter(this, void 0, void 0, function* () {
+            const performance = yield index_2.Performance.findOne({ _id: query.performance })
+                .populate({
+                path: 'athlete', // Path to populate
+                model: 'UserAccount', // Explicitly specifying the model is optional but sometimes necessary
+                select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType'
+            });
+            if (!performance)
+                return { errors: [{ message: "Activity not found" }] };
+            return { result: performance };
         });
         this._userModel = userModel;
     }

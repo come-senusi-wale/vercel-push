@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TrialValidation = exports.validateFormData = exports.pagination = exports.createTrialParams = void 0;
+exports.TrialValidation = exports.validateFormData = exports.TrialApplicationByStatus = exports.acceptTrial = exports.pagination = exports.createTrialParams = void 0;
 const express_validator_1 = require("express-validator");
 exports.createTrialParams = [
     (0, express_validator_1.body)("name").notEmpty(),
@@ -23,6 +23,16 @@ exports.pagination = [
     (0, express_validator_1.query)("page").notEmpty(),
     (0, express_validator_1.query)("limit").notEmpty(),
 ];
+exports.acceptTrial = [
+    (0, express_validator_1.body)("trialId").notEmpty(),
+    (0, express_validator_1.body)("athleteId").notEmpty(),
+];
+exports.TrialApplicationByStatus = [
+    (0, express_validator_1.query)("page").notEmpty(),
+    (0, express_validator_1.query)("limit").notEmpty(),
+    (0, express_validator_1.query)("status").notEmpty(),
+    (0, express_validator_1.query)("trialId").notEmpty(),
+];
 const validateFormData = (req, res, next) => {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
@@ -35,4 +45,6 @@ exports.TrialValidation = {
     validateFormData: exports.validateFormData,
     createTrialParams: exports.createTrialParams,
     pagination: exports.pagination,
+    acceptTrial: exports.acceptTrial,
+    TrialApplicationByStatus: exports.TrialApplicationByStatus
 };

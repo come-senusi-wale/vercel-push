@@ -19,7 +19,7 @@ const trialApplication_rseponse_1 = require("../../../../shared/types/interfaces
 const index_2 = require("../../../../shared/services/database/athletes/trialApplication/index");
 const index_3 = require("../../../../shared/services/database/athletes/auth/index");
 class TrialService {
-    constructor({ trailModel, trialApplicationModel }) {
+    constructor({ trailModel, trialApplicationModel, notificationModel }) {
         this.allPaginatedTrial = (option) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const trials = yield this._trailModel.getAll({}, option);
@@ -87,14 +87,17 @@ class TrialService {
                 } };
         });
         this.applyForTrial = (payload) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+            const checkTrial = yield this._trailModel.checkIfExist({ _id: payload.trial.trial });
+            if (!checkTrial.status)
+                return { errors: [{ message: "Trial not found" }] };
             const checkApplication = yield this._trialApplicationModel.checkIfExist({ athlete: payload.userId, trial: payload.trial.trial });
             if (checkApplication.status)
                 return { errors: [{ message: "You had applied for this trial" }] };
             if (!payload.file && !((_a = payload.file) === null || _a === void 0 ? void 0 : _a.buffer))
                 return { errors: [{ message: "Document is required" }] };
             const uploadResult = yield new Promise((resolve, reject) => {
-                const stream = bocket_1.default.uploader.upload_stream({ folder: "my_app_images" }, (error, result) => {
+                const stream = bocket_1.default.uploader.upload_stream({ folder: "my_app_images", resource_type: 'video', }, (error, result) => {
                     if (error || !result)
                         return { errors: [{ message: "unable to upload image" }] };
                     resolve({ url: result.secure_url });
@@ -107,7 +110,24 @@ class TrialService {
             const apply = yield this._trialApplicationModel.create(trailPayload);
             if (!apply.status)
                 return { errors: [{ message: apply.error }] };
-            return { result: (_b = apply.data) === null || _b === void 0 ? void 0 : _b.getModel };
+            const athlete = yield index_3.UserAccount.findOne({ _id: payload.userId });
+            yield this._notificationModel.create({
+                user: payload.userId,
+                title: `You have successfully registered for ${(_b = checkTrial.data) === null || _b === void 0 ? void 0 : _b.name}`,
+                description: `Thank you for registering for the ${(_c = checkTrial.data) === null || _c === void 0 ? void 0 : _c.name} happening on ${(_d = checkTrial.data) === null || _d === void 0 ? void 0 : _d.trialDate}. Venue ${(_e = checkTrial.data) === null || _e === void 0 ? void 0 : _e.location}. Please arrive 30 minutes early`
+            });
+            yield this._notificationModel.create({
+                user: (_f = checkTrial.data) === null || _f === void 0 ? void 0 : _f.scout,
+                title: `${athlete === null || athlete === void 0 ? void 0 : athlete.name} applied for Your ${(_g = checkTrial.data) === null || _g === void 0 ? void 0 : _g.name}`,
+                description: `${athlete === null || athlete === void 0 ? void 0 : athlete.name} applied for the ${(_h = checkTrial.data) === null || _h === void 0 ? void 0 : _h.name} happening on ${(_j = checkTrial.data) === null || _j === void 0 ? void 0 : _j.trialDate}. Please view their profile and video submissions for evaluation`
+            });
+            const newApplicant = yield index_2.TrialApplication.countDocuments({ trial: payload.trial.trial, status: trialApplication_rseponse_1.TrialApplicationStatus.Pending });
+            yield this._notificationModel.create({
+                user: (_k = checkTrial.data) === null || _k === void 0 ? void 0 : _k.scout,
+                title: `Your Trial ${(_l = checkTrial.data) === null || _l === void 0 ? void 0 : _l.name} now has ${newApplicant} pending application`,
+                description: `You have ${newApplicant} new application for ${(_m = checkTrial.data) === null || _m === void 0 ? void 0 : _m.name} review and shortlist candidates before ${(_o = checkTrial.data) === null || _o === void 0 ? void 0 : _o.trialDate}`
+            });
+            return { result: (_p = apply.data) === null || _p === void 0 ? void 0 : _p.getModel };
         });
         this.getUrTrial = (query) => __awaiter(this, void 0, void 0, function* () {
             const page = parseInt(query.page) || 1; // or get from query params
@@ -138,6 +158,7 @@ class TrialService {
         });
         this._trailModel = trailModel;
         this._trialApplicationModel = trialApplicationModel;
+        this._notificationModel = notificationModel;
     }
 }
 exports.default = TrialService;

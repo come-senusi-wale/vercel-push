@@ -7,6 +7,7 @@ class PerformanceDto {
         this.description = performance.description;
         this.visibility = performance.visibility;
         this.image = performance.image;
+        this.tag = performance.tag;
         this.updatedAt = performance.updatedAt;
         this.createdAt = performance.createdAt;
     }
@@ -17,6 +18,7 @@ class PerformanceDto {
             description: this.description,
             visibility: this.visibility,
             image: this.image,
+            tag: this.tag,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,
         };

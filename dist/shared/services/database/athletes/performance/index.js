@@ -33,8 +33,12 @@ const PerformanceSchema = new mongoose_1.Schema({
         required: true,
     },
     image: {
-        type: String,
+        type: [String],
         required: true,
+    },
+    tag: {
+        type: String,
+        default: ""
     },
     updatedAt: {
         type: Date,

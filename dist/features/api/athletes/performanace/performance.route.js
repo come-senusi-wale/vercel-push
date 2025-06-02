@@ -14,7 +14,7 @@ const fileUpload_middleware_1 = require("../../../../shared/services/middleware/
 const performanceModel = new index_1.default();
 const performanceService = new performance_service_1.default({ performanceModel });
 const performanceController = new performance_controller_1.default({ performanceService });
-router.post("/performance", user_middleware_1.isAthleteAuthenticated, (0, fileUpload_middleware_1.singleFileUpload)('picture', ['image']), performance_validation_1.AthletePerformanceValidation.postPerformance, performance_validation_1.AthletePerformanceValidation.validateFormData, performanceController.postPerformance);
+router.post("/performance", user_middleware_1.isAthleteAuthenticated, (0, fileUpload_middleware_1.multipleFileUpload)('media', true, ['image', 'video'], 4), performance_validation_1.AthletePerformanceValidation.postPerformance, performance_validation_1.AthletePerformanceValidation.validateFormData, performanceController.postPerformance);
 router.get("/performance", user_middleware_1.isAthleteAuthenticated, performance_validation_1.AthletePerformanceValidation.pagination, performance_validation_1.AthletePerformanceValidation.validateFormData, performanceController.getAllPerformance);
 router.get("/performance/ur", user_middleware_1.isAthleteAuthenticated, performance_validation_1.AthletePerformanceValidation.pagination, performance_validation_1.AthletePerformanceValidation.validateFormData, performanceController.getAllUrPerformance);
 router.get("/performance/ur/:performanceId", user_middleware_1.isAthleteAuthenticated, performanceController.getUrSingleTrial);

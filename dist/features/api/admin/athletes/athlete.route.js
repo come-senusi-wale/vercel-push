@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const athlete_controller_1 = __importDefault(require("./athlete.controller"));
+const athlete_service_1 = __importDefault(require("./athlete.service"));
+const athlete_validation_1 = require("./athlete.validation");
+const index_1 = __importDefault(require("../../../../shared/services/database/athletes/auth/index"));
+const admin_middleware_1 = require("../../../../shared/services/middleware/admin.middleware");
+const userModel = new index_1.default();
+const athleteService = new athlete_service_1.default({ userModel });
+const athleteController = new athlete_controller_1.default({ athleteService });
+router.get("/athletes", admin_middleware_1.isAdminAuthenticated, athlete_validation_1.AdminAthleteValidation.pagination, athlete_validation_1.AdminAthleteValidation.validateFormData, athleteController.getAllAthlete);
+router.get("/athletes-by-status", admin_middleware_1.isAdminAuthenticated, athlete_validation_1.AdminAthleteValidation.status, athlete_validation_1.AdminAthleteValidation.validateFormData, athleteController.getAllAthleteByStatus);
+router.get("/athlete/:athleteId", admin_middleware_1.isAdminAuthenticated, athleteController.getSingleAthlete);
+router.get("/athletes/search", admin_middleware_1.isAdminAuthenticated, athleteController.search);
+exports.default = router;
