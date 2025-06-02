@@ -88,6 +88,10 @@ class AthleteService {
             orConditions.push({ eligibility: { $regex: query.eligibility, $options: 'i' } });
         }
 
+        if (orConditions.length > 1) {
+            filter.$or = orConditions;
+        }
+
         let result: any = await UserAccount.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
         let total = await UserAccount.countDocuments(filter)
 

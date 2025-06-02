@@ -5,7 +5,11 @@ import mongoose, { ConnectOptions, MongooseOptions } from "mongoose";
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 import dotenv from "dotenv";
+
 import adminRoute from "./features/api/admin/auth/auth.route";
+import adminAthleteRoute from "./features/api/admin/athletes/athlete.route";
+import adminScoutRoute from "./features/api/admin/scouts/scout.route";
+
 import userAuthRoute from "./features/api/general/auth/auth.route";
 import scoutTrialRoute from "./features/api/scouts/trial/trial.route";
 import scoutAthleteRoute from "./features/api/scouts/athlete/athlete.route";
@@ -53,7 +57,7 @@ app.use(
     })
 );
 
-app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/admin", [adminRoute, adminAthleteRoute, adminScoutRoute]);
 app.use("/api/v1/auth", userAuthRoute);
 app.use("/api/v1/scout", [scoutTrialRoute, scoutAthleteRoute]);
 app.use("/api/v1/athlete", [athleteTrialRoute, athletePerformanceRoute, athleteProfileRoute]);

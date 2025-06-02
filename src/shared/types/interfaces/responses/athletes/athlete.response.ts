@@ -4,6 +4,12 @@ export enum AccountType {
     Scout = 'Scout',
 }
 
+export enum AccountStatus {
+    Active = 'Active',
+    Pending = 'Pending',
+    Inactive = 'Inactive',
+}
+
 export interface UserLocation {
     country: string;
     city: string;
@@ -70,6 +76,8 @@ export interface IAthletesAccount {
     achievement?: Array<UserAchievement>;
     experience?: Array<UserExperience>;
     education?: Array<UserEducation>;
+
+    accountStatus: AccountStatus;
 
     updatedAt?: Date;
     createdAt?: Date;

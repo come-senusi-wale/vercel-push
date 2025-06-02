@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { AccountType, IAthletesAccount, UserAchievement, UserEducation, UserExperience, UserLocation, UserStatistic } from "../../interfaces/responses/athletes/athlete.response";
+import { AccountStatus, AccountType, IAthletesAccount, UserAchievement, UserEducation, UserExperience, UserLocation, UserStatistic } from "../../interfaces/responses/athletes/athlete.response";
 
 
 class UserAccountDto implements IAthletesAccount {
@@ -28,6 +28,8 @@ class UserAccountDto implements IAthletesAccount {
     achievement?: UserAchievement[] | undefined;
     experience?: UserExperience[] | undefined;
     education?: UserEducation[] | undefined;
+
+    accountStatus: AccountStatus;
 
     public updatedAt?: Date;
     public createdAt?: Date;
@@ -59,6 +61,8 @@ class UserAccountDto implements IAthletesAccount {
       this.experience = userAccount.experience;
       this.education = userAccount.education;
 
+      this.accountStatus = userAccount.accountStatus
+
       this.updatedAt = userAccount.updatedAt;
       this.createdAt = userAccount.createdAt;
 
@@ -81,6 +85,7 @@ class UserAccountDto implements IAthletesAccount {
         pushNotification: this.pushNotification,
         emailNotification: this.emailNotification,
         soundVibration: this.soundVibration,
+        accountStatus: this.accountStatus,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as IAthletesAccount
@@ -105,6 +110,7 @@ class UserAccountDto implements IAthletesAccount {
           achievement: this.achievement,
           experience: this.experience,
           education: this.education,
+          accountStatus: this.accountStatus,
           updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
           createdAt: this.createdAt ? new Date(this.createdAt): undefined,
         } as IAthletesAccount

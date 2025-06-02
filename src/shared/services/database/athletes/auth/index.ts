@@ -1,6 +1,6 @@
 import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
-import { IAthletesAccount, AccountType, UserAchievement, UserEducation, UserExperience, UserLocation, UserStatistic } from "../../../../types/interfaces/responses/athletes/athlete.response";
+import { IAthletesAccount, AccountType, UserAchievement, UserEducation, UserExperience, UserLocation, UserStatistic, AccountStatus } from "../../../../types/interfaces/responses/athletes/athlete.response";
 import IUserAccountModel from "./type";
 import UserAccountDto from "../../../../types/dtos/athletes/athlete.dto";
 
@@ -101,15 +101,21 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
       default: true
     },
     
-    skill: { type: String, default: '' },
-    position: { type: String, default: '' },
+    skill: { type: String, default: "" },
+    position: { type: String, default: "" },
     location: { type: LocationSchema, default: () => ({}) },
-    profileImg: { type: String, default: '' },
-    about: { type: String, default: '' },
+    profileImg: { type: String, default: "" },
+    about: { type: String, default: ""},
     statistic: { type: StatisticSchema, default: () => ({}) },
     achievement: { type: [AchievementSchema], default: [] },
     experience: { type: [ExperienceSchema], default: [] },
     education: { type: [EducationSchema], default: [] },
+
+    accountStatus: {
+      type: String,  
+      enum: Object.values(AccountStatus),  
+      default: AccountStatus.Active
+    },
 
     updatedAt: {
       type: Date,
