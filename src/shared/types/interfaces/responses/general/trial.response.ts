@@ -19,6 +19,7 @@ export interface ITrial {
     equipmentNeeded: string[]; 
     description: string;
     file?: string;
+    maximumAttendance?: string;
     updatedAt?: Date;
     createdAt?: Date;
 }

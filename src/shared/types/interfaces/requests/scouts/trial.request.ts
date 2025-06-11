@@ -14,6 +14,7 @@ export interface ICreateTrialRequest {
     documentRequirement: string[]; 
     description: string;
     equipmentNeeded: string[]; 
+    maximumAttendance?: string;
 }
 
 export enum ScoutSearchType {

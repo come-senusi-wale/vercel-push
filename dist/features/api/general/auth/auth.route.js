@@ -24,4 +24,5 @@ router.post("/verify-password-otp", auth_validation_1.AuthValidation.verifyPassw
 router.post("/reset-password", auth_validation_1.AuthValidation.resetPasswordParams, auth_validation_1.AuthValidation.validateFormData, authController.resetPassword);
 router.post("/change-password", user_middleware_1.isUserAuthenticated, auth_validation_1.AuthValidation.changePasswordParams, auth_validation_1.AuthValidation.validateFormData, authController.changePassword);
 router.post("/change-notification-status", user_middleware_1.isUserAuthenticated, auth_validation_1.AuthValidation.changeNotificationStatusParams, auth_validation_1.AuthValidation.validateFormData, authController.changeNotificationStatus);
+router.get("/profile-completed", user_middleware_1.isUserAuthenticated, authController.getProfileCompletionPercentage);
 exports.default = router;

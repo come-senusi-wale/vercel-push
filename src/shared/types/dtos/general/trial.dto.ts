@@ -27,6 +27,7 @@ class TrialDto implements ITrial {
     public equipmentNeeded: string[];
     public description: string;
     public file?: string;
+    maximumAttendance?: string;
     public updatedAt?: Date;
     public createdAt?: Date;
     
@@ -49,6 +50,7 @@ class TrialDto implements ITrial {
       this.equipmentNeeded = trial.equipmentNeeded,
       this.description = trial.description,
       this.file = trial.file
+      this.maximumAttendance = trial.maximumAttendance,
       this.updatedAt = trial.updatedAt;
       this.createdAt = trial.createdAt;
     }
@@ -72,6 +74,7 @@ class TrialDto implements ITrial {
         equipmentNeeded: this.equipmentNeeded,
         description: this.description,
         file: this.file,
+        maximumAttendance: this.maximumAttendance,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as ITrial

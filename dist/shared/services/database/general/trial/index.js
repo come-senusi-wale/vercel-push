@@ -110,6 +110,9 @@ const TrialSchema = new mongoose_1.Schema({
     file: {
         type: String
     },
+    maximumAttendance: {
+        type: String
+    },
     updatedAt: {
         type: Date,
         default: Date.now,

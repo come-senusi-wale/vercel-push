@@ -66,6 +66,9 @@ const TrialSchema = new Schema<ITrial>({
     file: {
         type: String
     },
+    maximumAttendance: {
+      type: String
+    },
     updatedAt: {
       type: Date,
       default: Date.now,

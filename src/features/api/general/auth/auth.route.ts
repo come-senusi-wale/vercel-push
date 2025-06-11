@@ -23,5 +23,6 @@ router.post("/reset-password", AuthValidation.resetPasswordParams, AuthValidatio
 
 router.post("/change-password", isUserAuthenticated, AuthValidation.changePasswordParams, AuthValidation.validateFormData, authController.changePassword);
 router.post("/change-notification-status", isUserAuthenticated, AuthValidation.changeNotificationStatusParams, AuthValidation.validateFormData, authController.changeNotificationStatus);
+router.get("/profile-completed", isUserAuthenticated, authController.getProfileCompletionPercentage);
 
 export default router;

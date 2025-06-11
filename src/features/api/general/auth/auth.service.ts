@@ -181,6 +181,30 @@ class AuthService {
    
         return { user: checkUser.data?.getSecureRespons };
     }
+
+    public getProfileCompletionPercentage = async (data: {user: any}) : Promise<{ errors?: ErrorInterface[]; result?: AuthDto | any }> => {
+        const checkUser = await this._authModel.checkIfExist({_id: data.user})
+        if (!checkUser.status || !checkUser.data) return { errors: [{message: "Account not found"}] };
+
+        let completed = 0;
+        const total = 10;
+
+        const user = checkUser.data
+
+        if (user.name) completed++;
+        if (user.skill) completed++;
+        if (user.position) completed++;
+        if (user.location?.country && user.location?.city) completed++;
+        if (user.profileImg) completed++;
+        if (user.about) completed++;
+        if (user.statistic && Object.values(user.statistic).some(val => !!val)) completed++;
+        if (user.achievement && user.achievement.length > 0) completed++;
+        if (user.experience && user.experience.length > 0) completed++;
+        if (user.education && user.education.length > 0) completed++;
+
+   
+        return { result: Math.round((completed / total) * 100) };
+    }
   
     
   }

@@ -195,6 +195,27 @@ class AuthController {
                 status: true
             });
         });
+        this.getProfileCompletionPercentage = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+            const { result, errors } = yield this._AuthService.getProfileCompletionPercentage({ user: userId });
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
         this._AuthService = authService;
     }
 }

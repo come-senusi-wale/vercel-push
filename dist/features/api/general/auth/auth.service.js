@@ -163,6 +163,36 @@ class AuthService {
             }
             return { user: (_a = checkUser.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
         });
+        this.getProfileCompletionPercentage = (data) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            const checkUser = yield this._authModel.checkIfExist({ _id: data.user });
+            if (!checkUser.status || !checkUser.data)
+                return { errors: [{ message: "Account not found" }] };
+            let completed = 0;
+            const total = 10;
+            const user = checkUser.data;
+            if (user.name)
+                completed++;
+            if (user.skill)
+                completed++;
+            if (user.position)
+                completed++;
+            if (((_a = user.location) === null || _a === void 0 ? void 0 : _a.country) && ((_b = user.location) === null || _b === void 0 ? void 0 : _b.city))
+                completed++;
+            if (user.profileImg)
+                completed++;
+            if (user.about)
+                completed++;
+            if (user.statistic && Object.values(user.statistic).some(val => !!val))
+                completed++;
+            if (user.achievement && user.achievement.length > 0)
+                completed++;
+            if (user.experience && user.experience.length > 0)
+                completed++;
+            if (user.education && user.education.length > 0)
+                completed++;
+            return { result: Math.round((completed / total) * 100) };
+        });
         this._authModel = authModel;
         this._encryption = encryption;
     }
