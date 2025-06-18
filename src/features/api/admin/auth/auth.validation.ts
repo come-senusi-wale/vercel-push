@@ -4,6 +4,36 @@ import { Request, Response, NextFunction } from "express";
 export const registerParams = [
     body("email").isEmail(),
     body("password").notEmpty(),
+    body("role").notEmpty(),
+    body("name").optional()
+];
+
+export const resendEmailParams = [
+    body("email").isEmail(),
+];
+
+export const verifyEmailParams = [
+    body("email").isEmail(),
+    body("otp").notEmpty(),
+];
+
+export const loginParams = [
+    body("email").isEmail(),
+    body("password").notEmpty(),
+];
+
+export const forgotPasswordParams = [
+    body("email").isEmail(),
+];
+
+export const verifyPasswordOtpParams = [
+    body("email").isEmail(),
+    body("otp").notEmpty(),
+];
+
+export const resetPasswordParams = [
+    body("email").isEmail(),
+    body("password").notEmpty(),
 ];
 
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
@@ -17,4 +47,10 @@ export const validateFormData = (req: Request, res: Response, next: NextFunction
 export const AdminAuthValidation = {
     validateFormData,
     registerParams,
+    resendEmailParams,
+    verifyEmailParams,
+    loginParams,
+    forgotPasswordParams,
+    verifyPasswordOtpParams,
+    resetPasswordParams,
 }

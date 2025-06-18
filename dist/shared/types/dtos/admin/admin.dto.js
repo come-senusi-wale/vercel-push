@@ -5,6 +5,15 @@ class AdminAccountDto {
         this.id = adminAccount._id;
         this.email = adminAccount.email;
         this.password = adminAccount.password;
+        this.name = adminAccount.name;
+        this.role = adminAccount.role;
+        this.emailOtp = adminAccount.emailOtp;
+        this.emailOtpCreatedAt = adminAccount.emailOtpCreatedAt;
+        this.emailVerified = adminAccount.emailVerified;
+        this.passwordOtp = adminAccount.passwordOtp;
+        this.passwordOtpCreatedAt = adminAccount.passwordOtpCreatedAt;
+        this.passwordOtpVerified = adminAccount.passwordOtpVerified;
+        this.requestForPasswordChange = adminAccount.requestForPasswordChange;
         this.updatedAt = adminAccount.updatedAt;
         this.createdAt = adminAccount.createdAt;
     }
@@ -13,6 +22,15 @@ class AdminAccountDto {
             _id: this.id,
             email: this.email,
             password: this.password,
+            name: this.name,
+            role: this.role,
+            emailVerified: this.emailVerified,
+            emailOtp: this.emailOtp,
+            emailOtpCreatedAt: this.emailOtpCreatedAt,
+            passwordOtp: this.passwordOtp,
+            passwordOtpCreatedAt: this.passwordOtpCreatedAt,
+            passwordOtpVerified: this.passwordOtpVerified,
+            requestForPasswordChange: this.requestForPasswordChange,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,
         };
@@ -21,6 +39,13 @@ class AdminAccountDto {
         return {
             _id: this.id,
             email: this.email,
+            name: this.name,
+            role: this.role,
+            emailVerified: this.emailVerified,
+            emailOtpCreatedAt: this.emailOtpCreatedAt,
+            passwordOtpCreatedAt: this.passwordOtpCreatedAt,
+            passwordOtpVerified: this.passwordOtpVerified,
+            requestForPasswordChange: this.requestForPasswordChange,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,
         };

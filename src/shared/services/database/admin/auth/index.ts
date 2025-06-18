@@ -2,7 +2,7 @@ import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
 import IAdminAccountModel from "./type";
 import AdminAccountDto from "../../../../types/dtos/admin/admin.dto";
-import { IAdminAccount } from "../../../../types/interfaces/responses/admin/admin.response";
+import { AdminRole, IAdminAccount } from "../../../../types/interfaces/responses/admin/admin.response";
 
 const AdminAccountSchema = new Schema<IAdminAccount>({
     email: {
@@ -12,6 +12,39 @@ const AdminAccountSchema = new Schema<IAdminAccount>({
     },
     password: {
         type: String,
+    },
+    name: {
+      type: String,
+    },
+    role: {
+      type: String,  
+      enum: Object.values(AdminRole),  
+      required: true, 
+      
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false
+    },
+    emailOtp: {
+      type: String
+    },
+    emailOtpCreatedAt: {
+      type: Date
+    },
+    passwordOtp: {
+      type: String
+    },
+    passwordOtpCreatedAt: {
+      type: Date
+    },
+    passwordOtpVerified: {
+      type: Boolean,
+      default: false
+    },
+    requestForPasswordChange: {
+      type: Boolean,
+      default: false
     },
     updatedAt: {
       type: String
@@ -65,7 +98,7 @@ const AdminAccountSchema = new Schema<IAdminAccount>({
           if (data) {
             return {status: true, data: new AdminAccountDto(data)};
           } else {
-            return {status: false, error: "Unable to update configuration"};
+            return {status: false, error: "Unable to update Account"};
           }
       } catch (error) {
           return {status: false, error };

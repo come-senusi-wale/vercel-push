@@ -5,13 +5,22 @@ import AdminModel from "../../../../shared/services/database/admin/auth/index";
 import AuthController from "./auth.controller";
 import AuthService from "./auth.service";
 import { AdminAuthValidation } from "./auth.validation";
+import { isSuperAdminAuthenticated } from "../../../../shared/services/middleware/admin.middleware";
 
 
 const adminModel = new AdminModel()
-const auth = new AuthorizationRepo()
-const authService = new AuthService({adminModel, auth} )
+const encryption = new AuthorizationRepo()
+const authService = new AuthService({adminModel, encryption} )
 const authController = new AuthController({authService})
 
-router.post("/signup", AdminAuthValidation.registerParams, AdminAuthValidation.validateFormData, authController.registerAdmin);
+router.post("/signup", AdminAuthValidation.registerParams, AdminAuthValidation.validateFormData, authController.create);
+
+router.post("/register", isSuperAdminAuthenticated, AdminAuthValidation.registerParams, AdminAuthValidation.validateFormData, authController.register);
+router.post("/resend-email", AdminAuthValidation.resendEmailParams, AdminAuthValidation.validateFormData, authController.resendEmail);
+router.post("/verify-email", AdminAuthValidation.verifyEmailParams, AdminAuthValidation.validateFormData, authController.verifyEmail);
+router.post("/login", AdminAuthValidation.loginParams, AdminAuthValidation.validateFormData, authController.login);
+router.post("/forgot-password", AdminAuthValidation.forgotPasswordParams, AdminAuthValidation.validateFormData, authController.forgotPassword);
+router.post("/verify-password-otp", AdminAuthValidation.verifyPasswordOtpParams, AdminAuthValidation.validateFormData, authController.verifyPasswordOtp);
+router.post("/reset-password", AdminAuthValidation.resetPasswordParams, AdminAuthValidation.validateFormData, authController.resetPassword);
 
 export default router;

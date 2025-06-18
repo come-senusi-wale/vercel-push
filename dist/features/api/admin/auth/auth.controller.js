@@ -11,35 +11,162 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class AuthController {
     constructor({ authService }) {
-        this.registerAdmin = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
-            //   const validationErrors = this._userAuthValidator.validateBeforeRegistration({ ...body });
-            //   if (validationErrors.length > 0) {
-            //     return sendJson(400, {
-            //       error: validationErrors,
-            //       code: 400,
-            //       status: false
-            //     });
-            //   }
-            const { password, email } = body;
-            const { admin, errors } = yield this._AuthService.registerAdmin(email, password);
-            //   if (errors && errors.length > 0) return sendJson(401, {
-            //     error: errors,
-            //     code: 401,
-            //     status: false
-            //   });
+        this.create = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { password, email, name, role } = body;
+            const { result, errors } = yield this._AuthService.create(email, password, name, role);
             if (errors && errors.length > 0)
                 return res.status(401).json({
                     error: errors,
                     code: 401,
                     status: false
                 });
-            if (admin === null)
+            if (result === null)
                 return res.status(401).json({
                     code: 401,
                     status: false
                 });
             return res.status(201).json({
-                data: admin === null || admin === void 0 ? void 0 : admin.getResponse,
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.register = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { password, email, name, role } = body;
+            const { result, errors } = yield this._AuthService.register(email, password, name, role);
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.resendEmail = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { email } = body;
+            const { result, errors } = yield this._AuthService.resendEmail(email);
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.verifyEmail = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { email, otp } = body;
+            const { result, errors } = yield this._AuthService.verifyEmail(email, otp);
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.login = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { email, password } = body;
+            const { result, errors } = yield this._AuthService.login(email, password);
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.forgotPassword = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { email } = body;
+            const { result, errors } = yield this._AuthService.forgotPassword(email);
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.verifyPasswordOtp = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { email, otp } = body;
+            const { result, errors } = yield this._AuthService.verifyPasswordOtp(email, otp);
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.resetPassword = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { email, password } = body;
+            const { result, errors } = yield this._AuthService.resetPassword(email, password);
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
                 code: 201,
                 status: true
             });

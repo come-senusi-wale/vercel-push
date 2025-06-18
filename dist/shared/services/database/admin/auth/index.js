@@ -16,6 +16,7 @@ exports.AdminAccount = void 0;
 const mongoose_1 = require("mongoose");
 const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
 const admin_dto_1 = __importDefault(require("../../../../types/dtos/admin/admin.dto"));
+const admin_response_1 = require("../../../../types/interfaces/responses/admin/admin.response");
 const AdminAccountSchema = new mongoose_1.Schema({
     email: {
         type: String,
@@ -24,6 +25,38 @@ const AdminAccountSchema = new mongoose_1.Schema({
     },
     password: {
         type: String,
+    },
+    name: {
+        type: String,
+    },
+    role: {
+        type: String,
+        enum: Object.values(admin_response_1.AdminRole),
+        required: true,
+    },
+    emailVerified: {
+        type: Boolean,
+        default: false
+    },
+    emailOtp: {
+        type: String
+    },
+    emailOtpCreatedAt: {
+        type: Date
+    },
+    passwordOtp: {
+        type: String
+    },
+    passwordOtpCreatedAt: {
+        type: Date
+    },
+    passwordOtpVerified: {
+        type: Boolean,
+        default: false
+    },
+    requestForPasswordChange: {
+        type: Boolean,
+        default: false
     },
     updatedAt: {
         type: String
@@ -71,7 +104,7 @@ class AdminAccountModel {
                     return { status: true, data: new admin_dto_1.default(data) };
                 }
                 else {
-                    return { status: false, error: "Unable to update configuration" };
+                    return { status: false, error: "Unable to update Account" };
                 }
             }
             catch (error) {

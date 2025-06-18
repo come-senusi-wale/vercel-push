@@ -9,6 +9,7 @@ function generateAdminToken(payload) {
     const tokenPayload = {
         id: payload.id,
         email: payload.email,
+        role: payload.role
     };
     return jsonwebtoken_1.default.sign(tokenPayload, process.env.ADMIN_JWT_SECRET);
 }
