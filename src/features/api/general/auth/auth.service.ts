@@ -40,7 +40,7 @@ class AuthService {
 
         sendVerificationEmail(email, parseFloat(emailOtp))
    
-        return { user: createAccount.data?.getSecureRespons };
+        return { user: createAccount.data?.getSecureResponse };
     }
 
 
@@ -57,7 +57,7 @@ class AuthService {
 
         sendVerificationEmail(email, parseFloat(emailOtp))
    
-        return { user: updateOtp.data?.getSecureRespons };
+        return { user: updateOtp.data?.getSecureResponse };
     }
 
 
@@ -75,7 +75,7 @@ class AuthService {
         const updateOtp = await this._authModel.updateAccount(checkUser.data._id, {emailVerified: true})
         if (!updateOtp.status) return { errors: [{message: updateOtp.error}] };
    
-        return { user: updateOtp.data?.getSecureRespons };
+        return { user: updateOtp.data?.getSecureResponse };
     }
 
     public login = async (email: string, password: string) : Promise<{ errors?: ErrorInterface[]; user?: AuthDto | any }> => {
@@ -93,7 +93,7 @@ class AuthService {
             accountType: checkUser.data.accountType
         })
    
-        return { user: { token, user: checkUser.data.getSecureRespons} };
+        return { user: { token, user: checkUser.data.getSecureResponse} };
     }
 
 
@@ -108,7 +108,7 @@ class AuthService {
 
         sendForgotPasswordEmail(email, parseFloat(passwordOtp))
    
-        return { user: updatePasswordOtp.data?.getSecureRespons };
+        return { user: updatePasswordOtp.data?.getSecureResponse };
     }
 
 
@@ -126,7 +126,7 @@ class AuthService {
         const verifiedOtp = await this._authModel.updateAccount(checkUser.data._id, { passwordOtpVerified: true})
         if (!verifiedOtp.status) return { errors: [{message: "unable to verify OTP"}] };
    
-        return { user: verifiedOtp.data?.getSecureRespons };
+        return { user: verifiedOtp.data?.getSecureResponse };
     }
 
 
@@ -143,7 +143,7 @@ class AuthService {
         const changePassword = await this._authModel.updateAccount(checkUser.data._id, {password: hashPassword, passwordOtpVerified: false, requestForPasswordChange: false})
         if (!changePassword.status) return { errors: [{message: changePassword.error}] };
    
-        return { user: changePassword.data?.getSecureRespons };
+        return { user: changePassword.data?.getSecureResponse };
     }
 
 
@@ -159,7 +159,7 @@ class AuthService {
         const changePassword = await this._authModel.updateAccount(checkUser.data._id, {password: hashPassword, passwordOtpVerified: false, requestForPasswordChange: false})
         if (!changePassword.status) return { errors: [{message: changePassword.error}] };
    
-        return { user: changePassword.data?.getSecureRespons };
+        return { user: changePassword.data?.getSecureResponse };
     }
 
     public changeNotificationStatus = async (data: {payload: IChangeNotificationAlertRequest, user: any}) : Promise<{ errors?: ErrorInterface[]; user?: AuthDto | any }> => {
@@ -179,7 +179,7 @@ class AuthService {
             return { errors: [{message: "Unable to change Notification status"}] };
         }
    
-        return { user: checkUser.data?.getSecureRespons };
+        return { user: checkUser.data?.getSecureResponse };
     }
 
     public getProfileCompletionPercentage = async (data: {user: any}) : Promise<{ errors?: ErrorInterface[]; result?: AuthDto | any }> => {

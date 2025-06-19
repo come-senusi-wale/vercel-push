@@ -111,6 +111,10 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
     experience: { type: [ExperienceSchema], default: [] },
     education: { type: [EducationSchema], default: [] },
 
+    title: { type: String, default: ""},
+    sports: { type: [String], default: [] },
+    lookFor: { type: [String], default: [] },
+
     accountStatus: {
       type: String,  
       enum: Object.values(AccountStatus),  

@@ -22,7 +22,7 @@ class ProfileService {
 
         if (!profile.status) return { errors: [{message: "User not found"}] };
 
-        return { result: profile.data?.getSecureRespons };
+        return { result: profile.data?.getSecureResponse };
     }
   
     public editBio = async (data: {user: any, payload: IEditBioRequest}) : Promise<{ errors?: ErrorInterface[]; result?: AuthDto | any }> => {
@@ -32,7 +32,7 @@ class ProfileService {
         const editBio = await this._authModel.updateAccount(data.user,{name, skill, position, location: {city, country}})
         if (!editBio.status) return { errors: [{message: "Unable to update Bio"}] };
 
-        return { result: editBio.data?.getSecureRespons };
+        return { result: editBio.data?.getSecureResponse };
     }
 
     public editProfileImg = async (data: {user: any, file: any}) : Promise<{ errors?: ErrorInterface[]; result?: AuthDto | any }> => {
@@ -57,7 +57,7 @@ class ProfileService {
         const editProfileImag = await this._authModel.updateAccount(data.user,{profileImg})
         if (!editProfileImag.status) return { errors: [{message: "Unable to update profile image"}] };
 
-        return { result: editProfileImag.data?.getSecureRespons };
+        return { result: editProfileImag.data?.getSecureResponse };
     }
 
 
@@ -65,7 +65,7 @@ class ProfileService {
         const editAbout = await this._authModel.updateAccount(data.user,{about: data.about})
         if (!editAbout.status) return { errors: [{message: "Unable to update about"}] };
 
-        return { result: editAbout.data?.getSecureRespons };
+        return { result: editAbout.data?.getSecureResponse };
     }
 
     public addAchievement = async (data: {user: any, achievement: IAddAchievementRequest}) : Promise<{ errors?: ErrorInterface[]; result?: AuthDto | any }> => {

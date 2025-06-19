@@ -39,14 +39,14 @@ export interface UserEducation {
 }
 
 export interface UserStatistic {
-    height: string;
-    weight: string;
-    bodyFat: string;
-    BMI: string;
-    maxHeight: string;
-    v02Max: string;
-    sprintSpeed: string;
-    verticalJump: string;
+    height?: string;
+    weight?: string;
+    bodyFat?: string;
+    BMI?: string;
+    maxHeight?: string;
+    v02Max?: string;
+    sprintSpeed?: string;
+    verticalJump?: string;
     agility?: string;
 }
 
@@ -76,6 +76,10 @@ export interface IAthletesAccount {
     achievement?: Array<UserAchievement>;
     experience?: Array<UserExperience>;
     education?: Array<UserEducation>;
+
+    title?: string;
+    sports?: Array<string>;
+    lookFor?: Array<string>;
 
     accountStatus: AccountStatus;
 

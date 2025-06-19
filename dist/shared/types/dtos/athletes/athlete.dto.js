@@ -26,6 +26,9 @@ class UserAccountDto {
         this.achievement = userAccount.achievement;
         this.experience = userAccount.experience;
         this.education = userAccount.education;
+        this.title = userAccount.title;
+        this.sports = userAccount.sports;
+        this.lookFor = userAccount.lookFor;
         this.accountStatus = userAccount.accountStatus;
         this.updatedAt = userAccount.updatedAt;
         this.createdAt = userAccount.createdAt;
@@ -47,12 +50,15 @@ class UserAccountDto {
             pushNotification: this.pushNotification,
             emailNotification: this.emailNotification,
             soundVibration: this.soundVibration,
+            title: this.title,
+            sports: this.sports,
+            lookFor: this.lookFor,
             accountStatus: this.accountStatus,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,
         };
     }
-    get getSecureRespons() {
+    get getSecureResponse() {
         return {
             _id: this._id,
             email: this.email,
@@ -71,6 +77,9 @@ class UserAccountDto {
             achievement: this.achievement,
             experience: this.experience,
             education: this.education,
+            title: this.title,
+            sports: this.sports,
+            lookFor: this.lookFor,
             accountStatus: this.accountStatus,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,

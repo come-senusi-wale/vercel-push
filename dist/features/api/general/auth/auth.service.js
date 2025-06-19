@@ -30,7 +30,7 @@ class AuthService {
             if (!createAccount.status)
                 return { errors: [{ message: createAccount.error }] };
             (0, nodeMailer_1.sendVerificationEmail)(email, parseFloat(emailOtp));
-            return { user: (_a = createAccount.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { user: (_a = createAccount.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.resendEmail = (email) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
@@ -44,7 +44,7 @@ class AuthService {
             if (!updateOtp.status)
                 return { errors: [{ message: updateOtp.error }] };
             (0, nodeMailer_1.sendVerificationEmail)(email, parseFloat(emailOtp));
-            return { user: (_b = updateOtp.data) === null || _b === void 0 ? void 0 : _b.getSecureRespons };
+            return { user: (_b = updateOtp.data) === null || _b === void 0 ? void 0 : _b.getSecureResponse };
         });
         this.verifyEmail = (email, otp) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
@@ -61,7 +61,7 @@ class AuthService {
             const updateOtp = yield this._authModel.updateAccount(checkUser.data._id, { emailVerified: true });
             if (!updateOtp.status)
                 return { errors: [{ message: updateOtp.error }] };
-            return { user: (_b = updateOtp.data) === null || _b === void 0 ? void 0 : _b.getSecureRespons };
+            return { user: (_b = updateOtp.data) === null || _b === void 0 ? void 0 : _b.getSecureResponse };
         });
         this.login = (email, password) => __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -78,7 +78,7 @@ class AuthService {
                 email: checkUser.data.email,
                 accountType: checkUser.data.accountType
             });
-            return { user: { token, user: checkUser.data.getSecureRespons } };
+            return { user: { token, user: checkUser.data.getSecureResponse } };
         });
         this.forgotPassword = (email) => __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -90,7 +90,7 @@ class AuthService {
             if (!updatePasswordOtp.status)
                 return { errors: [{ message: updatePasswordOtp.error }] };
             (0, nodeMailer_1.sendForgotPasswordEmail)(email, parseFloat(passwordOtp));
-            return { user: (_a = updatePasswordOtp.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { user: (_a = updatePasswordOtp.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.verifyPasswordOtp = (email, otp) => __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -107,7 +107,7 @@ class AuthService {
             const verifiedOtp = yield this._authModel.updateAccount(checkUser.data._id, { passwordOtpVerified: true });
             if (!verifiedOtp.status)
                 return { errors: [{ message: "unable to verify OTP" }] };
-            return { user: (_a = verifiedOtp.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { user: (_a = verifiedOtp.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.resetPassword = (email, password) => __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -122,7 +122,7 @@ class AuthService {
             const changePassword = yield this._authModel.updateAccount(checkUser.data._id, { password: hashPassword, passwordOtpVerified: false, requestForPasswordChange: false });
             if (!changePassword.status)
                 return { errors: [{ message: changePassword.error }] };
-            return { user: (_a = changePassword.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { user: (_a = changePassword.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.changePassword = (data) => __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -136,7 +136,7 @@ class AuthService {
             const changePassword = yield this._authModel.updateAccount(checkUser.data._id, { password: hashPassword, passwordOtpVerified: false, requestForPasswordChange: false });
             if (!changePassword.status)
                 return { errors: [{ message: changePassword.error }] };
-            return { user: (_a = changePassword.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { user: (_a = changePassword.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.changeNotificationStatus = (data) => __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -161,7 +161,7 @@ class AuthService {
             else {
                 return { errors: [{ message: "Unable to change Notification status" }] };
             }
-            return { user: (_a = checkUser.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { user: (_a = checkUser.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.getProfileCompletionPercentage = (data) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b;

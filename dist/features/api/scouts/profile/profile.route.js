@@ -1,1 +1,25 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const profile_controller_1 = __importDefault(require("./profile.controller"));
+const profile_service_1 = __importDefault(require("./profile.service"));
+const profile_validation_1 = require("./profile.validation");
+const user_middleware_1 = require("../../../../shared/services/middleware/user.middleware");
+const index_1 = __importDefault(require("../../../../shared/services/database/athletes/auth/index"));
+const fileUpload_middleware_1 = require("../../../../shared/services/middleware/fileUpload.middleware");
+const authModel = new index_1.default();
+const profileService = new profile_service_1.default({ authModel });
+const profileController = new profile_controller_1.default({ profileService });
+router.get("/profile", user_middleware_1.isScoutAuthenticated, profileController.getProfile);
+router.post("/profile-bio", user_middleware_1.isScoutAuthenticated, profile_validation_1.ScoutProfileValidation.bio, profile_validation_1.ScoutProfileValidation.validateFormData, profileController.editBio);
+router.post("/profile-img", user_middleware_1.isScoutAuthenticated, (0, fileUpload_middleware_1.singleFileUpload)('picture', ['image']), profileController.editProfileImg);
+router.post("/profile-about", user_middleware_1.isScoutAuthenticated, profile_validation_1.ScoutProfileValidation.about, profile_validation_1.ScoutProfileValidation.validateFormData, profileController.editAbout);
+router.post("/profile/add-sports", user_middleware_1.isScoutAuthenticated, profile_validation_1.ScoutProfileValidation.addSports, profile_validation_1.ScoutProfileValidation.validateFormData, profileController.addSport);
+router.post("/profile/remove-sports", user_middleware_1.isScoutAuthenticated, profile_validation_1.ScoutProfileValidation.removeSports, profile_validation_1.ScoutProfileValidation.validateFormData, profileController.deleteSport);
+router.post("/profile/add-look-for", user_middleware_1.isScoutAuthenticated, profile_validation_1.ScoutProfileValidation.addLookFor, profile_validation_1.ScoutProfileValidation.validateFormData, profileController.addLookFor);
+router.post("/profile/remove-look-for", user_middleware_1.isScoutAuthenticated, profile_validation_1.ScoutProfileValidation.removeLookFor, profile_validation_1.ScoutProfileValidation.validateFormData, profileController.deleteLookFor);
+exports.default = router;

@@ -21,7 +21,7 @@ class ProfileService {
             const profile = yield this._authModel.checkIfExist({ _id: user });
             if (!profile.status)
                 return { errors: [{ message: "User not found" }] };
-            return { result: (_a = profile.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { result: (_a = profile.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.editBio = (data) => __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -29,7 +29,7 @@ class ProfileService {
             const editBio = yield this._authModel.updateAccount(data.user, { name, skill, position, location: { city, country } });
             if (!editBio.status)
                 return { errors: [{ message: "Unable to update Bio" }] };
-            return { result: (_a = editBio.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { result: (_a = editBio.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.editProfileImg = (data) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
@@ -48,14 +48,14 @@ class ProfileService {
             const editProfileImag = yield this._authModel.updateAccount(data.user, { profileImg });
             if (!editProfileImag.status)
                 return { errors: [{ message: "Unable to update profile image" }] };
-            return { result: (_b = editProfileImag.data) === null || _b === void 0 ? void 0 : _b.getSecureRespons };
+            return { result: (_b = editProfileImag.data) === null || _b === void 0 ? void 0 : _b.getSecureResponse };
         });
         this.editAbout = (data) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const editAbout = yield this._authModel.updateAccount(data.user, { about: data.about });
             if (!editAbout.status)
                 return { errors: [{ message: "Unable to update about" }] };
-            return { result: (_a = editAbout.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+            return { result: (_a = editAbout.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
         });
         this.addAchievement = (data) => __awaiter(this, void 0, void 0, function* () {
             const newAchievement = Object.assign({}, data.achievement);

@@ -114,6 +114,9 @@ const UserAccountSchema = new mongoose_1.Schema({
     achievement: { type: [AchievementSchema], default: [] },
     experience: { type: [ExperienceSchema], default: [] },
     education: { type: [EducationSchema], default: [] },
+    title: { type: String, default: "" },
+    sports: { type: [String], default: [] },
+    lookFor: { type: [String], default: [] },
     accountStatus: {
         type: String,
         enum: Object.values(athlete_response_1.AccountStatus),
