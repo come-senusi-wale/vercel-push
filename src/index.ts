@@ -55,10 +55,34 @@ global.io = io;
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// app.use(
+//     cors({
+//       origin: "*",
+//     })
+// );
+
+const allowedOrigins = [
+  "http://localhost:3000", 
+  "https://confluenxe-dashboard.netlify.app", 
+  "https://admin.confluenxe.com",
+];
+
 app.use(
-    cors({
-      origin: "*",
-    })
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // If cookies are used
+  })
 );
 
 app.use("/api/v1/admin", [adminRoute, adminAthleteRoute, adminScoutRoute]);

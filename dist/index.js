@@ -47,8 +47,31 @@ const io = new socket_io_1.Server(server, {
 global.io = io;
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
+// app.use(
+//     cors({
+//       origin: "*",
+//     })
+// );
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://confluenxe-dashboard.netlify.app",
+    "https://admin.confluenxe.com",
+];
 app.use((0, cors_1.default)({
-    origin: "*",
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin)
+            return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // If cookies are used
 }));
 app.use("/api/v1/admin", [auth_route_1.default, athlete_route_1.default, scout_route_1.default]);
 app.use("/api/v1/auth", auth_route_2.default);
