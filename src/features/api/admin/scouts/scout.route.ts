@@ -14,8 +14,12 @@ const scoutController = new ScoutController({scoutService})
 
 router.get("/scouts", isAdminAuthenticated,  AdminScoutValidation.pagination, AdminScoutValidation.validateFormData, scoutController.getAllScout);
 router.get("/scouts-by-status", isAdminAuthenticated,  AdminScoutValidation.status, AdminScoutValidation.validateFormData, scoutController.getAllScoutByStatus);
-router.get("/scout/:athleteId", isAdminAuthenticated, scoutController.getSingleScout);
+router.get("/scout/:scoutId", isAdminAuthenticated, scoutController.getSingleScout);
 router.get("/scouts/search", isAdminAuthenticated, scoutController.search);
+
+router.get("/scouts-total", isAdminAuthenticated, scoutController.totalScouts);
+router.get("/scout-last-month-percentage", isAdminAuthenticated, scoutController.lastMonthPercentReg);
+router.get("/scout-reg-per-month", isAdminAuthenticated, scoutController.totalRegPerMonth);
 
 
 

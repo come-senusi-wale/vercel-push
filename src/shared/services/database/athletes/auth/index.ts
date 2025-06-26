@@ -118,7 +118,7 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
     accountStatus: {
       type: String,  
       enum: Object.values(AccountStatus),  
-      default: AccountStatus.Active
+      default: AccountStatus.Active,
     },
 
     updatedAt: {

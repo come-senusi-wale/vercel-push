@@ -17,6 +17,10 @@ router.get("/athletes-by-status", isAdminAuthenticated,  AdminAthleteValidation.
 router.get("/athlete/:athleteId", isAdminAuthenticated, athleteController.getSingleAthlete);
 router.get("/athletes/search", isAdminAuthenticated, athleteController.search);
 
+router.get("/athletes-total", isAdminAuthenticated, athleteController.totalAthletes);
+router.get("/athlete-last-month-percentage", isAdminAuthenticated, athleteController.lastMonthPercentReg);
+router.get("/athlete-reg-per-month", isAdminAuthenticated, athleteController.totalRegPerMonth);
+
 
 
 

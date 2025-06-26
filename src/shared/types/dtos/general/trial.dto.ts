@@ -1,5 +1,5 @@
 import { Schema, Types } from "mongoose";
-import { ITrial } from "../../interfaces/responses/general/trial.response";
+import { ITrial, TrialStatus } from "../../interfaces/responses/general/trial.response";
 
 export interface IMultipleTrialResponse {
   trials: ITrial[];
@@ -28,6 +28,7 @@ class TrialDto implements ITrial {
     public description: string;
     public file?: string;
     maximumAttendance?: string;
+    status: TrialStatus;
     public updatedAt?: Date;
     public createdAt?: Date;
     
@@ -51,6 +52,7 @@ class TrialDto implements ITrial {
       this.description = trial.description,
       this.file = trial.file
       this.maximumAttendance = trial.maximumAttendance,
+      this.status = trial.status
       this.updatedAt = trial.updatedAt;
       this.createdAt = trial.createdAt;
     }
@@ -75,6 +77,7 @@ class TrialDto implements ITrial {
         description: this.description,
         file: this.file,
         maximumAttendance: this.maximumAttendance,
+        status: this.status,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as ITrial

@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../../../../shared/services/database/athletes/auth/index");
 const athlete_response_1 = require("../../../../shared/types/interfaces/responses/athletes/athlete.response");
+const date_fns_1 = require("date-fns");
 class ScoutService {
     constructor({ userModel }) {
         this.getAllScout = (query) => __awaiter(this, void 0, void 0, function* () {
@@ -42,10 +43,11 @@ class ScoutService {
                 } };
         });
         this.getSingleScout = (query) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const scout = yield this._userModel.checkIfExist({ _id: query.scout, accountType: athlete_response_1.AccountType.Scout });
             if (!scout.status)
-                return { errors: [{ message: "Athlete not found" }] };
-            return { result: { scout } };
+                return { errors: [{ message: "Scout not found" }] };
+            return { result: { scout: (_a = scout.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse } };
         });
         this.search = (query) => __awaiter(this, void 0, void 0, function* () {
             const filter = {};
@@ -82,6 +84,87 @@ class ScoutService {
                     total,
                     result
                 } };
+        });
+        this.totalScouts = () => __awaiter(this, void 0, void 0, function* () {
+            const totalScouts = yield index_1.UserAccount.countDocuments({ accountType: athlete_response_1.AccountType.Scout });
+            return { result: {
+                    totalScouts: totalScouts
+                } };
+        });
+        this.lastMonthPercentReg = () => __awaiter(this, void 0, void 0, function* () {
+            const now = new Date();
+            const lastMonthStart = (0, date_fns_1.startOfMonth)((0, date_fns_1.subMonths)(now, 1));
+            const lastMonthEnd = (0, date_fns_1.endOfMonth)((0, date_fns_1.subMonths)(now, 1));
+            const prevMonthStart = (0, date_fns_1.startOfMonth)((0, date_fns_1.subMonths)(now, 2));
+            const prevMonthEnd = (0, date_fns_1.endOfMonth)((0, date_fns_1.subMonths)(now, 2));
+            console.log("lastMonthStart", lastMonthStart);
+            console.log("lastMonthEnd", lastMonthEnd);
+            console.log("prevMonthStart", prevMonthStart);
+            console.log("prevMonthEnd", prevMonthEnd);
+            const lastMonthCount = yield index_1.UserAccount.countDocuments({
+                accountType: athlete_response_1.AccountType.Scout,
+                createdAt: {
+                    $gte: lastMonthStart,
+                    $lte: lastMonthEnd
+                }
+            });
+            const prevMonthCount = yield index_1.UserAccount.countDocuments({
+                accountType: athlete_response_1.AccountType.Scout,
+                createdAt: {
+                    $gte: prevMonthStart,
+                    $lte: prevMonthEnd
+                }
+            });
+            let percentageChange = 0;
+            if (prevMonthCount === 0 && lastMonthCount > 0) {
+                percentageChange = 100; // New growth
+            }
+            else if (prevMonthCount === 0 && lastMonthCount === 0) {
+                percentageChange = 0; // No change, no data
+            }
+            else {
+                percentageChange = ((lastMonthCount - prevMonthCount) / prevMonthCount) * 100;
+            }
+            return { result: {
+                    lastMonthCount,
+                    prevMonthCount,
+                    percentageChange: Math.round(percentageChange * 100) / 100, // round to 2 decimal places
+                    trend: percentageChange > 0 ? 'increase' : percentageChange < 0 ? 'decrease' : 'no change'
+                } };
+        });
+        this.totalRegPerMonth = () => __awaiter(this, void 0, void 0, function* () {
+            const now = new Date();
+            const yearStart = (0, date_fns_1.startOfYear)(now);
+            const yearEnd = (0, date_fns_1.endOfYear)(now);
+            const monthlyRegistrations = yield index_1.UserAccount.aggregate([
+                {
+                    $match: {
+                        accountType: athlete_response_1.AccountType.Scout,
+                        createdAt: {
+                            $gte: yearStart,
+                            $lte: yearEnd
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: { month: { $month: '$createdAt' } },
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { '_id.month': 1 }
+                }
+            ]);
+            // Fill in months with 0 if no users were registered
+            const result = {};
+            for (let i = 1; i <= 12; i++) {
+                const monthData = monthlyRegistrations.find(item => item._id.month === i);
+                result[`Month ${i}`] = monthData ? monthData.count : 0;
+            }
+            return {
+                result
+            };
         });
         this._userModel = userModel;
     }

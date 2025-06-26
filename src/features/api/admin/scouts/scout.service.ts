@@ -3,9 +3,7 @@ import IUserModel from "../../../../shared/services/database/athletes/auth/type"
 import { UserAccount } from "../../../../shared/services/database/athletes/auth/index";
 import UserDto from "../../../../shared/types/dtos/athletes/athlete.dto";
 import { AccountStatus, AccountType } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
-import { Performance } from "../../../../shared/services/database/athletes/performance/index";
-import { ScoutSearchType } from "../../../../shared/types/interfaces/requests/scouts/trial.request";
-import { Trial } from "../../../../shared/services/database/general/trial/index";
+import { startOfMonth, subMonths, endOfMonth, startOfYear, endOfYear } from 'date-fns';
 
 
 class ScoutService {
@@ -59,9 +57,9 @@ class ScoutService {
     public getSingleScout = async (query : {scout: any}) : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
         const scout = await this._userModel.checkIfExist({_id: query.scout, accountType: AccountType.Scout})
         
-        if (!scout.status) return { errors: [{message: "Athlete not found"}] };
+        if (!scout.status) return { errors: [{message: "Scout not found"}] };
 
-        return { result: {scout}};
+        return { result: {scout: scout.data?.getSecureResponse}};
 
     }
 
@@ -112,6 +110,100 @@ class ScoutService {
             total,
             result
         } };
+    }
+
+    public totalScouts = async () : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const totalScouts = await UserAccount.countDocuments({accountType: AccountType.Scout})
+          
+        return { result: {
+            totalScouts: totalScouts 
+        } };
+    }
+
+    public lastMonthPercentReg = async () : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const now = new Date();
+
+        const lastMonthStart = startOfMonth(subMonths(now, 1));
+        const lastMonthEnd = endOfMonth(subMonths(now, 1));
+      
+        const prevMonthStart = startOfMonth(subMonths(now, 2));
+        const prevMonthEnd = endOfMonth(subMonths(now, 2));
+
+        console.log("lastMonthStart", lastMonthStart)
+        console.log("lastMonthEnd", lastMonthEnd)
+        console.log("prevMonthStart", prevMonthStart)
+        console.log("prevMonthEnd", prevMonthEnd)
+      
+        const lastMonthCount = await UserAccount.countDocuments({
+          accountType: AccountType.Scout,
+          createdAt: {
+            $gte: lastMonthStart,
+            $lte: lastMonthEnd
+          }
+        });
+      
+        const prevMonthCount = await UserAccount.countDocuments({
+          accountType: AccountType.Scout,
+          createdAt: {
+            $gte: prevMonthStart,
+            $lte: prevMonthEnd
+          }
+        });
+      
+        let percentageChange = 0;
+      
+        if (prevMonthCount === 0 && lastMonthCount > 0) {
+          percentageChange = 100; // New growth
+        } else if (prevMonthCount === 0 && lastMonthCount === 0) {
+          percentageChange = 0; // No change, no data
+        } else {
+          percentageChange = ((lastMonthCount - prevMonthCount) / prevMonthCount) * 100;
+        }
+      
+        return { result: {
+            lastMonthCount,
+            prevMonthCount,
+            percentageChange: Math.round(percentageChange * 100) / 100, // round to 2 decimal places
+            trend: percentageChange > 0 ? 'increase' : percentageChange < 0 ? 'decrease' : 'no change'
+        }};
+    }
+
+    public totalRegPerMonth = async () : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const now = new Date();
+        const yearStart = startOfYear(now);
+        const yearEnd = endOfYear(now);
+
+        const monthlyRegistrations = await UserAccount.aggregate([
+            {
+            $match: {
+                accountType: AccountType.Scout,
+                createdAt: {
+                $gte: yearStart,
+                $lte: yearEnd
+                }
+            }
+            },
+            {
+            $group: {
+                _id: { month: { $month: '$createdAt' } },
+                count: { $sum: 1 }
+            }
+            },
+            {
+            $sort: { '_id.month': 1 }
+            }
+        ]);
+
+        // Fill in months with 0 if no users were registered
+        const result: Record<string, number> = {};
+        for (let i = 1; i <= 12; i++) {
+            const monthData = monthlyRegistrations.find(item => item._id.month === i);
+            result[`Month ${i}`] = monthData ? monthData.count : 0;
+        }
+
+        return {
+            result
+        };
     }
 }
 

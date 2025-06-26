@@ -1,6 +1,6 @@
 import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
-import { ITrial } from "../../../../types/interfaces/responses/general/trial.response";
+import { ITrial, TrialStatus } from "../../../../types/interfaces/responses/general/trial.response";
 import ITrialModel from "./type";
 import TrialDto, { MultipleTrialDto } from "../../../../types/dtos/general/trial.dto";
 
@@ -68,6 +68,11 @@ const TrialSchema = new Schema<ITrial>({
     },
     maximumAttendance: {
       type: String
+    },
+    status: {
+      type: String,
+      enum: Object.values(TrialStatus),  
+      default: TrialStatus.Open,
     },
     updatedAt: {
       type: Date,

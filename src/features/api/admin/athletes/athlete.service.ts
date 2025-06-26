@@ -4,8 +4,7 @@ import { UserAccount } from "../../../../shared/services/database/athletes/auth/
 import UserDto from "../../../../shared/types/dtos/athletes/athlete.dto";
 import { AccountStatus, AccountType } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
 import { Performance } from "../../../../shared/services/database/athletes/performance/index";
-import { ScoutSearchType } from "../../../../shared/types/interfaces/requests/scouts/trial.request";
-import { Trial } from "../../../../shared/services/database/general/trial/index";
+import { startOfMonth, subMonths, endOfMonth, startOfYear, endOfYear } from 'date-fns';
 
 
 class AthleteService {
@@ -41,6 +40,7 @@ class AthleteService {
         const page: number = parseInt(query.page!) || 1; // or get from query params
         const limit: number = parseInt(query.limit!) || 50;
         const skip = (page - 1) * limit;
+        console.log('query', query)
 
         const athletes = await UserAccount.find({accountType: AccountType.Athlete, accountStatus: query.status}).skip(skip).limit(limit).sort({createdAt: -1})
         .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt')
@@ -62,7 +62,7 @@ class AthleteService {
 
         const performance= await Performance.find({athlete: query.athlete}).limit(20).sort({createdAt: -1})
 
-        return { result: {athlete, performance}};
+        return { result: {athlete: athlete.data?.getSecureResponse, performance}};
 
     }
 
@@ -113,6 +113,102 @@ class AthleteService {
             total,
             result
         } };
+    }
+
+
+    public totalAthletes = async () : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const totalAthletes = await UserAccount.countDocuments({accountType: AccountType.Athlete})
+          
+        return { result: {
+            totalAthletes: totalAthletes
+        } };
+
+    }
+
+    public lastMonthPercentReg = async () : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const now = new Date();
+
+        const lastMonthStart = startOfMonth(subMonths(now, 1));
+        const lastMonthEnd = endOfMonth(subMonths(now, 1));
+      
+        const prevMonthStart = startOfMonth(subMonths(now, 2));
+        const prevMonthEnd = endOfMonth(subMonths(now, 2));
+
+        console.log("lastMonthStart", lastMonthStart)
+        console.log("lastMonthEnd", lastMonthEnd)
+        console.log("prevMonthStart", prevMonthStart)
+        console.log("prevMonthEnd", prevMonthEnd)
+      
+        const lastMonthCount = await UserAccount.countDocuments({
+          accountType: AccountType.Athlete,
+          createdAt: {
+            $gte: lastMonthStart,
+            $lte: lastMonthEnd
+          }
+        });
+      
+        const prevMonthCount = await UserAccount.countDocuments({
+          accountType: AccountType.Athlete,
+          createdAt: {
+            $gte: prevMonthStart,
+            $lte: prevMonthEnd
+          }
+        });
+      
+        let percentageChange = 0;
+      
+        if (prevMonthCount === 0 && lastMonthCount > 0) {
+          percentageChange = 100; // New growth
+        } else if (prevMonthCount === 0 && lastMonthCount === 0) {
+          percentageChange = 0; // No change, no data
+        } else {
+          percentageChange = ((lastMonthCount - prevMonthCount) / prevMonthCount) * 100;
+        }
+      
+        return { result: {
+            lastMonthCount,
+            prevMonthCount,
+            percentageChange: Math.round(percentageChange * 100) / 100, // round to 2 decimal places
+            trend: percentageChange > 0 ? 'increase' : percentageChange < 0 ? 'decrease' : 'no change'
+        }};
+    }
+
+    public totalRegPerMonth = async () : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const now = new Date();
+        const yearStart = startOfYear(now);
+        const yearEnd = endOfYear(now);
+
+        const monthlyRegistrations = await UserAccount.aggregate([
+            {
+            $match: {
+                accountType: AccountType.Athlete,
+                createdAt: {
+                $gte: yearStart,
+                $lte: yearEnd
+                }
+            }
+            },
+            {
+            $group: {
+                _id: { month: { $month: '$createdAt' } },
+                count: { $sum: 1 }
+            }
+            },
+            {
+            $sort: { '_id.month': 1 }
+            }
+        ]);
+
+        // Fill in months with 0 if no users were registered
+        const result: Record<string, number> = {};
+        for (let i = 1; i <= 12; i++) {
+            const monthData = monthlyRegistrations.find(item => item._id.month === i);
+            result[`Month ${i}`] = monthData ? monthData.count : 0;
+        }
+
+        return {
+            result
+        };
     }
 }
 

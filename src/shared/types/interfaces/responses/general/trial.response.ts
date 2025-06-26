@@ -1,4 +1,9 @@
 import { Document, Types , Schema} from 'mongoose';
+export enum TrialStatus {
+    Open = 'open',
+    Full = 'full',
+    Expired = 'expired',
+}
 
 export interface ITrial {
     _id: string;
@@ -20,6 +25,7 @@ export interface ITrial {
     description: string;
     file?: string;
     maximumAttendance?: string;
+    status: TrialStatus;
     updatedAt?: Date;
     createdAt?: Date;
 }

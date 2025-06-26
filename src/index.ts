@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import adminRoute from "./features/api/admin/auth/auth.route";
 import adminAthleteRoute from "./features/api/admin/athletes/athlete.route";
 import adminScoutRoute from "./features/api/admin/scouts/scout.route";
+import adminTrialRoute from "./features/api/admin/trials/trial.route";
 
 import userAuthRoute from "./features/api/general/auth/auth.route";
 
@@ -85,7 +86,7 @@ app.use(
   })
 );
 
-app.use("/api/v1/admin", [adminRoute, adminAthleteRoute, adminScoutRoute]);
+app.use("/api/v1/admin", [adminRoute, adminAthleteRoute, adminScoutRoute, adminTrialRoute]);
 app.use("/api/v1/auth", userAuthRoute);
 app.use("/api/v1/scout", [scoutTrialRoute, scoutAthleteRoute, scoutProfileRoute]);
 app.use("/api/v1/athlete", [athleteTrialRoute, athletePerformanceRoute, athleteProfileRoute]);

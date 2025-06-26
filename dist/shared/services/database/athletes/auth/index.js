@@ -120,7 +120,7 @@ const UserAccountSchema = new mongoose_1.Schema({
     accountStatus: {
         type: String,
         enum: Object.values(athlete_response_1.AccountStatus),
-        default: athlete_response_1.AccountStatus.Active
+        default: athlete_response_1.AccountStatus.Active,
     },
     updatedAt: {
         type: Date,

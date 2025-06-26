@@ -48,6 +48,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Trial = void 0;
 const mongoose_1 = require("mongoose");
 const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
+const trial_response_1 = require("../../../../types/interfaces/responses/general/trial.response");
 const trial_dto_1 = __importStar(require("../../../../types/dtos/general/trial.dto"));
 const TrialSchema = new mongoose_1.Schema({
     name: {
@@ -112,6 +113,11 @@ const TrialSchema = new mongoose_1.Schema({
     },
     maximumAttendance: {
         type: String
+    },
+    status: {
+        type: String,
+        enum: Object.values(trial_response_1.TrialStatus),
+        default: trial_response_1.TrialStatus.Open,
     },
     updatedAt: {
         type: Date,

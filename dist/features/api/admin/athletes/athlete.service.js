@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../../../../shared/services/database/athletes/auth/index");
 const athlete_response_1 = require("../../../../shared/types/interfaces/responses/athletes/athlete.response");
 const index_2 = require("../../../../shared/services/database/athletes/performance/index");
+const date_fns_1 = require("date-fns");
 class AthleteService {
     constructor({ userModel }) {
         this.getAllAthlete = (query) => __awaiter(this, void 0, void 0, function* () {
@@ -32,6 +33,7 @@ class AthleteService {
             const page = parseInt(query.page) || 1; // or get from query params
             const limit = parseInt(query.limit) || 50;
             const skip = (page - 1) * limit;
+            console.log('query', query);
             const athletes = yield index_1.UserAccount.find({ accountType: athlete_response_1.AccountType.Athlete, accountStatus: query.status }).skip(skip).limit(limit).sort({ createdAt: -1 })
                 .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt');
             const total = yield index_1.UserAccount.countDocuments({ accountType: athlete_response_1.AccountType.Athlete, accountStatus: query.status });
@@ -43,11 +45,12 @@ class AthleteService {
                 } };
         });
         this.getSingleAthlete = (query) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const athlete = yield this._userModel.checkIfExist({ _id: query.athlete, accountType: athlete_response_1.AccountType.Athlete });
             if (!athlete.status)
                 return { errors: [{ message: "Athlete not found" }] };
             const performance = yield index_2.Performance.find({ athlete: query.athlete }).limit(20).sort({ createdAt: -1 });
-            return { result: { athlete, performance } };
+            return { result: { athlete: (_a = athlete.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse, performance } };
         });
         this.search = (query) => __awaiter(this, void 0, void 0, function* () {
             const filter = {};
@@ -84,6 +87,87 @@ class AthleteService {
                     total,
                     result
                 } };
+        });
+        this.totalAthletes = () => __awaiter(this, void 0, void 0, function* () {
+            const totalAthletes = yield index_1.UserAccount.countDocuments({ accountType: athlete_response_1.AccountType.Athlete });
+            return { result: {
+                    totalAthletes: totalAthletes
+                } };
+        });
+        this.lastMonthPercentReg = () => __awaiter(this, void 0, void 0, function* () {
+            const now = new Date();
+            const lastMonthStart = (0, date_fns_1.startOfMonth)((0, date_fns_1.subMonths)(now, 1));
+            const lastMonthEnd = (0, date_fns_1.endOfMonth)((0, date_fns_1.subMonths)(now, 1));
+            const prevMonthStart = (0, date_fns_1.startOfMonth)((0, date_fns_1.subMonths)(now, 2));
+            const prevMonthEnd = (0, date_fns_1.endOfMonth)((0, date_fns_1.subMonths)(now, 2));
+            console.log("lastMonthStart", lastMonthStart);
+            console.log("lastMonthEnd", lastMonthEnd);
+            console.log("prevMonthStart", prevMonthStart);
+            console.log("prevMonthEnd", prevMonthEnd);
+            const lastMonthCount = yield index_1.UserAccount.countDocuments({
+                accountType: athlete_response_1.AccountType.Athlete,
+                createdAt: {
+                    $gte: lastMonthStart,
+                    $lte: lastMonthEnd
+                }
+            });
+            const prevMonthCount = yield index_1.UserAccount.countDocuments({
+                accountType: athlete_response_1.AccountType.Athlete,
+                createdAt: {
+                    $gte: prevMonthStart,
+                    $lte: prevMonthEnd
+                }
+            });
+            let percentageChange = 0;
+            if (prevMonthCount === 0 && lastMonthCount > 0) {
+                percentageChange = 100; // New growth
+            }
+            else if (prevMonthCount === 0 && lastMonthCount === 0) {
+                percentageChange = 0; // No change, no data
+            }
+            else {
+                percentageChange = ((lastMonthCount - prevMonthCount) / prevMonthCount) * 100;
+            }
+            return { result: {
+                    lastMonthCount,
+                    prevMonthCount,
+                    percentageChange: Math.round(percentageChange * 100) / 100, // round to 2 decimal places
+                    trend: percentageChange > 0 ? 'increase' : percentageChange < 0 ? 'decrease' : 'no change'
+                } };
+        });
+        this.totalRegPerMonth = () => __awaiter(this, void 0, void 0, function* () {
+            const now = new Date();
+            const yearStart = (0, date_fns_1.startOfYear)(now);
+            const yearEnd = (0, date_fns_1.endOfYear)(now);
+            const monthlyRegistrations = yield index_1.UserAccount.aggregate([
+                {
+                    $match: {
+                        accountType: athlete_response_1.AccountType.Athlete,
+                        createdAt: {
+                            $gte: yearStart,
+                            $lte: yearEnd
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: { month: { $month: '$createdAt' } },
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { '_id.month': 1 }
+                }
+            ]);
+            // Fill in months with 0 if no users were registered
+            const result = {};
+            for (let i = 1; i <= 12; i++) {
+                const monthData = monthlyRegistrations.find(item => item._id.month === i);
+                result[`Month ${i}`] = monthData ? monthData.count : 0;
+            }
+            return {
+                result
+            };
         });
         this._userModel = userModel;
     }

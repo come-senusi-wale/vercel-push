@@ -1,0 +1,26 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const trial_controller_1 = __importDefault(require("./trial.controller"));
+const trial_service_1 = __importDefault(require("./trial.service"));
+const trial_validation_1 = require("./trial.validation");
+const admin_middleware_1 = require("../../../../shared/services/middleware/admin.middleware");
+const trialService = new trial_service_1.default();
+const trialController = new trial_controller_1.default({ trialService });
+router.get("/trials", admin_middleware_1.isAdminAuthenticated, trial_validation_1.AdminTrialValidation.pagination, trial_validation_1.AdminTrialValidation.validateFormData, trialController.getAllTrial);
+router.get("/trials-by-status", admin_middleware_1.isAdminAuthenticated, trial_validation_1.AdminTrialValidation.status, trial_validation_1.AdminTrialValidation.validateFormData, trialController.getAllTrialByStatus);
+router.get("/trial/:trialId", admin_middleware_1.isAdminAuthenticated, trialController.getSingleTrial);
+router.get("/trials/search", admin_middleware_1.isAdminAuthenticated, trialController.search);
+router.get("/trial-total", admin_middleware_1.isAdminAuthenticated, trialController.totalTrial);
+router.get("/trial-total-live", admin_middleware_1.isAdminAuthenticated, trialController.totalLiveTrial);
+router.get("/trial-total-month", admin_middleware_1.isAdminAuthenticated, trialController.totalTrialCreatedForThisMonth);
+router.get("/trial-last-month-percentage", admin_middleware_1.isAdminAuthenticated, trialController.lastMonthPercentCrate);
+router.get("/trails-create-per-month", admin_middleware_1.isAdminAuthenticated, trialController.totalTrialCreatePerMonth);
+router.get("/trial/application/total-application-today", admin_middleware_1.isAdminAuthenticated, trialController.totalApplicationToday);
+router.get("/trial/application/total-application", admin_middleware_1.isAdminAuthenticated, trialController.totalApplication);
+router.get("/trial/application/last-month-percentage-applied", admin_middleware_1.isAdminAuthenticated, trialController.lastMonthPercentApplied);
+exports.default = router;
