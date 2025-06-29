@@ -11,11 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class NotificationController {
     constructor({ notificationService }) {
-        this.getAllNotification = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const { page, limit } = req.query;
-            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-            const { result, errors } = yield this._notificationService.getAllNotification({ page, limit, user: userId });
+        this.createNotification = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const body = req.body;
+            const { result, errors } = yield this._notificationService.createNotification(body);
             if (errors && errors.length > 0)
                 return res.status(401).json({
                     error: errors,
@@ -33,11 +31,9 @@ class NotificationController {
                 status: true
             });
         });
-        this.getAllNotificationTwo = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const { page, limit, recipient } = req.query;
-            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-            const { result, errors } = yield this._notificationService.getAllNotificationTwo({ page, limit, user: userId, recipient });
+        this.getAllNotification = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { page, limit, user, } = req.query;
+            const { result, errors } = yield this._notificationService.getAllNotification({ page, limit, user });
             if (errors && errors.length > 0)
                 return res.status(401).json({
                     error: errors,
@@ -56,10 +52,8 @@ class NotificationController {
             });
         });
         this.getSingleNotification = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
             const { notificationId } = req.params;
-            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-            const { result, errors } = yield this._notificationService.getSingleNotification({ notification: notificationId, user: userId });
+            const { result, errors } = yield this._notificationService.getSingleNotification({ notification: notificationId });
             if (errors && errors.length > 0)
                 return res.status(401).json({
                     error: errors,
@@ -77,10 +71,8 @@ class NotificationController {
                 status: true
             });
         });
-        this.readAllNotification = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-            const { result, errors } = yield this._notificationService.readAllNotification({ user: userId });
+        this.totalSent = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { result, errors } = yield this._notificationService.totalSent();
             if (errors && errors.length > 0)
                 return res.status(401).json({
                     error: errors,
@@ -98,11 +90,8 @@ class NotificationController {
                 status: true
             });
         });
-        this.removeNotification = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const { notificationId } = req.params;
-            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-            const { result, errors } = yield this._notificationService.removeNotification({ notification: notificationId, user: userId });
+        this.totalSchedule = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { result, errors } = yield this._notificationService.totalSchedule();
             if (errors && errors.length > 0)
                 return res.status(401).json({
                     error: errors,

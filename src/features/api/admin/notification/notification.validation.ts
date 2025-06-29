@@ -1,6 +1,13 @@
 import { body, query, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 
+export const createNotification = [
+    body("user").notEmpty(),
+    body("title").notEmpty(),
+    body("message").notEmpty(),
+    body("type").notEmpty(),
+];
+
 export const pagination = [
     query("page").notEmpty(),
     query("limit").notEmpty(),
@@ -20,8 +27,9 @@ export const validateFormData = (req: Request, res: Response, next: NextFunction
     next();
 };
 
-export const NotificationValidation = {
+export const AdminNotificationValidation = {
     validateFormData,
+    createNotification,
     pagination,
     notifications,
 }

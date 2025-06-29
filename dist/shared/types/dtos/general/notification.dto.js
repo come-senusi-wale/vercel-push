@@ -8,6 +8,7 @@ class NotificationDto {
         this.title = notification.title;
         this.description = notification.description;
         this.seen = notification.seen;
+        this.type = notification.type;
         this.updatedAt = notification.updatedAt;
         this.createdAt = notification.createdAt;
     }
@@ -18,6 +19,7 @@ class NotificationDto {
             title: this.title,
             description: this.description,
             seen: this.seen,
+            type: this.type,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,
         };

@@ -2,6 +2,8 @@ import NotificationDto, {MultipleNotificationDto} from "../../../../shared/types
 import INotificationModel from "../../../../shared/services/database/general/notification/type";
 import ErrorInterface from "../../../../shared/types/interfaces/responses/error";
 import {Notification} from "../../../../shared/services/database/general/notification/index";
+import { NotificationRecipient } from "../../../../shared/types/interfaces/responses/general/notification.response";
+import { Types } from "mongoose";
 
 
 class NotificationService {
@@ -15,10 +17,35 @@ class NotificationService {
     }
   
     public getAllNotification = async (query: {page: any, limit: any, user: any}) : Promise<{ errors?: ErrorInterface[]; result?: MultipleNotificationDto | any }> => {
-       const notifications = await this._notificationModel.getAll({user: query.user}, {page: query.page, limit: query.limit})
+      const notifications = await this._notificationModel.getAll({user: query.user}, {page: query.page, limit: query.limit})
    
-        return { result: notifications.data?.getResponse };
+      return { result: notifications.data?.getResponse };
     }
+
+    public getAllNotificationTwo = async (query: {page: any, limit: any, user: any, recipient: any}) : Promise<{ errors?: ErrorInterface[]; result?: MultipleNotificationDto | any }> => {
+      const userId = new Types.ObjectId(query.user);
+
+      const page: number = parseInt(query.page!) || 1; // or get from query params
+      const limit: number = parseInt(query.limit!) || 50;
+      const skip = (page - 1) * limit;
+
+      const notifications = await Notification.find({
+        user: {
+          $in: [userId, NotificationRecipient.All, query.recipient]
+        }
+      }).skip(skip).limit(limit).sort({ createdAt: -1 });
+      
+      const total = await Notification.countDocuments({user: {
+        $in: [userId, NotificationRecipient.All, query.recipient]
+      }})
+      
+      return { result: {
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+        total,
+        notifications
+      } };
+   }
 
     public getSingleNotification = async (query: {notification: any, user: any}) : Promise<{ errors?: ErrorInterface[]; result?: NotificationDto | any }> => {
         const notification = await this._notificationModel.checkIfExist({ _id: query.notification, user: query.user })

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import NotificationService from "./notification.service";
+import { ICreateNotificationRequest } from "../../../../shared/types/interfaces/requests/admin/notification.request";
 
 class NotificationController {
   private _notificationService: NotificationService;
@@ -8,10 +9,10 @@ class NotificationController {
     this._notificationService = notificationService;
   }
 
-  public getAllNotification = async (req: Request, res: Response)  => {
-    const {page, limit} = req.query;
-    const userId = req.user?._id
-    const { result, errors } = await this._notificationService.getAllNotification({page, limit, user: userId});
+  public createNotification = async (req: Request, res: Response)  => {
+    const body: ICreateNotificationRequest = req.body;
+ 
+    const { result, errors } = await this._notificationService.createNotification(body);
 
   if (errors && errors.length > 0) return res.status(401).json({
       error: errors,
@@ -31,10 +32,10 @@ class NotificationController {
     });
   }
 
-  public getAllNotificationTwo = async (req: Request, res: Response)  => {
-    const {page, limit, recipient} = req.query;
-    const userId = req.user?._id
-    const { result, errors } = await this._notificationService.getAllNotificationTwo({page, limit, user: userId, recipient});
+
+  public getAllNotification = async (req: Request, res: Response)  => {
+    const {page, limit, user,} = req.query;
+    const { result, errors } = await this._notificationService.getAllNotification({page, limit, user});
 
   if (errors && errors.length > 0) return res.status(401).json({
       error: errors,
@@ -56,8 +57,7 @@ class NotificationController {
 
   public getSingleNotification = async (req: Request, res: Response)  => {
     const {notificationId} = req.params;
-    const userId = req.user?._id
-    const { result, errors } = await this._notificationService.getSingleNotification({notification: notificationId, user: userId});
+    const { result, errors } = await this._notificationService.getSingleNotification({notification: notificationId});
 
   if (errors && errors.length > 0) return res.status(401).json({
       error: errors,
@@ -77,9 +77,8 @@ class NotificationController {
     });
   }
 
-  public readAllNotification = async (req: Request, res: Response)  => {
-    const userId = req.user?._id
-    const { result, errors } = await this._notificationService.readAllNotification({user: userId});
+  public totalSent = async (req: Request, res: Response)  => {
+    const { result, errors } = await this._notificationService.totalSent();
 
   if (errors && errors.length > 0) return res.status(401).json({
       error: errors,
@@ -99,10 +98,8 @@ class NotificationController {
     });
   }
 
-  public removeNotification = async (req: Request, res: Response)  => {
-    const {notificationId} = req.params;
-    const userId = req.user?._id
-    const { result, errors } = await this._notificationService.removeNotification({notification: notificationId, user: userId});
+  public totalSchedule = async (req: Request, res: Response)  => {
+    const { result, errors } = await this._notificationService.totalSchedule();
 
   if (errors && errors.length > 0) return res.status(401).json({
       error: errors,

@@ -1,15 +1,28 @@
-import { Schema, model, PaginateModel } from "mongoose";
+import { Schema, model, PaginateModel, Types } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
-import { INotification } from "../../../../types/interfaces/responses/general/notification.response";
+import { INotification, NotificationRecipient, NotificationType } from "../../../../types/interfaces/responses/general/notification.response";
 import INotificationModel from "./type";
 import NotificationDto, { MultipleNotificationDto } from "../../../../types/dtos/general/notification.dto";
 
 
 const NotificationSchema = new Schema<INotification>({
+    // user: {
+    //   type: Schema.Types.ObjectId, 
+    //   ref: 'UserAccount',
+    //   required: true
+    // },
     user: {
-      type: Schema.Types.ObjectId, 
-      ref: 'UserAccount',
-      required: true
+      type: Schema.Types.Mixed, // Allows ObjectId or enum string
+      required: true,
+      validate: {
+        validator: function (value: any) {
+          return (
+            Types.ObjectId.isValid(value) ||
+            Object.values(NotificationRecipient).includes(value)
+          );
+        },
+        message: "user must be a valid ObjectId or a valid recipient type (all, athlete, scout)"
+      }
     },
     title: {
         type: String,
@@ -22,6 +35,11 @@ const NotificationSchema = new Schema<INotification>({
     seen: {
         type: Boolean,
         default: false
+    },
+    type: {
+      type: String,
+      enum: Object.values(NotificationType),  
+      default: NotificationType.Now,
     },
     updatedAt: {
       type: Date,

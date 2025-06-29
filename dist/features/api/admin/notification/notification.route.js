@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const notification_controller_1 = __importDefault(require("./notification.controller"));
+const notification_service_1 = __importDefault(require("./notification.service"));
+const notification_validation_1 = require("./notification.validation");
+const index_1 = __importDefault(require("../../../../shared/services/database/general/notification/index"));
+const admin_middleware_1 = require("../../../../shared/services/middleware/admin.middleware");
+const notificationModel = new index_1.default();
+const notificationService = new notification_service_1.default({ notificationModel });
+const notificationController = new notification_controller_1.default({ notificationService });
+router.post("/notification/create", admin_middleware_1.isAdminAuthenticated, notification_validation_1.AdminNotificationValidation.createNotification, notification_validation_1.AdminNotificationValidation.validateFormData, notificationController.createNotification);
+router.get("/notifications", admin_middleware_1.isAdminAuthenticated, notification_validation_1.AdminNotificationValidation.pagination, notification_validation_1.AdminNotificationValidation.validateFormData, notificationController.getAllNotification);
+router.get("/notification/:notificationId", admin_middleware_1.isAdminAuthenticated, notificationController.getSingleNotification);
+router.get("/notifications/total-sent", admin_middleware_1.isAdminAuthenticated, notificationController.totalSent);
+router.get("/notifications/total-schedule", admin_middleware_1.isAdminAuthenticated, notificationController.totalSchedule);
+exports.default = router;

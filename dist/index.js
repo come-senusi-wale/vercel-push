@@ -23,6 +23,7 @@ const auth_route_1 = __importDefault(require("./features/api/admin/auth/auth.rou
 const athlete_route_1 = __importDefault(require("./features/api/admin/athletes/athlete.route"));
 const scout_route_1 = __importDefault(require("./features/api/admin/scouts/scout.route"));
 const trial_route_1 = __importDefault(require("./features/api/admin/trials/trial.route"));
+const notification_route_1 = __importDefault(require("./features/api/admin/notification/notification.route"));
 const auth_route_2 = __importDefault(require("./features/api/general/auth/auth.route"));
 const trial_route_2 = __importDefault(require("./features/api/scouts/trial/trial.route"));
 const athlete_route_2 = __importDefault(require("./features/api/scouts/athlete/athlete.route"));
@@ -31,7 +32,7 @@ const trial_route_3 = __importDefault(require("./features/api/athletes/trial/tri
 const performance_route_1 = __importDefault(require("./features/api/athletes/performanace/performance.route"));
 const profile_route_2 = __importDefault(require("./features/api/athletes/profile/profile.route"));
 const message_route_1 = __importDefault(require("./features/api/general/message/message.route"));
-const notification_route_1 = __importDefault(require("./features/api/general/notification/notification.route"));
+const notification_route_2 = __importDefault(require("./features/api/general/notification/notification.route"));
 const message_socket_1 = require("./shared/services/websocket/message.socket");
 dotenv_1.default.config();
 const router = express_1.default.Router();
@@ -74,11 +75,11 @@ app.use((0, cors_1.default)({
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // If cookies are used
 }));
-app.use("/api/v1/admin", [auth_route_1.default, athlete_route_1.default, scout_route_1.default, trial_route_1.default]);
+app.use("/api/v1/admin", [auth_route_1.default, athlete_route_1.default, scout_route_1.default, trial_route_1.default, notification_route_1.default]);
 app.use("/api/v1/auth", auth_route_2.default);
 app.use("/api/v1/scout", [trial_route_2.default, athlete_route_2.default, profile_route_1.default]);
 app.use("/api/v1/athlete", [trial_route_3.default, performance_route_1.default, profile_route_2.default]);
-app.use("/api/v1/general", [message_route_1.default, notification_route_1.default]);
+app.use("/api/v1/general", [message_route_1.default, notification_route_2.default]);
 // app.use("/api/v1/athlete", athletePerformanceRoute);
 io.on("connection", (socket) => {
     console.log(`New client connected: ${socket.id}`);

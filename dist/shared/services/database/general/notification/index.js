@@ -48,12 +48,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Notification = void 0;
 const mongoose_1 = require("mongoose");
 const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
+const notification_response_1 = require("../../../../types/interfaces/responses/general/notification.response");
 const notification_dto_1 = __importStar(require("../../../../types/dtos/general/notification.dto"));
 const NotificationSchema = new mongoose_1.Schema({
+    // user: {
+    //   type: Schema.Types.ObjectId, 
+    //   ref: 'UserAccount',
+    //   required: true
+    // },
     user: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'UserAccount',
-        required: true
+        type: mongoose_1.Schema.Types.Mixed, // Allows ObjectId or enum string
+        required: true,
+        validate: {
+            validator: function (value) {
+                return (mongoose_1.Types.ObjectId.isValid(value) ||
+                    Object.values(notification_response_1.NotificationRecipient).includes(value));
+            },
+            message: "user must be a valid ObjectId or a valid recipient type (all, athlete, scout)"
+        }
     },
     title: {
         type: String,
@@ -66,6 +78,11 @@ const NotificationSchema = new mongoose_1.Schema({
     seen: {
         type: Boolean,
         default: false
+    },
+    type: {
+        type: String,
+        enum: Object.values(notification_response_1.NotificationType),
+        default: notification_response_1.NotificationType.Now,
     },
     updatedAt: {
         type: Date,

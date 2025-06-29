@@ -1,5 +1,5 @@
 import { Schema, Types } from "mongoose";
-import { INotification } from "../../interfaces/responses/general/notification.response";
+import { INotification, NotificationRecipient, NotificationType } from "../../interfaces/responses/general/notification.response";
 
 export interface IMultipleNotificationResponse {
   notifications: INotification[];
@@ -10,10 +10,11 @@ export interface IMultipleNotificationResponse {
 
 class NotificationDto implements INotification {
     public _id: string;
-    user: Schema.Types.ObjectId;
+    user: Schema.Types.ObjectId | NotificationRecipient;
     title: string;
     description: string;
     seen: boolean;
+    type: NotificationType;
     public updatedAt?: Date;
     public createdAt?: Date;
     
@@ -23,6 +24,7 @@ class NotificationDto implements INotification {
       this.title = notification.title;
       this.description = notification.description;
       this.seen = notification.seen;
+      this.type = notification.type;
       this.updatedAt = notification.updatedAt;
       this.createdAt = notification.createdAt;
     }
@@ -33,6 +35,7 @@ class NotificationDto implements INotification {
         title: this.title,
         description: this.description,
         seen: this.seen,
+        type: this.type,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as INotification

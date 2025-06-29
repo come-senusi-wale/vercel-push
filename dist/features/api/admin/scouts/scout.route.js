@@ -15,7 +15,7 @@ const scoutService = new scout_service_1.default({ userModel });
 const scoutController = new scout_controller_1.default({ scoutService });
 router.get("/scouts", admin_middleware_1.isAdminAuthenticated, scout_validation_1.AdminScoutValidation.pagination, scout_validation_1.AdminScoutValidation.validateFormData, scoutController.getAllScout);
 router.get("/scouts-by-status", admin_middleware_1.isAdminAuthenticated, scout_validation_1.AdminScoutValidation.status, scout_validation_1.AdminScoutValidation.validateFormData, scoutController.getAllScoutByStatus);
-router.get("/scout/:scoutId", admin_middleware_1.isAdminAuthenticated, scoutController.getSingleScout);
+router.get("/scout/:athleteId", admin_middleware_1.isAdminAuthenticated, scoutController.getSingleScout);
 router.get("/scouts/search", admin_middleware_1.isAdminAuthenticated, scoutController.search);
 router.get("/scouts-total", admin_middleware_1.isAdminAuthenticated, scoutController.totalScouts);
 router.get("/scout-last-month-percentage", admin_middleware_1.isAdminAuthenticated, scoutController.lastMonthPercentReg);

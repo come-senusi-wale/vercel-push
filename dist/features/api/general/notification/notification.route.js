@@ -14,6 +14,7 @@ const notificationModel = new index_1.default();
 const notificationService = new notification_service_1.default({ notificationModel });
 const notificationController = new notification_controller_1.default({ notificationService });
 router.get("/notification", user_middleware_1.isUserAuthenticated, notification_validation_1.NotificationValidation.pagination, notification_validation_1.NotificationValidation.validateFormData, notificationController.getAllNotification);
+router.get("/notifications", user_middleware_1.isUserAuthenticated, notification_validation_1.NotificationValidation.notifications, notification_validation_1.NotificationValidation.validateFormData, notificationController.getAllNotificationTwo);
 router.get("/notification/:notificationId", user_middleware_1.isUserAuthenticated, notificationController.getSingleNotification);
 router.post("/notification/read", user_middleware_1.isUserAuthenticated, notificationController.readAllNotification);
 router.post("/notification/remove/:notificationId", user_middleware_1.isUserAuthenticated, notificationController.removeNotification);

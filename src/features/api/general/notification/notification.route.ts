@@ -14,6 +14,7 @@ const notificationService = new NotificationService({ notificationModel })
 const notificationController = new NotificationController({notificationService})
 
 router.get("/notification", isUserAuthenticated, NotificationValidation.pagination, NotificationValidation.validateFormData, notificationController.getAllNotification);
+router.get("/notifications", isUserAuthenticated, NotificationValidation.notifications, NotificationValidation.validateFormData, notificationController.getAllNotificationTwo);
 router.get("/notification/:notificationId", isUserAuthenticated, notificationController.getSingleNotification);
 router.post("/notification/read", isUserAuthenticated, notificationController.readAllNotification);
 router.post("/notification/remove/:notificationId", isUserAuthenticated, notificationController.removeNotification);
