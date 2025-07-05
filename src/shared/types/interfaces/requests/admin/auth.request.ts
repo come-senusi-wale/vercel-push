@@ -1,4 +1,4 @@
-import { AdminRole } from "../../responses/admin/admin.response";
+import { AdminRole, AdminStatus } from "../../responses/admin/admin.response";
 
 export interface IAdminRegistrationRequest {
     name: string;
@@ -39,4 +39,14 @@ export interface IAdminVerifyPasswordOtpRequest {
 export interface IAdminResetPasswordRequest {
     email: string;
     password: string;
+}
+
+export interface IAdminChangeStatusRequest {
+    admin: any;
+    status: AdminStatus;
+}
+
+export interface IAdminChangeRoleRequest {
+    admin: any;
+    role: AdminRole;
 }

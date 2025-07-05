@@ -2,7 +2,7 @@ import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
 import IAdminAccountModel from "./type";
 import AdminAccountDto from "../../../../types/dtos/admin/admin.dto";
-import { AdminRole, IAdminAccount } from "../../../../types/interfaces/responses/admin/admin.response";
+import { AdminRole, AdminStatus, IAdminAccount } from "../../../../types/interfaces/responses/admin/admin.response";
 
 const AdminAccountSchema = new Schema<IAdminAccount>({
     email: {
@@ -45,6 +45,11 @@ const AdminAccountSchema = new Schema<IAdminAccount>({
     requestForPasswordChange: {
       type: Boolean,
       default: false
+    },
+    status: {
+      type: String,  
+      enum: Object.values(AdminStatus), 
+      default: AdminStatus.Active 
     },
     updatedAt: {
       type: String

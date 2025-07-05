@@ -21,6 +21,8 @@ router.get("/scouts-total", isAdminAuthenticated, scoutController.totalScouts);
 router.get("/scout-last-month-percentage", isAdminAuthenticated, scoutController.lastMonthPercentReg);
 router.get("/scout-reg-per-month", isAdminAuthenticated, scoutController.totalRegPerMonth);
 
+router.post("/scouts-change-status", isAdminAuthenticated,  AdminScoutValidation.changeStatus, AdminScoutValidation.validateFormData, scoutController.changeStatus);
+
 
 
 

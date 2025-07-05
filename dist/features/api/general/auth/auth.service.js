@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const otp_1 = require("../../../../shared/constant/otp");
 const nodeMailer_1 = require("../../../../shared/services/email/nodeMailer");
 const checkTime_1 = require("../../../../shared/constant/checkTime");
+const athlete_response_1 = require("../../../../shared/types/interfaces/responses/athletes/athlete.response");
 const token_1 = require("../../../../shared/constant/token");
 const auth_request_1 = require("../../../../shared/types/interfaces/requests/athletes/auth.request");
 const ERROR_TO_SAVE_ADMIN = {
@@ -73,6 +74,8 @@ class AuthService {
             const checkPassword = this._encryption.comparePassword(password, checkUser.data.password);
             if (!checkPassword)
                 return { errors: [{ message: "Incorrect credential" }] };
+            if (checkUser.data.accountStatus == athlete_response_1.AccountStatus.Suspended)
+                return { errors: [{ message: "Account have been Suspended" }] };
             const token = (0, token_1.generateToken)({
                 id: checkUser.data._id,
                 email: checkUser.data.email,

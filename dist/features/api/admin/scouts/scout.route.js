@@ -20,4 +20,5 @@ router.get("/scouts/search", admin_middleware_1.isAdminAuthenticated, scoutContr
 router.get("/scouts-total", admin_middleware_1.isAdminAuthenticated, scoutController.totalScouts);
 router.get("/scout-last-month-percentage", admin_middleware_1.isAdminAuthenticated, scoutController.lastMonthPercentReg);
 router.get("/scout-reg-per-month", admin_middleware_1.isAdminAuthenticated, scoutController.totalRegPerMonth);
+router.post("/scouts-change-status", admin_middleware_1.isAdminAuthenticated, scout_validation_1.AdminScoutValidation.changeStatus, scout_validation_1.AdminScoutValidation.validateFormData, scoutController.changeStatus);
 exports.default = router;

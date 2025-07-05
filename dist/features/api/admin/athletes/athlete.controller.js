@@ -165,6 +165,26 @@ class AthleteController {
                 status: true
             });
         });
+        this.changeStatus = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { user, status } = body;
+            const { result, errors } = yield this._AthleteService.changeStatus({ user, status });
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
         this._AthleteService = athleteService;
     }
 }

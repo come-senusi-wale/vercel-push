@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { AdminRole, IAdminAccount } from "../../interfaces/responses/admin/admin.response";
+import { AdminRole, AdminStatus, IAdminAccount } from "../../interfaces/responses/admin/admin.response";
 
 
 class AdminAccountDto implements IAdminAccount {
@@ -17,6 +17,7 @@ class AdminAccountDto implements IAdminAccount {
     passwordOtpCreatedAt?: Date | undefined;
     passwordOtpVerified?: boolean | undefined;
     requestForPasswordChange?: boolean | undefined;
+    status: AdminStatus;
     
     constructor(adminAccount: IAdminAccount) {
       this.id = adminAccount._id;
@@ -31,9 +32,9 @@ class AdminAccountDto implements IAdminAccount {
       this.passwordOtpCreatedAt = adminAccount.passwordOtpCreatedAt;
       this.passwordOtpVerified = adminAccount.passwordOtpVerified;
       this.requestForPasswordChange = adminAccount.requestForPasswordChange;
+      this.status = adminAccount.status;
       this.updatedAt = adminAccount.updatedAt;
       this.createdAt = adminAccount.createdAt;
-
     }
   
     get getModel() {
@@ -50,6 +51,7 @@ class AdminAccountDto implements IAdminAccount {
         passwordOtpCreatedAt: this.passwordOtpCreatedAt,
         passwordOtpVerified: this.passwordOtpVerified,
         requestForPasswordChange: this.requestForPasswordChange,
+        status: this.status,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as IAdminAccount
@@ -66,6 +68,7 @@ class AdminAccountDto implements IAdminAccount {
           passwordOtpCreatedAt: this.passwordOtpCreatedAt,
           passwordOtpVerified: this.passwordOtpVerified,
           requestForPasswordChange: this.requestForPasswordChange,
+          status: this.status,
           updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
           createdAt: this.createdAt ? new Date(this.createdAt): undefined,
         } as IAdminAccount

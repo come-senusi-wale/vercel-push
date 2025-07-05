@@ -36,6 +36,21 @@ export const resetPasswordParams = [
     body("password").notEmpty(),
 ];
 
+export const changeStatusParams = [
+    body("admin").notEmpty(),
+    body("status").notEmpty(),
+];
+
+export const changeRoleParams = [
+    body("admin").notEmpty(),
+    body("role").notEmpty(),
+];
+
+export const pagination = [
+    query("page").notEmpty(),
+    query("limit").notEmpty(),
+];
+
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -53,4 +68,7 @@ export const AdminAuthValidation = {
     forgotPasswordParams,
     verifyPasswordOtpParams,
     resetPasswordParams,
+    changeStatusParams,
+    changeRoleParams,
+    pagination,
 }

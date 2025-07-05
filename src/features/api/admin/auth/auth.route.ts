@@ -5,7 +5,7 @@ import AdminModel from "../../../../shared/services/database/admin/auth/index";
 import AuthController from "./auth.controller";
 import AuthService from "./auth.service";
 import { AdminAuthValidation } from "./auth.validation";
-import { isSuperAdminAuthenticated } from "../../../../shared/services/middleware/admin.middleware";
+import { isSuperAdminAuthenticated, isAdminAuthenticated } from "../../../../shared/services/middleware/admin.middleware";
 
 
 const adminModel = new AdminModel()
@@ -22,5 +22,9 @@ router.post("/login", AdminAuthValidation.loginParams, AdminAuthValidation.valid
 router.post("/forgot-password", AdminAuthValidation.forgotPasswordParams, AdminAuthValidation.validateFormData, authController.forgotPassword);
 router.post("/verify-password-otp", AdminAuthValidation.verifyPasswordOtpParams, AdminAuthValidation.validateFormData, authController.verifyPasswordOtp);
 router.post("/reset-password", AdminAuthValidation.resetPasswordParams, AdminAuthValidation.validateFormData, authController.resetPassword);
+
+router.get("/admins", isAdminAuthenticated, AdminAuthValidation.pagination, AdminAuthValidation.validateFormData, authController.getAllAdmin);
+router.post("/change-status", isSuperAdminAuthenticated, AdminAuthValidation.changeStatusParams, AdminAuthValidation.validateFormData, authController.changeAdminStatus);
+router.post("/change-role", isSuperAdminAuthenticated, AdminAuthValidation.changeRoleParams, AdminAuthValidation.validateFormData, authController.changeAdminRole);
 
 export default router;

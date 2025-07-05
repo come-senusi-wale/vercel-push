@@ -5,7 +5,7 @@ import ErrorInterface from "../../../../shared/types/interfaces/responses/error"
 import { generateOTP } from "../../../../shared/constant/otp";
 import { sendForgotPasswordEmail, sendVerificationEmail } from "../../../../shared/services/email/nodeMailer";
 import { checkTime } from "../../../../shared/constant/checkTime";
-import { AccountType } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
+import { AccountStatus, AccountType } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
 import { generateToken } from "../../../../shared/constant/token";
 import { IChangeNotificationAlertRequest, IChangePasswordRequest, UserAlertType } from "../../../../shared/types/interfaces/requests/athletes/auth.request";
 
@@ -86,6 +86,8 @@ class AuthService {
 
         const checkPassword = this._encryption.comparePassword(password, checkUser.data.password)
         if (!checkPassword) return { errors: [{message: "Incorrect credential"}] };
+
+        if (checkUser.data.accountStatus == AccountStatus.Suspended) return { errors: [{message: "Account have been Suspended"}] };
 
         const token = generateToken({
             id: checkUser.data._id,

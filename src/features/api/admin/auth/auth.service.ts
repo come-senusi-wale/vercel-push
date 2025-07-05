@@ -1,12 +1,14 @@
 import AdminDto from "../../../../shared/types/dtos/admin/admin.dto";
 import IAdminModelRepository from "../../../../shared/services/database/admin/auth/type";
+import { AdminAccount } from "../../../../shared/services/database/admin/auth/index";
 import ErrorInterface from "../../../../shared/types/interfaces/responses/error";
-import { AdminRole } from "../../../../shared/types/interfaces/responses/admin/admin.response";
+import { AdminRole, AdminStatus } from "../../../../shared/types/interfaces/responses/admin/admin.response";
 import EncryptionInterface, { TokenType } from "../../../../shared/services/encryption/index";
 import { generateOTP } from "../../../../shared/constant/otp";
 import { sendForgotPasswordEmail, sendVerificationEmail } from "../../../../shared/services/email/nodeMailer";
 import { checkTime } from "../../../../shared/constant/checkTime";
 import { generateAdminToken } from "../../../../shared/constant/adminToken";
+import { IAdminChangeRoleRequest, IAdminChangeStatusRequest } from "../../../../shared/types/interfaces/requests/admin/auth.request";
 
 const ERROR_TO_SAVE_ADMIN: ErrorInterface = {
     message: 'unable to create admin',
@@ -101,6 +103,8 @@ class AuthService {
 
       const checkPassword = this._encryption.comparePassword(password, checkAdmin.data.password)
       if (!checkPassword) return { errors: [{message: "Incorrect credential"}] };
+      
+      if (checkAdmin.data.status == AdminStatus.Suspended) return { errors: [{message: "Account have been Suspended"}] };
 
       const token = generateAdminToken({
           id: checkAdmin.data.id!,
@@ -159,6 +163,51 @@ class AuthService {
       if (!changePassword.status) return { errors: [{message: changePassword.error}] };
  
       return { result: changePassword.data?.getSecureRespons };
+    }
+
+    public getAllAdmin = async (query: { page?: string, limit?: string}) : Promise<{ errors?: ErrorInterface[]; result?: AdminDto | any }> => {
+      const page: number = parseInt(query.page!) || 1; // or get from query params
+      const limit: number = parseInt(query.limit!) || 50;
+      const skip = (page - 1) * limit;
+
+      const admins = await AdminAccount.find().skip(skip).limit(limit).sort({createdAt: -1})
+      .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt')
+    
+      const total = await AdminAccount.countDocuments()
+        
+      return { result: {
+          totalPages: Math.ceil(total / limit),
+          currentPage: page,
+          total,
+          admins
+      } };
+
+  }
+
+    public changeAdminStatus = async (data: IAdminChangeStatusRequest) : Promise<{ errors?: ErrorInterface[]; result?: AdminDto | any }> => {
+      const checkAdmin = await this._adminModel.checkIfExist({_id: data.admin})
+      if (!checkAdmin.status || !checkAdmin.data) return { errors: [{message: "Account not found"}] };
+
+      if (checkAdmin.data.role == AdminRole.SuperAdmin) return { errors: [{message: "You can't change status of this account"}] };
+
+      const changeAdminStatus = await this._adminModel.updateAccount(checkAdmin.data.id!, { status: data.status})
+      if (!changeAdminStatus.status) return { errors: [{message: "Unable to change account status"}] };
+ 
+      return { result: changeAdminStatus.data?.getSecureRespons };
+    }
+
+    public changeAdminRole = async (data: IAdminChangeRoleRequest) : Promise<{ errors?: ErrorInterface[]; result?: AdminDto | any }> => {
+      const checkAdmin = await this._adminModel.checkIfExist({_id: data.admin})
+      if (!checkAdmin.status || !checkAdmin.data) return { errors: [{message: "Account not found"}] };
+
+      if (checkAdmin.data.role == AdminRole.SuperAdmin) return { errors: [{message: "You can't change role of this account"}] };
+
+      if (data.role == AdminRole.SuperAdmin) return { errors: [{message: "You can't assign this role"}] };
+
+      const changeAdminRole = await this._adminModel.updateAccount(checkAdmin.data.id!, { role: data.role})
+      if (!changeAdminRole.status) return { errors: [{message: "Unable to change account role"}] };
+ 
+      return { result: changeAdminRole.data?.getSecureRespons };
     }
 
 }

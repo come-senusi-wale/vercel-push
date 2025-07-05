@@ -14,6 +14,7 @@ class AdminAccountDto {
         this.passwordOtpCreatedAt = adminAccount.passwordOtpCreatedAt;
         this.passwordOtpVerified = adminAccount.passwordOtpVerified;
         this.requestForPasswordChange = adminAccount.requestForPasswordChange;
+        this.status = adminAccount.status;
         this.updatedAt = adminAccount.updatedAt;
         this.createdAt = adminAccount.createdAt;
     }
@@ -31,6 +32,7 @@ class AdminAccountDto {
             passwordOtpCreatedAt: this.passwordOtpCreatedAt,
             passwordOtpVerified: this.passwordOtpVerified,
             requestForPasswordChange: this.requestForPasswordChange,
+            status: this.status,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,
         };
@@ -46,6 +48,7 @@ class AdminAccountDto {
             passwordOtpCreatedAt: this.passwordOtpCreatedAt,
             passwordOtpVerified: this.passwordOtpVerified,
             requestForPasswordChange: this.requestForPasswordChange,
+            status: this.status,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,
         };

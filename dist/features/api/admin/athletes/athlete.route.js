@@ -20,4 +20,5 @@ router.get("/athletes/search", admin_middleware_1.isAdminAuthenticated, athleteC
 router.get("/athletes-total", admin_middleware_1.isAdminAuthenticated, athleteController.totalAthletes);
 router.get("/athlete-last-month-percentage", admin_middleware_1.isAdminAuthenticated, athleteController.lastMonthPercentReg);
 router.get("/athlete-reg-per-month", admin_middleware_1.isAdminAuthenticated, athleteController.totalRegPerMonth);
+router.post("/athlete-change-status", admin_middleware_1.isAdminAuthenticated, athlete_validation_1.AdminAthleteValidation.changeStatus, athlete_validation_1.AdminAthleteValidation.validateFormData, athleteController.changeStatus);
 exports.default = router;

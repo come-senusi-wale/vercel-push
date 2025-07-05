@@ -1,4 +1,4 @@
-import { AccountType } from "../../responses/athletes/athlete.response";
+import { AccountStatus, AccountType } from "../../responses/athletes/athlete.response";
 
 export interface IRegistrationRequest {
     email: string;
@@ -49,4 +49,9 @@ export enum UserAlertType {
 export interface IChangeNotificationAlertRequest {
     alertType: UserAlertType;
     status: boolean;
+}
+
+export interface IChangeStatusRequest {
+    user: string;
+    status: AccountStatus;
 }

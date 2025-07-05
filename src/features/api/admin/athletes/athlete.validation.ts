@@ -12,6 +12,12 @@ export const status = [
     query("status").notEmpty(),
 ];
 
+
+export const changeStatus = [
+    body("user").notEmpty(),
+    body("status").notEmpty(),
+];
+
 export const validateFormData = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -24,4 +30,5 @@ export const AdminAthleteValidation = {
     validateFormData,
     pagination,
     status,
+    changeStatus,
 }

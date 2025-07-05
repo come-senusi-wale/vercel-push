@@ -171,6 +171,66 @@ class AuthController {
                 status: true
             });
         });
+        this.getAllAdmin = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const query = req.query;
+            const { result, errors } = yield this._AuthService.getAllAdmin(Object.assign({}, query));
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.changeAdminStatus = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { admin, status } = body;
+            const { result, errors } = yield this._AuthService.changeAdminStatus({ admin, status });
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
+        this.changeAdminRole = (_a, res_1) => __awaiter(this, [_a, res_1], void 0, function* ({ body }, res) {
+            const { admin, role } = body;
+            const { result, errors } = yield this._AuthService.changeAdminRole({ admin, role });
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
         this._AuthService = authService;
     }
 }

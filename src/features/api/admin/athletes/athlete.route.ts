@@ -21,6 +21,8 @@ router.get("/athletes-total", isAdminAuthenticated, athleteController.totalAthle
 router.get("/athlete-last-month-percentage", isAdminAuthenticated, athleteController.lastMonthPercentReg);
 router.get("/athlete-reg-per-month", isAdminAuthenticated, athleteController.totalRegPerMonth);
 
+router.post("/athlete-change-status", isAdminAuthenticated,  AdminAthleteValidation.changeStatus, AdminAthleteValidation.validateFormData, athleteController.changeStatus);
+
 
 
 

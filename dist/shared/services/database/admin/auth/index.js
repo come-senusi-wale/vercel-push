@@ -58,6 +58,11 @@ const AdminAccountSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false
     },
+    status: {
+        type: String,
+        enum: Object.values(admin_response_1.AdminStatus),
+        default: admin_response_1.AdminStatus.Active
+    },
     updatedAt: {
         type: String
     },

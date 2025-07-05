@@ -205,6 +205,16 @@ class ScoutService {
             result
         };
     }
+
+    public changeStatus = async (data: {user: any, status: AccountStatus}) : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
+        const checkUser = await this._userModel.checkIfExist({_id: data.user})
+        if (!checkUser.status || !checkUser.data) return { errors: [{message: "User not found"}] };
+  
+        const changeUserStatus = await this._userModel.updateAccount(checkUser.data._id, { accountStatus: data.status})
+        if (!changeUserStatus.status) return { errors: [{message: "Unable to change account status"}] };
+   
+        return { result: changeUserStatus.data?.getSecureResponse };
+    }
 }
 
 export default ScoutService;

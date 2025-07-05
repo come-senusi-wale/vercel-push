@@ -5,6 +5,11 @@ export enum AdminRole {
     SupportAgent = 'Support Agent'
 }
 
+export enum AdminStatus {
+    Active = 'active',
+    Suspended = 'suspended',
+}
+
 export interface IAdminAccount {
     _id?: string;
     email: string;
@@ -18,6 +23,7 @@ export interface IAdminAccount {
     passwordOtpCreatedAt?: Date;
     passwordOtpVerified?: boolean;
     requestForPasswordChange?: boolean;
+    status: AdminStatus;
     updatedAt?: Date;
     createdAt?: Date;
 }

@@ -8,6 +8,7 @@ export enum AccountStatus {
     Active = 'Active',
     Pending = 'Pending',
     Inactive = 'Inactive',
+    Suspended = 'Suspended',
 }
 
 export interface UserLocation {
@@ -49,6 +50,8 @@ export interface UserStatistic {
     verticalJump?: string;
     agility?: string;
 }
+
+
 
 export interface IAthletesAccount {
     _id: string;

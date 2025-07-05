@@ -23,4 +23,7 @@ router.post("/login", auth_validation_1.AdminAuthValidation.loginParams, auth_va
 router.post("/forgot-password", auth_validation_1.AdminAuthValidation.forgotPasswordParams, auth_validation_1.AdminAuthValidation.validateFormData, authController.forgotPassword);
 router.post("/verify-password-otp", auth_validation_1.AdminAuthValidation.verifyPasswordOtpParams, auth_validation_1.AdminAuthValidation.validateFormData, authController.verifyPasswordOtp);
 router.post("/reset-password", auth_validation_1.AdminAuthValidation.resetPasswordParams, auth_validation_1.AdminAuthValidation.validateFormData, authController.resetPassword);
+router.get("/admins", admin_middleware_1.isAdminAuthenticated, auth_validation_1.AdminAuthValidation.pagination, auth_validation_1.AdminAuthValidation.validateFormData, authController.getAllAdmin);
+router.post("/change-status", admin_middleware_1.isSuperAdminAuthenticated, auth_validation_1.AdminAuthValidation.changeStatusParams, auth_validation_1.AdminAuthValidation.validateFormData, authController.changeAdminStatus);
+router.post("/change-role", admin_middleware_1.isSuperAdminAuthenticated, auth_validation_1.AdminAuthValidation.changeRoleParams, auth_validation_1.AdminAuthValidation.validateFormData, authController.changeAdminRole);
 exports.default = router;

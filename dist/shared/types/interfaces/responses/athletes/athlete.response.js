@@ -11,4 +11,5 @@ var AccountStatus;
     AccountStatus["Active"] = "Active";
     AccountStatus["Pending"] = "Pending";
     AccountStatus["Inactive"] = "Inactive";
+    AccountStatus["Suspended"] = "Suspended";
 })(AccountStatus || (exports.AccountStatus = AccountStatus = {}));

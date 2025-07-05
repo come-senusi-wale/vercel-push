@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../../../../shared/services/database/admin/auth/index");
 const admin_response_1 = require("../../../../shared/types/interfaces/responses/admin/admin.response");
 const otp_1 = require("../../../../shared/constant/otp");
 const nodeMailer_1 = require("../../../../shared/services/email/nodeMailer");
@@ -86,6 +87,8 @@ class AuthService {
             const checkPassword = this._encryption.comparePassword(password, checkAdmin.data.password);
             if (!checkPassword)
                 return { errors: [{ message: "Incorrect credential" }] };
+            if (checkAdmin.data.status == admin_response_1.AdminStatus.Suspended)
+                return { errors: [{ message: "Account have been Suspended" }] };
             const token = (0, adminToken_1.generateAdminToken)({
                 id: checkAdmin.data.id,
                 email: checkAdmin.data.email,
@@ -136,6 +139,46 @@ class AuthService {
             if (!changePassword.status)
                 return { errors: [{ message: changePassword.error }] };
             return { result: (_a = changePassword.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+        });
+        this.getAllAdmin = (query) => __awaiter(this, void 0, void 0, function* () {
+            const page = parseInt(query.page) || 1; // or get from query params
+            const limit = parseInt(query.limit) || 50;
+            const skip = (page - 1) * limit;
+            const admins = yield index_1.AdminAccount.find().skip(skip).limit(limit).sort({ createdAt: -1 })
+                .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt');
+            const total = yield index_1.AdminAccount.countDocuments();
+            return { result: {
+                    totalPages: Math.ceil(total / limit),
+                    currentPage: page,
+                    total,
+                    admins
+                } };
+        });
+        this.changeAdminStatus = (data) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const checkAdmin = yield this._adminModel.checkIfExist({ _id: data.admin });
+            if (!checkAdmin.status || !checkAdmin.data)
+                return { errors: [{ message: "Account not found" }] };
+            if (checkAdmin.data.role == admin_response_1.AdminRole.SuperAdmin)
+                return { errors: [{ message: "You can't change status of this account" }] };
+            const changeAdminStatus = yield this._adminModel.updateAccount(checkAdmin.data.id, { status: data.status });
+            if (!changeAdminStatus.status)
+                return { errors: [{ message: "Unable to change account status" }] };
+            return { result: (_a = changeAdminStatus.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
+        });
+        this.changeAdminRole = (data) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const checkAdmin = yield this._adminModel.checkIfExist({ _id: data.admin });
+            if (!checkAdmin.status || !checkAdmin.data)
+                return { errors: [{ message: "Account not found" }] };
+            if (checkAdmin.data.role == admin_response_1.AdminRole.SuperAdmin)
+                return { errors: [{ message: "You can't change role of this account" }] };
+            if (data.role == admin_response_1.AdminRole.SuperAdmin)
+                return { errors: [{ message: "You can't assign this role" }] };
+            const changeAdminRole = yield this._adminModel.updateAccount(checkAdmin.data.id, { role: data.role });
+            if (!changeAdminRole.status)
+                return { errors: [{ message: "Unable to change account role" }] };
+            return { result: (_a = changeAdminRole.data) === null || _a === void 0 ? void 0 : _a.getSecureRespons };
         });
         this._adminModel = adminModel;
         this._encryption = encryption;

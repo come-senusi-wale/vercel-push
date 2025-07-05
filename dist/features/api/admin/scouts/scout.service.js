@@ -166,6 +166,16 @@ class ScoutService {
                 result
             };
         });
+        this.changeStatus = (data) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const checkUser = yield this._userModel.checkIfExist({ _id: data.user });
+            if (!checkUser.status || !checkUser.data)
+                return { errors: [{ message: "User not found" }] };
+            const changeUserStatus = yield this._userModel.updateAccount(checkUser.data._id, { accountStatus: data.status });
+            if (!changeUserStatus.status)
+                return { errors: [{ message: "Unable to change account status" }] };
+            return { result: (_a = changeUserStatus.data) === null || _a === void 0 ? void 0 : _a.getSecureResponse };
+        });
         this._userModel = userModel;
     }
 }
