@@ -40,15 +40,15 @@ export interface UserEducation {
 }
 
 export interface UserStatistic {
-    height?: string;
-    weight?: string;
-    bodyFat?: string;
-    BMI?: string;
-    maxHeight?: string;
-    v02Max?: string;
-    sprintSpeed?: string;
-    verticalJump?: string;
-    agility?: string;
+    height: string;
+    weight: string;
+    bodyFat: string;
+    BMI: string;
+    maxHeight: string;
+    v02Max: string;
+    sprintSpeed: string;
+    verticalJump: string;
+    agility: string;
 }
 
 

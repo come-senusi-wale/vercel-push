@@ -56,11 +56,10 @@ class ScoutService {
 
     public getSingleScout = async (query : {scout: any}) : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {
         const scout = await this._userModel.checkIfExist({_id: query.scout, accountType: AccountType.Scout})
-        
+
         if (!scout.status) return { errors: [{message: "Scout not found"}] };
 
         return { result: {scout: scout.data?.getSecureResponse}};
-
     }
 
     public search = async (query: { page?: string, limit?: string, name?: string, email?: string, sport?: string, position?: string, }) : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {

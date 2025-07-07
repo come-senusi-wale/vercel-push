@@ -33,15 +33,15 @@ const EducationSchema = new Schema<UserEducation>({
 });
 
 const StatisticSchema = new Schema<UserStatistic>({
-  height: { type: String, required: true },
-  weight: { type: String, required: true },
-  bodyFat: { type: String, required: true },
-  BMI: { type: String, required: true },
-  maxHeight: { type: String, required: true },
-  v02Max: { type: String, required: true },
-  sprintSpeed: { type: String, required: true },
-  verticalJump: { type: String, required: true },
-  agility: { type: String, required: true },
+  height: { type: String, default: "" },
+  weight: { type: String,  default: "" },
+  bodyFat: { type: String,  default: "" },
+  BMI: { type: String, default: "" },
+  maxHeight: { type: String,  default: "" },
+  v02Max: { type: String,  default: "" },
+  sprintSpeed: { type: String,  default: "" },
+  verticalJump: { type: String,  default: "" },
+  agility: { type: String,  default: "" },
 });
 
 
