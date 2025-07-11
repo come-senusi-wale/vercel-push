@@ -208,6 +208,14 @@ class TrialService {
         
         return { result: trial };
     }
+
+    public getScoutProfile = async (query: { scout: any, }) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {   
+        const scout = await UserAccount.findOne({_id: query.scout})
+        .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType -achievement -experience -education -statistic')
+        if (!scout) return { errors: [{message: "Scout not Found"}] };
+        
+        return { result: scout };
+    }
 }
 
 export default TrialService;

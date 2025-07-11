@@ -33,7 +33,6 @@ export const acceptTrial = [
 export const TrialApplicationByStatus = [
     query("page").notEmpty(),
     query("limit").notEmpty(),
-    query("status").notEmpty(),
     query("trialId").notEmpty(),
 ];
 

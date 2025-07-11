@@ -12,6 +12,8 @@ const messageService = new message_service_1.default();
 const messageController = new message_controller_1.default({ messageService });
 router.get("/message/scout/history/:receiver", user_middleware_1.isScoutAuthenticated, messageController.getChatHistory);
 router.get("/message/scout/chat-list", user_middleware_1.isScoutAuthenticated, messageController.chatList);
+router.get("/message/scout/sent", user_middleware_1.isScoutAuthenticated, messageController.getUnseenMessage);
 router.get("/message/athlete/history/:receiver", user_middleware_1.isAthleteAuthenticated, messageController.getChatHistory);
 router.get("/message/athlete/chat-list", user_middleware_1.isAthleteAuthenticated, messageController.chatList);
+router.get("/message/athlete/sent", user_middleware_1.isAthleteAuthenticated, messageController.getUnseenMessage);
 exports.default = router;

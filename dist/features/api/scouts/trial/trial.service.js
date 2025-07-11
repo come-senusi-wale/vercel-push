@@ -16,6 +16,7 @@ const index_1 = require("../../../../shared/services/database/general/trial/inde
 const bocket_1 = __importDefault(require("../../../../shared/services/cloudinary/bocket"));
 const trialApplication_1 = require("../../../../shared/services/database/athletes/trialApplication");
 const trialApplication_rseponse_1 = require("../../../../shared/types/interfaces/responses/athletes/trialApplication.rseponse");
+const auth_1 = require("../../../../shared/services/database/athletes/auth");
 class TrialService {
     constructor({ trailModel, trialApplicationModel, notificationModel }) {
         this.create = (trial, file, userId) => __awaiter(this, void 0, void 0, function* () {
@@ -72,7 +73,8 @@ class TrialService {
                 select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType'
             });
             const total = yield trialApplication_1.TrialApplication.countDocuments({ trial: trial._id, status: trialApplication_rseponse_1.TrialApplicationStatus.Pending });
-            return { result: { trial,
+            return { result: {
+                    trial,
                     totalPages: Math.ceil(total / limit),
                     currentPage: page,
                     total,
@@ -83,14 +85,26 @@ class TrialService {
             const page = parseInt(query.page) || 1; // or get from query params
             const limit = parseInt(query.limit) || 50;
             const skip = (page - 1) * limit;
-            const Applicants = yield trialApplication_1.TrialApplication.find({ trial: query.trial, status: query.status }).skip(skip).limit(limit).sort({ createdAt: -1 })
+            const trial = yield index_1.Trial.findOne({ scout: query.userId, _id: query.trial });
+            if (!trial)
+                return { errors: [{ message: "Trial not Found" }] };
+            let Applicants = yield trialApplication_1.TrialApplication.find({ trial: query.trial }).skip(skip).limit(limit).sort({ createdAt: -1 })
                 .populate({
                 path: 'athlete', // Path to populate
                 model: 'UserAccount', // Explicitly specifying the model is optional but sometimes necessary
                 select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType'
             });
+            if (query.status) {
+                Applicants = yield trialApplication_1.TrialApplication.find({ trial: query.trial, status: query.status }).skip(skip).limit(limit).sort({ createdAt: -1 })
+                    .populate({
+                    path: 'athlete', // Path to populate
+                    model: 'UserAccount', // Explicitly specifying the model is optional but sometimes necessary
+                    select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType'
+                });
+            }
             const total = yield trialApplication_1.TrialApplication.countDocuments({ trial: query.trial, status: query.status });
             return { result: {
+                    trial,
                     totalPages: Math.ceil(total / limit),
                     currentPage: page,
                     total,
@@ -132,6 +146,13 @@ class TrialService {
                 description: `Sorry! You application for the ${(_c = trial.data) === null || _c === void 0 ? void 0 : _c.name} on ${(_d = trial.data) === null || _d === void 0 ? void 0 : _d.trialDate}, has been rejected. Please check your email for further Info.`
             });
             return { result: { trial: (_e = trial.data) === null || _e === void 0 ? void 0 : _e.getModel, application: (_f = checkApplication.data) === null || _f === void 0 ? void 0 : _f.getModel } };
+        });
+        this.getAthleteProfile = (query) => __awaiter(this, void 0, void 0, function* () {
+            const athlete = yield auth_1.UserAccount.findOne({ _id: query.athlete })
+                .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType');
+            if (!athlete)
+                return { errors: [{ message: "Athlete not Found" }] };
+            return { result: { athlete: athlete } };
         });
         this._trailModel = trailModel;
         this._trialApplicationModel = trialApplicationModel;

@@ -23,6 +23,7 @@ router.get("/trial/single", isScoutAuthenticated, trialController.getSingleTrial
 router.get("/trial/applicant/by/status", isScoutAuthenticated, TrialValidation.TrialApplicationByStatus, TrialValidation.validateFormData, trialController.getApplicantOnTrial);
 router.post("/trial/accept", isScoutAuthenticated, TrialValidation.acceptTrial, TrialValidation.validateFormData, trialController.acceptApplicant);
 router.post("/trial/reject", isScoutAuthenticated, TrialValidation.acceptTrial, TrialValidation.validateFormData, trialController.rejectApplicant);
+router.post("/athlete/:athleteId", isScoutAuthenticated, trialController.getAthleteProfile);
 
 
 export default router;

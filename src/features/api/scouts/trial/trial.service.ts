@@ -10,6 +10,7 @@ import { TrialApplication } from "../../../../shared/services/database/athletes/
 import INotificationModel from "../../../../shared/services/database/general/notification/type";
 import ITrialApplicationModel from "../../../../shared/services/database/athletes/trialApplication/type";
 import { TrialApplicationStatus } from "../../../../shared/types/interfaces/responses/athletes/trialApplication.rseponse";
+import { UserAccount } from "../../../../shared/services/database/athletes/auth";
 
 
 class TrialService {
@@ -103,7 +104,8 @@ class TrialService {
 
       const total = await TrialApplication.countDocuments({trial: trial._id, status: TrialApplicationStatus.Pending})
       
-      return { result: {trial, 
+      return { result: {
+        trial, 
         totalPages: Math.ceil(total / limit),
         currentPage: page,
         total,
@@ -111,21 +113,34 @@ class TrialService {
       } };
     }
 
-    public getApplicantOnTrial = async (query: {trial: any, page?: string, limit?: string, userId: any, status: TrialApplicationStatus}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {
+    public getApplicantOnTrial = async (query: {trial: any, page?: string, limit?: string, userId: any, status?: TrialApplicationStatus}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {
       const page: number = parseInt(query.page!) || 1; // or get from query params
       const limit: number = parseInt(query.limit!) || 50;
       const skip = (page - 1) * limit;
 
-      const Applicants = await TrialApplication.find({trial: query.trial, status: query.status}).skip(skip).limit(limit).sort({createdAt: -1})
+      const trial = await Trial.findOne({scout: query.userId, _id: query.trial})
+      if (!trial) return { errors: [{message: "Trial not Found"}] };
+
+      let Applicants = await TrialApplication.find({trial: query.trial}).skip(skip).limit(limit).sort({createdAt: -1})
       .populate({
         path: 'athlete',  // Path to populate
         model: 'UserAccount',  // Explicitly specifying the model is optional but sometimes necessary
         select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType' 
       });
+
+      if (query.status) {
+        Applicants = await TrialApplication.find({trial: query.trial, status: query.status}).skip(skip).limit(limit).sort({createdAt: -1})
+        .populate({
+          path: 'athlete',  // Path to populate
+          model: 'UserAccount',  // Explicitly specifying the model is optional but sometimes necessary
+          select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType' 
+        });
+      }
       
       const total = await TrialApplication.countDocuments({trial: query.trial, status: query.status})
       
       return { result: {
+          trial,
           totalPages: Math.ceil(total / limit),
           currentPage: page,
           total,
@@ -169,6 +184,14 @@ class TrialService {
       })
       
       return { result: {trial: trial.data?.getModel, application: checkApplication.data?.getModel} };
+    }
+
+    public getAthleteProfile = async (query: { athlete: any }) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {   
+      const athlete = await UserAccount.findOne({ _id: query.athlete })
+      .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType');
+      if (!athlete) return { errors: [{message: "Athlete not Found"}] }
+      
+      return { result: {athlete: athlete} };
     }
 }
 

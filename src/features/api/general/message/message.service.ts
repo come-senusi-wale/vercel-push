@@ -2,6 +2,7 @@ import MessageModel, {Message} from "../../../../shared/services/database/genera
 import ErrorInterface from "../../../../shared/types/interfaces/responses/error";
 import MessageDto from "../../../../shared/types/dtos/general/message.dto";
 import mongoose from "mongoose";
+import { MessageStatus } from "../../../../shared/types/interfaces/responses/general/message.response";
 
 const message = new MessageModel()
 
@@ -162,6 +163,17 @@ class MessageService {
       ]);
 
       return { result: chatList };
+    }
+
+    public getUnseenMessage = async ( sender: any) : Promise<{ errors?: ErrorInterface[]; result?: MessageDto | any }> => {
+        const objectId = new mongoose.Types.ObjectId(sender);
+
+        const totalUnseen = await Message.countDocuments({
+          receiver: objectId,
+          status: { $ne: MessageStatus.Seen } // Only count messages not marked as 'seen'
+        });
+   
+        return { result: {totalUnseen} };
     }
 
     

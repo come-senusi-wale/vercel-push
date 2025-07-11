@@ -30,7 +30,6 @@ exports.acceptTrial = [
 exports.TrialApplicationByStatus = [
     (0, express_validator_1.query)("page").notEmpty(),
     (0, express_validator_1.query)("limit").notEmpty(),
-    (0, express_validator_1.query)("status").notEmpty(),
     (0, express_validator_1.query)("trialId").notEmpty(),
 ];
 const validateFormData = (req, res, next) => {

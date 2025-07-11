@@ -162,6 +162,13 @@ class TrialService {
                 return { errors: [{ message: "Trial not Found" }] };
             return { result: trial };
         });
+        this.getScoutProfile = (query) => __awaiter(this, void 0, void 0, function* () {
+            const scout = yield index_3.UserAccount.findOne({ _id: query.scout })
+                .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType -achievement -experience -education -statistic');
+            if (!scout)
+                return { errors: [{ message: "Scout not Found" }] };
+            return { result: scout };
+        });
         this._trailModel = trailModel;
         this._trialApplicationModel = trialApplicationModel;
         this._notificationModel = notificationModel;

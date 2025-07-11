@@ -142,6 +142,26 @@ class TrialController {
                 status: true
             });
         });
+        this.getScoutProfile = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { scoutId } = req.params;
+            const { result, errors } = yield this._TrialService.getScoutProfile({ scout: scoutId });
+            if (errors && errors.length > 0)
+                return res.status(401).json({
+                    error: errors,
+                    code: 401,
+                    status: false
+                });
+            if (result === null)
+                return res.status(401).json({
+                    code: 401,
+                    status: false
+                });
+            return res.status(201).json({
+                data: result,
+                code: 201,
+                status: true
+            });
+        });
         this._TrialService = trialService;
     }
 }

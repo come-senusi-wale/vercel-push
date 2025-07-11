@@ -10,9 +10,11 @@ const messageController = new MessageController({messageService})
 
 router.get("/message/scout/history/:receiver", isScoutAuthenticated, messageController.getChatHistory);
 router.get("/message/scout/chat-list", isScoutAuthenticated, messageController.chatList);
+router.get("/message/scout/sent", isScoutAuthenticated, messageController.getUnseenMessage);
 
 router.get("/message/athlete/history/:receiver", isAthleteAuthenticated, messageController.getChatHistory);
 router.get("/message/athlete/chat-list", isAthleteAuthenticated, messageController.chatList);
+router.get("/message/athlete/sent", isAthleteAuthenticated, messageController.getUnseenMessage);
 
 
 export default router;

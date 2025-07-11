@@ -23,6 +23,7 @@ router.post("/trials/apply", isAthleteAuthenticated, singleFileUpload('picture',
 router.get("/trials/activity", isAthleteAuthenticated, AthleteTrialValidation.pagination, AthleteTrialValidation.validateFormData, trialController.getUrTrial);
 router.get("/trials/activity/:trialId", isAthleteAuthenticated, trialController.getUrSingleTrial);
 router.get("/trials/:trialId", isAthleteAuthenticated, trialController.singleTrial);
+router.get("/scout/:scoutId", isAthleteAuthenticated, trialController.getScoutProfile);
 
 
 

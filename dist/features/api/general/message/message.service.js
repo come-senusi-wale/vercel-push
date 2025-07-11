@@ -47,6 +47,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = __importStar(require("../../../../shared/services/database/general/message/index"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const message_response_1 = require("../../../../shared/types/interfaces/responses/general/message.response");
 const message = new index_1.default();
 class MessageService {
     constructor() {
@@ -199,6 +200,14 @@ class MessageService {
                 }
             ]);
             return { result: chatList };
+        });
+        this.getUnseenMessage = (sender) => __awaiter(this, void 0, void 0, function* () {
+            const objectId = new mongoose_1.default.Types.ObjectId(sender);
+            const totalUnseen = yield index_1.Message.countDocuments({
+                receiver: objectId,
+                status: { $ne: message_response_1.MessageStatus.Seen } // Only count messages not marked as 'seen'
+            });
+            return { result: { totalUnseen } };
         });
     }
 }

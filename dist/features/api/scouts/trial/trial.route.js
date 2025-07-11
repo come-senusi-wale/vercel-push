@@ -24,4 +24,5 @@ router.get("/trial/single", user_middleware_1.isScoutAuthenticated, trialControl
 router.get("/trial/applicant/by/status", user_middleware_1.isScoutAuthenticated, trial_validation_1.TrialValidation.TrialApplicationByStatus, trial_validation_1.TrialValidation.validateFormData, trialController.getApplicantOnTrial);
 router.post("/trial/accept", user_middleware_1.isScoutAuthenticated, trial_validation_1.TrialValidation.acceptTrial, trial_validation_1.TrialValidation.validateFormData, trialController.acceptApplicant);
 router.post("/trial/reject", user_middleware_1.isScoutAuthenticated, trial_validation_1.TrialValidation.acceptTrial, trial_validation_1.TrialValidation.validateFormData, trialController.rejectApplicant);
+router.post("/athlete/:athleteId", user_middleware_1.isScoutAuthenticated, trialController.getAthleteProfile);
 exports.default = router;
