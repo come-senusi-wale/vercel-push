@@ -34,6 +34,7 @@ class UserAccountDto implements IAthletesAccount {
     lookFor?: string[] | undefined;
 
     accountStatus: AccountStatus;
+    onChat: boolean;
 
     public updatedAt?: Date;
     public createdAt?: Date;
@@ -70,6 +71,7 @@ class UserAccountDto implements IAthletesAccount {
       this.lookFor = userAccount.lookFor;
 
       this.accountStatus = userAccount.accountStatus
+      this.onChat = userAccount.onChat;
 
       this.updatedAt = userAccount.updatedAt;
       this.createdAt = userAccount.createdAt;
@@ -97,6 +99,7 @@ class UserAccountDto implements IAthletesAccount {
         sports: this.sports,
         lookFor: this.lookFor,
         accountStatus: this.accountStatus,
+        onChat: this.onChat,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as IAthletesAccount
@@ -125,6 +128,7 @@ class UserAccountDto implements IAthletesAccount {
           sports: this.sports,
           lookFor: this.lookFor,
           accountStatus: this.accountStatus,
+          onChat: this.onChat,
           updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
           createdAt: this.createdAt ? new Date(this.createdAt): undefined,
         } as IAthletesAccount

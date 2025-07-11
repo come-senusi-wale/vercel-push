@@ -1,6 +1,6 @@
 import { Schema, model, PaginateModel } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
-import { IMessage, MessageType } from "../../../../types/interfaces/responses/general/message.response";
+import { IMessage, MessageStatus, MessageType } from "../../../../types/interfaces/responses/general/message.response";
 import IMessageModel from "./type";
 import MessageDto from "../../../../types/dtos/general/message.dto";
 
@@ -32,6 +32,11 @@ const MessageSchema = new Schema<IMessage>({
         type: String,
         enum: Object.values(MessageType),  
         required: true, 
+    },
+    status: {
+      type: String,
+      enum: Object.values(MessageStatus),
+      default: MessageStatus.Sent
     },
     updatedAt: {
       type: Date,

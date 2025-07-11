@@ -2,6 +2,7 @@ import { emitToUser, emitToAll } from "./socket";
 import MessageModel from "../database/general/message/index";
 import { ISendMessageRequest } from "../../types/interfaces/requests/general/meassge.request";
 import UserModel from "../database/athletes/auth/index";
+import { MessageStatus } from "../../types/interfaces/responses/general/message.response";
 
 const userModel = new UserModel()
 const messageModel = new MessageModel()
@@ -24,7 +25,13 @@ export const sendMessage = async (data: ISendMessageRequest) => {
         return
     }
 
-    const saveMessage = await messageModel.create(data)
+    let chatStatus = MessageStatus.Sent
+
+    if (checkReceiver.data?.onChat) {
+        chatStatus = MessageStatus.Seen
+    }
+
+    const saveMessage = await messageModel.create({...data, status: chatStatus})
     if (!saveMessage.status) {
         console.log(saveMessage.error)
         emitToAll('bad-request', { status: false, message: 'Unable to send Message' })
@@ -32,4 +39,5 @@ export const sendMessage = async (data: ISendMessageRequest) => {
     }
 
     emitToUser(data.receiver, 'receive_message', saveMessage.data?.getModel)
+    emitToUser(data.sender, 'delivered_message', saveMessage.data?.getModel)
 }

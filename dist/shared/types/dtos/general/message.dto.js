@@ -10,6 +10,7 @@ class MessageDto {
         this.fileName = message.fileName;
         this.fileType = message.fileType;
         this.messageType = message.messageType;
+        this.status = message.status;
         this.updatedAt = message.updatedAt;
         this.createdAt = message.createdAt;
     }
@@ -23,6 +24,7 @@ class MessageDto {
             fileName: this.fileName,
             fileType: this.fileType,
             messageType: this.messageType,
+            status: this.status,
             updatedAt: this.updatedAt ? new Date(this.updatedAt) : undefined,
             createdAt: this.createdAt ? new Date(this.createdAt) : undefined,
         };

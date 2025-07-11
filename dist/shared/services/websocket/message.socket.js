@@ -16,10 +16,11 @@ exports.sendMessage = void 0;
 const socket_1 = require("./socket");
 const index_1 = __importDefault(require("../database/general/message/index"));
 const index_2 = __importDefault(require("../database/athletes/auth/index"));
+const message_response_1 = require("../../types/interfaces/responses/general/message.response");
 const userModel = new index_2.default();
 const messageModel = new index_1.default();
 const sendMessage = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b, _c;
     if (data.sender === data.receiver) {
         (0, socket_1.emitToAll)('bad-request', { status: false, message: "You can't chat yourself" });
         return;
@@ -34,12 +35,17 @@ const sendMessage = (data) => __awaiter(void 0, void 0, void 0, function* () {
         (0, socket_1.emitToAll)('bad-request', { status: false, message: 'Receiver not found' });
         return;
     }
-    const saveMessage = yield messageModel.create(data);
+    let chatStatus = message_response_1.MessageStatus.Sent;
+    if ((_a = checkReceiver.data) === null || _a === void 0 ? void 0 : _a.onChat) {
+        chatStatus = message_response_1.MessageStatus.Seen;
+    }
+    const saveMessage = yield messageModel.create(Object.assign(Object.assign({}, data), { status: chatStatus }));
     if (!saveMessage.status) {
         console.log(saveMessage.error);
         (0, socket_1.emitToAll)('bad-request', { status: false, message: 'Unable to send Message' });
         return;
     }
-    (0, socket_1.emitToUser)(data.receiver, 'receive_message', (_a = saveMessage.data) === null || _a === void 0 ? void 0 : _a.getModel);
+    (0, socket_1.emitToUser)(data.receiver, 'receive_message', (_b = saveMessage.data) === null || _b === void 0 ? void 0 : _b.getModel);
+    (0, socket_1.emitToUser)(data.sender, 'delivered_message', (_c = saveMessage.data) === null || _c === void 0 ? void 0 : _c.getModel);
 });
 exports.sendMessage = sendMessage;

@@ -71,7 +71,7 @@ function createEmailTemplate(subject, body) {
         color: #888888;
       }
       .highlight {
-        color: #03BDE9;
+        color: #000080;
       }
       .button {
         display: inline-block;
@@ -87,14 +87,14 @@ function createEmailTemplate(subject, body) {
   <body>
     <div class="email-container">
       <div class="header">
-        <img src="${logoUrl}" alt="CONFLUEX Logo">
+        <img src="${logoUrl}" alt="Confluenxe Logo">
       </div>
       <div class="content">
         ${body}
       </div>
       <div class="footer">
         Best regards,<br>
-        <span class="highlight">Confluex Team</span>
+        <span class="highlight">Confluenxe Team</span>
       </div>
     </div>
   </body>
@@ -104,19 +104,19 @@ function createEmailTemplate(subject, body) {
 // Email content templates
 const emailTemplates = {
     verification: (code) => createEmailTemplate('Your OTP Code for Confluex Registration', `<p>Hello,</p>
-    <p>To complete your registration on the Confluex App, please use the One-Time Password (OTP) below:</p>
+    <p>To complete your registration on the Confluenxe App, please use the One-Time Password (OTP) below:</p>
     <h2 class="highlight">${code}</h2>
     <p>This code is valid for the next 15 minutes. Please do not share it with anyone for your security.</p>
     <p>If you didn’t request this code, please ignore this email or contact our support team immediately at support@confluex.com.ng or 07013580030.</p>
-    <p>Thank you for choosing Confluex to stay safe!</p>
+    <p>Thank you for choosing Confluenxe to stay safe!</p>
     `),
-    forgotPassword: (otp) => createEmailTemplate('ForgotPassword Code for Confluex APP', `<p>Hello there,</p>
+    forgotPassword: (otp) => createEmailTemplate('ForgotPassword Code for Confluenxe APP', `<p>Hello there,</p>
     <p>We've sent you a forgotPassword code to complete your reset your password. Please enter the code below to proceed:</p>
     <h2 class="highlight">OTP: ${otp}</h2>
     <p>This code is valid for 15 minutes. If you didn't request this code, please ignore this email.</p>`),
-    welcome: () => createEmailTemplate('Welcome to Confluex: Your Safety, Our Priority!', `<p>Hello</p>
-      <p>Welcome to YAWA, your trusted partner for early warning, situational awareness, and emergency reporting. We’re thrilled to have you join our growing community dedicated to making Nigeria safer for everyone</p>
-      <p>With Confluex, you can:</p>
+    welcome: () => createEmailTemplate('Welcome to Confluenxe: Your Safety, Our Priority!', `<p>Hello</p>
+      <p>Welcome to Confluenxe, your trusted partner for early warning, situational awareness, and emergency reporting. We’re thrilled to have you join our growing community dedicated to making Nigeria safer for everyone</p>
+      <p>With Confluenxe, you can:</p>
       <ul>
       <li>Report emergencies and get real-time assistance.</li>
       <li>Stay updated on critical safety alerts in your area.</li>
@@ -126,7 +126,7 @@ const emailTemplates = {
       <p>Together, we can create safer communities! If you have any questions or need assistance, feel free to contact us at <a href="mailto:upport@yawaapp.com.ng">support@yawaapp.com.ng</a> or 07013580030.</p>
       <p>
       Staysafe,<br>
-      The Confluex Team
+      The Confluenxe Team
       </p>
       `),
 };
@@ -141,7 +141,7 @@ function sendVerificationEmail(email, emailVerificationCode) {
             //   subject: 'Your OTP Code for Confluex Registration',
             //   html,
             // });
-            (0, bravo_emil_1.sendEmail)(email, "Your OTP Code for Confluex Registration", html);
+            (0, bravo_emil_1.sendEmail)(email, "Your OTP Code for Confluenxe Registration", html);
             console.log('Verification email sent successfully');
         }
         catch (error) {
@@ -173,9 +173,9 @@ function sendWelcomeEmail(email) {
         try {
             const html = emailTemplates.welcome();
             yield transporter.sendMail({
-                from: '"Confluex TEAM" <info@Confluex.com>',
+                from: '"Confluenxe TEAM" <info@Confluex.com>',
                 to: email,
-                subject: 'Welcome to YAWA: Your Safety, Our Priority!',
+                subject: 'Welcome to Confluenxe: Your Safety, Our Priority!',
                 html,
             });
             console.log('Welcome email sent successfully');

@@ -32,63 +32,136 @@ class MessageService {
     public chatList = async (user: any) : Promise<{ errors?: ErrorInterface[]; result?: MessageDto | any }> => {
         const currentUserId = new mongoose.Types.ObjectId(user);
 
+        // const chatList = await Message.aggregate([
+        //     {
+        //       $match: {
+        //         $or: [
+        //           { sender: currentUserId },
+        //           { receiver: currentUserId }
+        //         ]
+        //       }
+        //     },
+        //     {
+        //       $addFields: {
+        //         otherUser: {
+        //           $cond: [
+        //             { $eq: ["$sender", currentUserId] },
+        //             "$receiver",
+        //             "$sender"
+        //           ]
+        //         }
+        //       }
+        //     },
+        //     {
+        //       $sort: { createdAt: -1 }
+        //     },
+        //     {
+        //       $group: {
+        //         _id: "$otherUser",
+        //         lastMessage: { $first: "$content" },
+        //         fileUrl: { $first: "$fileUrl" },
+        //         messageType: { $first: "$messageType" },
+        //         timestamp: { $first: "$createdAt" }
+        //       }
+        //     },
+        //     {
+        //       $lookup: {
+        //         from: "useraccounts", // matches the actual MongoDB collection name (lowercase plural usually)
+        //         localField: "_id",
+        //         foreignField: "_id",
+        //         as: "user"
+        //       }
+        //     },
+        //     { $unwind: "$user" },
+        //     {
+        //       $project: {
+        //         userId: "$user._id",
+        //         name: "$user.name",
+        //         email: "$user.email",
+        //         lastMessage: 1,
+        //         fileUrl: 1,
+        //         messageType: 1,
+        //         timestamp: 1
+        //       }
+        //     },
+        //     {
+        //       $sort: { timestamp: -1 }
+        //     }
+        // ]);
+
         const chatList = await Message.aggregate([
-            {
+          {
               $match: {
-                $or: [
-                  { sender: currentUserId },
-                  { receiver: currentUserId }
-                ]
-              }
-            },
-            {
-              $addFields: {
-                otherUser: {
-                  $cond: [
-                    { $eq: ["$sender", currentUserId] },
-                    "$receiver",
-                    "$sender"
+                  $or: [
+                      { sender: currentUserId },
+                      { receiver: currentUserId }
                   ]
-                }
               }
-            },
-            {
+          },
+          {
+              $addFields: {
+                  otherUser: {
+                      $cond: [
+                          { $eq: ["$sender", currentUserId] },
+                          "$receiver",
+                          "$sender"
+                      ]
+                  },
+                  isFromOtherUser: {
+                      $cond: [
+                          {
+                              $and: [
+                                  { $ne: ["$sender", currentUserId] },
+                                  { $eq: ["$receiver", currentUserId] },
+                                  { $ne: ["$status", "seen"] }
+                              ]
+                          },
+                          1,
+                          0
+                      ]
+                  }
+              }
+          },
+          {
               $sort: { createdAt: -1 }
-            },
-            {
+          },
+          {
               $group: {
-                _id: "$otherUser",
-                lastMessage: { $first: "$content" },
-                fileUrl: { $first: "$fileUrl" },
-                messageType: { $first: "$messageType" },
-                timestamp: { $first: "$createdAt" }
+                  _id: "$otherUser",
+                  lastMessage: { $first: "$content" },
+                  fileUrl: { $first: "$fileUrl" },
+                  messageType: { $first: "$messageType" },
+                  timestamp: { $first: "$createdAt" },
+                  unseenCount: { $sum: "$isFromOtherUser" }
               }
-            },
-            {
+          },
+          {
               $lookup: {
-                from: "useraccounts", // matches the actual MongoDB collection name (lowercase plural usually)
-                localField: "_id",
-                foreignField: "_id",
-                as: "user"
+                  from: "useraccounts",
+                  localField: "_id",
+                  foreignField: "_id",
+                  as: "user"
               }
-            },
-            { $unwind: "$user" },
-            {
+          },
+          { $unwind: "$user" },
+          {
               $project: {
-                userId: "$user._id",
-                name: "$user.name",
-                email: "$user.email",
-                lastMessage: 1,
-                fileUrl: 1,
-                messageType: 1,
-                timestamp: 1
+                  userId: "$user._id",
+                  name: "$user.name",
+                  email: "$user.email",
+                  lastMessage: 1,
+                  fileUrl: 1,
+                  messageType: 1,
+                  timestamp: 1,
+                  unseenCount: 1
               }
-            },
-            {
+          },
+          {
               $sort: { timestamp: -1 }
-            }
-        ]);
-        return { result: chatList };
+          }
+      ]);
+
+      return { result: chatList };
     }
 
     

@@ -37,10 +37,19 @@ class TrialService {
     }
 
     public singleTrial = async (option: { trialId: any }) : Promise<{ errors?: ErrorInterface[]; trial?: TrialDto | any }> => {
-        const trial = await this._trailModel.checkIfExist({_id: option.trialId})
-        if (!trial.status) return { errors: [{message: trial.error}] };
+        // const trial = await this._trailModel.checkIfExist({_id: option.trialId})
+        // if (!trial.status) return { errors: [{message: trial.error}] };
+
+        const trial = await Trial.findOne({_id: option.trialId})
+        .populate({
+            path: 'scout',  // Path to populate
+            model: 'UserAccount',  // Explicitly specifying the model is optional but sometimes necessary
+            select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType -achievement -experience -education -statistic' 
+        });
+
+        if (!trial) return { errors: [{message: "Trial not found"}] };
    
-        return { trial: trial.data?.getModel };
+        return { trial: trial };
     }
 
     public searchTrial = async (query: { searchType?: AthleteSearchType, page?: string, limit?: string, name?: string, location?: string, type?: string, free?: boolean, eligibility?: string, gender?: string}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {

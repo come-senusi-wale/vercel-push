@@ -6,6 +6,11 @@ export enum MessageType {
     Document = 'document'
 }
 
+export enum MessageStatus {
+    Sent = 'sent',
+    Seen = 'seen',
+}
+
 export interface IMessage {
     _id: string;
     sender: Schema.Types.ObjectId;
@@ -15,6 +20,7 @@ export interface IMessage {
     fileName?: string; // Original file name
     fileType?: string; // MIME type
     messageType: MessageType;
+    status: MessageStatus;
     updatedAt?: Date;
     createdAt?: Date;
 }

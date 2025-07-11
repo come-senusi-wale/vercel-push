@@ -45,6 +45,11 @@ const MessageSchema = new mongoose_1.Schema({
         enum: Object.values(message_response_1.MessageType),
         required: true,
     },
+    status: {
+        type: String,
+        enum: Object.values(message_response_1.MessageStatus),
+        default: message_response_1.MessageStatus.Sent
+    },
     updatedAt: {
         type: Date,
         default: Date.now,

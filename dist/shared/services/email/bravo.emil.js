@@ -23,7 +23,9 @@ const sendEmail = (to, subject, htmlContent) => __awaiter(void 0, void 0, void 0
     const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
     const sendSmtpEmail = {
         to: [{ email: to }],
-        sender: { email: 'communicationsyawa@gmail.com', name: 'Yawa' },
+        // sender: { email: 'communicationsyawa@gmail.com', name: 'Yawa' },
+        sender: { email: 'confluenxe@gmail.com', name: 'confluenxe' },
+        // sender: { email: 'akinyemisaheedwale@gmail.com', name: 'wale' },
         subject: subject,
         htmlContent: htmlContent,
     };

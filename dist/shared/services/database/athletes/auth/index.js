@@ -122,6 +122,10 @@ const UserAccountSchema = new mongoose_1.Schema({
         enum: Object.values(athlete_response_1.AccountStatus),
         default: athlete_response_1.AccountStatus.Active,
     },
+    onChat: {
+        type: Boolean,
+        default: false,
+    },
     updatedAt: {
         type: Date,
         default: Date.now,

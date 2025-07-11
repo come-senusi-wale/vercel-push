@@ -1,5 +1,5 @@
 import { Schema, Types } from "mongoose";
-import { IMessage, MessageType } from "../../interfaces/responses/general/message.response";
+import { IMessage, MessageStatus, MessageType } from "../../interfaces/responses/general/message.response";
 
 class MessageDto implements IMessage {
     public _id: string;
@@ -10,6 +10,7 @@ class MessageDto implements IMessage {
     fileName?: string | undefined;
     fileType?: string | undefined;
     messageType: MessageType;
+    status: MessageStatus;
     public updatedAt?: Date;
     public createdAt?: Date;
     
@@ -22,6 +23,7 @@ class MessageDto implements IMessage {
       this.fileName = message.fileName;
       this.fileType = message.fileType;
       this.messageType = message.messageType;
+      this.status = message.status;
       this.updatedAt = message.updatedAt;
       this.createdAt = message.createdAt;
     }
@@ -35,6 +37,7 @@ class MessageDto implements IMessage {
         fileName: this.fileName,
         fileType: this.fileType,
         messageType: this.messageType,
+        status: this.status,
         updatedAt: this.updatedAt ? new Date(this.updatedAt): undefined,
         createdAt: this.createdAt ? new Date(this.createdAt): undefined,
       } as IMessage

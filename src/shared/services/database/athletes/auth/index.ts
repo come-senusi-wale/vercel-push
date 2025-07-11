@@ -120,7 +120,10 @@ const UserAccountSchema = new Schema<IAthletesAccount>({
       enum: Object.values(AccountStatus),  
       default: AccountStatus.Active,
     },
-
+    onChat: {
+      type: Boolean,
+      default: false,
+    },
     updatedAt: {
       type: Date,
       default: Date.now,

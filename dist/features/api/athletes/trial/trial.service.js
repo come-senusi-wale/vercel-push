@@ -28,11 +28,17 @@ class TrialService {
             return { trials: (_a = trials.data) === null || _a === void 0 ? void 0 : _a.getResponse };
         });
         this.singleTrial = (option) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const trial = yield this._trailModel.checkIfExist({ _id: option.trialId });
-            if (!trial.status)
-                return { errors: [{ message: trial.error }] };
-            return { trial: (_a = trial.data) === null || _a === void 0 ? void 0 : _a.getModel };
+            // const trial = await this._trailModel.checkIfExist({_id: option.trialId})
+            // if (!trial.status) return { errors: [{message: trial.error}] };
+            const trial = yield index_1.Trial.findOne({ _id: option.trialId })
+                .populate({
+                path: 'scout', // Path to populate
+                model: 'UserAccount', // Explicitly specifying the model is optional but sometimes necessary
+                select: '-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt -accountType -achievement -experience -education -statistic'
+            });
+            if (!trial)
+                return { errors: [{ message: "Trial not found" }] };
+            return { trial: trial };
         });
         this.searchTrial = (query) => __awaiter(this, void 0, void 0, function* () {
             const filter = {};

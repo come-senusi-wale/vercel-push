@@ -85,6 +85,7 @@ export interface IAthletesAccount {
     lookFor?: Array<string>;
 
     accountStatus: AccountStatus;
+    onChat: boolean;
 
     updatedAt?: Date;
     createdAt?: Date;
