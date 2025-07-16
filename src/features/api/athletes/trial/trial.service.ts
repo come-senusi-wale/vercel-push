@@ -10,6 +10,7 @@ import { TrialApplicationStatus } from "../../../../shared/types/interfaces/resp
 import { TrialApplication } from "../../../../shared/services/database/athletes/trialApplication/index";
 import { UserAccount } from "../../../../shared/services/database/athletes/auth/index";
 import INotificationModel from "../../../../shared/services/database/general/notification/type";
+import { AccountType } from "../../../../shared/types/interfaces/responses/athletes/athlete.response";
 
 
 class TrialService {
@@ -52,7 +53,7 @@ class TrialService {
         return { trial: trial };
     }
 
-    public searchTrial = async (query: { searchType?: AthleteSearchType, page?: string, limit?: string, name?: string, location?: string, type?: string, free?: boolean, eligibility?: string, gender?: string}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {
+    public searchTrial = async (query: { searchType?: AthleteSearchType, page?: string, limit?: string, name?: string, location?: string, type?: string, free?: boolean, eligibility?: string, gender?: string, sport?: string}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {
         const filter: any = {};
 
         const page: number = parseInt(query.page!) || 1; // or get from query params
@@ -64,7 +65,8 @@ class TrialService {
 
         // Case-insensitive partial match for name
         if (query.name) {
-            filter.name = { $regex: query.name, $options: 'i' };
+            // filter.name = { $regex: query.name, $options: 'i' };
+            orConditions.push({ name: { $regex: query.name, $options: 'i' } });
         }
 
         if (query.type) {
@@ -77,8 +79,8 @@ class TrialService {
         }
 
         if (query.location) {
-            // filter.location = query.location;
-            orConditions.push({ location: { $regex: query.location, $options: 'i' } });
+            orConditions.push({ 'location.country': { $regex: query.location, $options: 'i' } });
+            orConditions.push({ 'location.city': { $regex: query.location, $options: 'i' } });
         }
 
         if (query.eligibility) {
@@ -96,27 +98,64 @@ class TrialService {
             orConditions.push({ free: checkFree });
         }
 
-        console.log("filter", filter)
+        if (orConditions.length > 1) {
+            filter.$or = orConditions;
+        }
 
-        let result: any = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
-        let total = await Trial.countDocuments(filter)
-
+        let result: any = {}
+        
         if (query.searchType == AthleteSearchType.Scout) {
-            result = await UserAccount.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
-            total = await UserAccount.countDocuments(filter)
+            const scouts = await UserAccount.find({accountType: AccountType.Scout, ...filter}).skip(skip).limit(limit).sort({createdAt: -1})
+            .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt');
+            const totalSCout = await UserAccount.countDocuments({accountType: AccountType.Scout, ...filter})
+
+            result = {
+                scout: {
+                    totalPages: Math.ceil(totalSCout / limit),
+                    currentPage: page,
+                    total: totalSCout,
+                    scouts: scouts
+                },
+            }
+        }else if(query.searchType == AthleteSearchType.Trial){
+            const trials = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
+            const totalTrial = await Trial.countDocuments(filter)
+
+            result = {
+                trial: {
+                    totalPages: Math.ceil(totalTrial / limit),
+                    currentPage: page,
+                    total: totalTrial,
+                    trials: trials
+                }
+            }
         }else{
-            result = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
-            total = await Trial.countDocuments(filter)
+            const scouts = await UserAccount.find({accountType: AccountType.Scout, ...filter}).skip(skip).limit(limit).sort({createdAt: -1})
+            .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt');
+            const totalSCout = await UserAccount.countDocuments({accountType: AccountType.Scout, ...filter})
+
+            const trials = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
+            const totalTrial = await Trial.countDocuments(filter)
+
+            result = {
+                scout: {
+                    totalPages: Math.ceil(totalSCout / limit),
+                    currentPage: page,
+                    total: totalSCout,
+                    scouts: scouts
+                },
+                trial: {
+                    totalPages: Math.ceil(totalTrial / limit),
+                    currentPage: page,
+                    total: totalTrial,
+                    trials: trials
+                }
+            }
         }
 
     
         
-        return { result: {
-            totalPages: Math.ceil(total / limit),
-            currentPage: page,
-            total,
-            result
-        } };
+        return { result };
     }
 
     public applyForTrial = async (payload: { trial: ITrialApplicationRequest, userId: any, file: any }) : Promise<{ errors?: ErrorInterface[]; result?: TrialApplicationDto | any }> => {

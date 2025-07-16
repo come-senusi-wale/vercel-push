@@ -5,4 +5,5 @@ var ScoutSearchType;
 (function (ScoutSearchType) {
     ScoutSearchType["Athlete"] = "athlete";
     ScoutSearchType["Trial"] = "trial";
+    ScoutSearchType["All"] = "all";
 })(ScoutSearchType || (exports.ScoutSearchType = ScoutSearchType = {}));

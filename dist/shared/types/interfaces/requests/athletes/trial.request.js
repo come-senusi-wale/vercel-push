@@ -5,4 +5,5 @@ var AthleteSearchType;
 (function (AthleteSearchType) {
     AthleteSearchType["Scout"] = "scout";
     AthleteSearchType["Trial"] = "trial";
+    AthleteSearchType["All"] = "all";
 })(AthleteSearchType || (exports.AthleteSearchType = AthleteSearchType = {}));

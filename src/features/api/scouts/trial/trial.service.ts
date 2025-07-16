@@ -11,6 +11,7 @@ import INotificationModel from "../../../../shared/services/database/general/not
 import ITrialApplicationModel from "../../../../shared/services/database/athletes/trialApplication/type";
 import { TrialApplicationStatus } from "../../../../shared/types/interfaces/responses/athletes/trialApplication.rseponse";
 import { UserAccount } from "../../../../shared/services/database/athletes/auth";
+import mongoose from "mongoose";
 
 
 class TrialService {
@@ -70,20 +71,76 @@ class TrialService {
     }
 
     public getAllTrial = async (query: { page?: string, limit?: string, userId: any}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {
-      const page: number = parseInt(query.page!) || 1; // or get from query params
+      // const page: number = parseInt(query.page!) || 1; // or get from query params
+      // const limit: number = parseInt(query.limit!) || 50;
+      // const skip = (page - 1) * limit;
+
+      // const trials = await Trial.find({scout: query.userId}).skip(skip).limit(limit).sort({createdAt: -1})
+      
+      // const total = await Trial.countDocuments({scout: query.userId})
+      
+      // return { result: {
+      //     totalPages: Math.ceil(total / limit),
+      //     currentPage: page,
+      //     total,
+      //     trials
+      // } };
+
+      const page: number = parseInt(query.page!) || 1;
       const limit: number = parseInt(query.limit!) || 50;
       const skip = (page - 1) * limit;
 
-      const trials = await Trial.find({scout: query.userId}).skip(skip).limit(limit).sort({createdAt: -1})
-      
-      const total = await Trial.countDocuments({scout: query.userId})
-      
-      return { result: {
+      const trialsWithPendingCount = await Trial.aggregate([
+        {
+          $match: { scout: new mongoose.Types.ObjectId(query.userId) }
+        },
+        {
+          $sort: { createdAt: -1 }
+        },
+        {
+          $skip: skip
+        },
+        {
+          $limit: limit
+        },
+        {
+          $lookup: {
+            from: "trialapplications",
+            localField: "_id",
+            foreignField: "trial",
+            as: "applications"
+          }
+        },
+        {
+          $addFields: {
+            pendingApplicationsCount: {
+              $size: {
+                $filter: {
+                  input: "$applications",
+                  as: "app",
+                  cond: { $eq: ["$$app.status", "pending"] }
+                }
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            applications: 0 // exclude full applications array
+          }
+        }
+      ]);
+
+      const total = await Trial.countDocuments({ scout: query.userId });
+
+      return {
+        result: {
           totalPages: Math.ceil(total / limit),
           currentPage: page,
           total,
-          trials
-      } };
+          trials: trialsWithPendingCount
+        }
+      };
     }
 
     public getSingleTrial = async (query: { trial: string, page?: string, limit?: string, userId: any}) : Promise<{ errors?: ErrorInterface[]; result?: TrialDto | any }> => {   

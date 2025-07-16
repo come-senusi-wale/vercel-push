@@ -54,15 +54,16 @@ class AthleteService {
             orConditions.push({ accountType: athlete_response_1.AccountType.Athlete });
             // Case-insensitive partial match for name
             if (query.name) {
-                filter.name = { $regex: query.name, $options: 'i' };
+                // filter.name = { $regex: query.name, $options: 'i' };
+                orConditions.push({ name: { $regex: query.name, $options: 'i' } });
             }
             if (query.type) {
                 // filter.trialType = query.type;
                 orConditions.push({ trialType: query.type });
             }
             if (query.location) {
-                // filter.location = query.location;
-                orConditions.push({ location: { $regex: query.location, $options: 'i' } });
+                orConditions.push({ 'location.country': { $regex: query.location, $options: 'i' } });
+                orConditions.push({ 'location.city': { $regex: query.location, $options: 'i' } });
             }
             if (query.eligibility) {
                 // filter.eligibility = query.eligibility;
@@ -71,22 +72,53 @@ class AthleteService {
             if (orConditions.length > 1) {
                 filter.$or = orConditions;
             }
-            let result = yield index_1.UserAccount.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
-            let total = yield index_1.UserAccount.countDocuments(filter);
+            let result = {};
             if (query.category == trial_request_1.ScoutSearchType.Trial) {
-                result = yield index_3.Trial.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
-                total = yield index_3.Trial.countDocuments(filter);
+                const trials = yield index_3.Trial.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
+                const totalTrial = yield index_3.Trial.countDocuments(filter);
+                result = {
+                    trial: {
+                        totalPages: Math.ceil(totalTrial / limit),
+                        currentPage: page,
+                        total: totalTrial,
+                        trials: trials
+                    }
+                };
+            }
+            else if (query.category == trial_request_1.ScoutSearchType.Athlete) {
+                const athletes = yield index_1.UserAccount.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
+                const totalAthlete = yield index_1.UserAccount.countDocuments(filter);
+                result = {
+                    athlete: {
+                        totalPages: Math.ceil(totalAthlete / limit),
+                        currentPage: page,
+                        total: totalAthlete,
+                        athletes: athletes
+                    },
+                };
             }
             else {
-                result = yield index_1.UserAccount.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
-                total = yield index_1.UserAccount.countDocuments(filter);
+                const athletes = yield index_1.UserAccount.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 })
+                    .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt');
+                const totalAthlete = yield index_1.UserAccount.countDocuments(filter);
+                const trials = yield index_3.Trial.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
+                const totalTrial = yield index_3.Trial.countDocuments(filter);
+                result = {
+                    athlete: {
+                        totalPages: Math.ceil(totalAthlete / limit),
+                        currentPage: page,
+                        total: totalAthlete,
+                        athletes: athletes
+                    },
+                    trial: {
+                        totalPages: Math.ceil(totalTrial / limit),
+                        currentPage: page,
+                        total: totalTrial,
+                        trials: trials
+                    }
+                };
             }
-            return { result: {
-                    totalPages: Math.ceil(total / limit),
-                    currentPage: page,
-                    total,
-                    result
-                } };
+            return { result: result };
         });
         this.getAllPerformance = (query) => __awaiter(this, void 0, void 0, function* () {
             const page = parseInt(query.page) || 1; // or get from query params

@@ -18,6 +18,7 @@ const bocket_1 = __importDefault(require("../../../../shared/services/cloudinary
 const trialApplication_rseponse_1 = require("../../../../shared/types/interfaces/responses/athletes/trialApplication.rseponse");
 const index_2 = require("../../../../shared/services/database/athletes/trialApplication/index");
 const index_3 = require("../../../../shared/services/database/athletes/auth/index");
+const athlete_response_1 = require("../../../../shared/types/interfaces/responses/athletes/athlete.response");
 class TrialService {
     constructor({ trailModel, trialApplicationModel, notificationModel }) {
         this.allPaginatedTrial = (option) => __awaiter(this, void 0, void 0, function* () {
@@ -49,7 +50,8 @@ class TrialService {
             const orConditions = [];
             // Case-insensitive partial match for name
             if (query.name) {
-                filter.name = { $regex: query.name, $options: 'i' };
+                // filter.name = { $regex: query.name, $options: 'i' };
+                orConditions.push({ name: { $regex: query.name, $options: 'i' } });
             }
             if (query.type) {
                 // filter.trialType = query.type;
@@ -59,8 +61,8 @@ class TrialService {
                 orConditions.push({ gender: query.gender });
             }
             if (query.location) {
-                // filter.location = query.location;
-                orConditions.push({ location: { $regex: query.location, $options: 'i' } });
+                orConditions.push({ 'location.country': { $regex: query.location, $options: 'i' } });
+                orConditions.push({ 'location.city': { $regex: query.location, $options: 'i' } });
             }
             if (query.eligibility) {
                 // filter.eligibility = query.eligibility;
@@ -74,23 +76,57 @@ class TrialService {
                 const checkFree = filter.free = query.free === 'true';
                 orConditions.push({ free: checkFree });
             }
-            console.log("filter", filter);
-            let result = yield index_1.Trial.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
-            let total = yield index_1.Trial.countDocuments(filter);
+            if (orConditions.length > 1) {
+                filter.$or = orConditions;
+            }
+            let result = {};
             if (query.searchType == trial_request_1.AthleteSearchType.Scout) {
-                result = yield index_3.UserAccount.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
-                total = yield index_3.UserAccount.countDocuments(filter);
+                const scouts = yield index_3.UserAccount.find(Object.assign({ accountType: athlete_response_1.AccountType.Scout }, filter)).skip(skip).limit(limit).sort({ createdAt: -1 })
+                    .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt');
+                const totalSCout = yield index_3.UserAccount.countDocuments(Object.assign({ accountType: athlete_response_1.AccountType.Scout }, filter));
+                result = {
+                    scout: {
+                        totalPages: Math.ceil(totalSCout / limit),
+                        currentPage: page,
+                        total: totalSCout,
+                        scouts: scouts
+                    },
+                };
+            }
+            else if (query.searchType == trial_request_1.AthleteSearchType.Trial) {
+                const trials = yield index_1.Trial.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
+                const totalTrial = yield index_1.Trial.countDocuments(filter);
+                result = {
+                    trial: {
+                        totalPages: Math.ceil(totalTrial / limit),
+                        currentPage: page,
+                        total: totalTrial,
+                        trials: trials
+                    }
+                };
             }
             else {
-                result = yield index_1.Trial.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
-                total = yield index_1.Trial.countDocuments(filter);
+                const scouts = yield index_3.UserAccount.find(Object.assign({ accountType: athlete_response_1.AccountType.Scout }, filter)).skip(skip).limit(limit).sort({ createdAt: -1 })
+                    .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt');
+                const totalSCout = yield index_3.UserAccount.countDocuments(Object.assign({ accountType: athlete_response_1.AccountType.Scout }, filter));
+                const trials = yield index_1.Trial.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
+                const totalTrial = yield index_1.Trial.countDocuments(filter);
+                result = {
+                    scout: {
+                        totalPages: Math.ceil(totalSCout / limit),
+                        currentPage: page,
+                        total: totalSCout,
+                        scouts: scouts
+                    },
+                    trial: {
+                        totalPages: Math.ceil(totalTrial / limit),
+                        currentPage: page,
+                        total: totalTrial,
+                        trials: trials
+                    }
+                };
             }
-            return { result: {
-                    totalPages: Math.ceil(total / limit),
-                    currentPage: page,
-                    total,
-                    result
-                } };
+            return { result };
         });
         this.applyForTrial = (payload) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;

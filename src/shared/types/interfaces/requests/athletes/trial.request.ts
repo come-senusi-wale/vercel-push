@@ -8,4 +8,5 @@ export interface ITrialApplicationRequest {
 export enum AthleteSearchType {
     Scout = 'scout',
     Trial = 'trial',
+    All = 'all',
 }

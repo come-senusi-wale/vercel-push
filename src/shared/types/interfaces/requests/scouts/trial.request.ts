@@ -20,4 +20,5 @@ export interface ICreateTrialRequest {
 export enum ScoutSearchType {
     Athlete = 'athlete',
     Trial = 'trial',
+    All = 'all'
 }

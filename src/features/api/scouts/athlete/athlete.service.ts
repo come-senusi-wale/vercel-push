@@ -69,7 +69,8 @@ class AthleteService {
 
         // Case-insensitive partial match for name
         if (query.name) {
-            filter.name = { $regex: query.name, $options: 'i' };
+            // filter.name = { $regex: query.name, $options: 'i' };
+            orConditions.push({ name: { $regex: query.name, $options: 'i' } });
         }
 
         if (query.type) {
@@ -79,8 +80,8 @@ class AthleteService {
 
 
         if (query.location) {
-            // filter.location = query.location;
-            orConditions.push({ location: { $regex: query.location, $options: 'i' } });
+            orConditions.push({ 'location.country': { $regex: query.location, $options: 'i' } });
+            orConditions.push({ 'location.city': { $regex: query.location, $options: 'i' } });
         }
 
         if (query.eligibility) {
@@ -92,23 +93,57 @@ class AthleteService {
             filter.$or = orConditions;
         }
 
-        let result: any = await UserAccount.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
-        let total = await UserAccount.countDocuments(filter)
+        let result: any = {}
 
         if (query.category == ScoutSearchType.Trial) {
-            result = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
-            total = await Trial.countDocuments(filter)
+            const trials = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
+            const totalTrial = await Trial.countDocuments(filter)
+
+            result = {
+                trial: {
+                    totalPages: Math.ceil(totalTrial / limit),
+                    currentPage: page,
+                    total: totalTrial,
+                    trials: trials
+                }
+            }
+        }else if (query.category == ScoutSearchType.Athlete){
+            const athletes = await UserAccount.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
+            const totalAthlete = await UserAccount.countDocuments(filter)
+
+            result = {
+                athlete: {
+                    totalPages: Math.ceil(totalAthlete / limit),
+                    currentPage: page,
+                    total: totalAthlete,
+                    athletes: athletes
+                },
+            }
         }else{
-            result = await UserAccount.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
-            total = await UserAccount.countDocuments(filter)
+            const athletes: any = await UserAccount.find(filter).skip(skip).limit(limit).sort({createdAt: -1})
+            .select('-password -emailVerified -emailOtp -emailOtpCreatedAt -passwordOtp -passwordOtpCreatedAt');
+            const totalAthlete = await UserAccount.countDocuments(filter)
+
+            const trials = await Trial.find(filter).skip(skip).limit(limit).sort({createdAt: -1});
+            const totalTrial = await Trial.countDocuments(filter)
+
+            result = {
+                athlete: {
+                    totalPages: Math.ceil(totalAthlete / limit),
+                    currentPage: page,
+                    total: totalAthlete,
+                    athletes: athletes
+                },
+                trial: {
+                    totalPages: Math.ceil(totalTrial / limit),
+                    currentPage: page,
+                    total: totalTrial,
+                    trials: trials
+                }
+            }
         }
 
-        return { result: {
-            totalPages: Math.ceil(total / limit),
-            currentPage: page,
-            total,
-            result
-        } };
+        return { result: result };
     }
 
     public getAllPerformance = async (query : {page: any, limit: any}) : Promise<{ errors?: ErrorInterface[]; result?: UserDto | any }> => {

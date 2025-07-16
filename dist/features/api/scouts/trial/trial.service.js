@@ -17,6 +17,7 @@ const bocket_1 = __importDefault(require("../../../../shared/services/cloudinary
 const trialApplication_1 = require("../../../../shared/services/database/athletes/trialApplication");
 const trialApplication_rseponse_1 = require("../../../../shared/types/interfaces/responses/athletes/trialApplication.rseponse");
 const auth_1 = require("../../../../shared/services/database/athletes/auth");
+const mongoose_1 = __importDefault(require("mongoose"));
 class TrialService {
     constructor({ trailModel, trialApplicationModel, notificationModel }) {
         this.create = (trial, file, userId) => __awaiter(this, void 0, void 0, function* () {
@@ -46,17 +47,69 @@ class TrialService {
             return { trial: (_a = createTrial.data) === null || _a === void 0 ? void 0 : _a.getModel };
         });
         this.getAllTrial = (query) => __awaiter(this, void 0, void 0, function* () {
-            const page = parseInt(query.page) || 1; // or get from query params
+            // const page: number = parseInt(query.page!) || 1; // or get from query params
+            // const limit: number = parseInt(query.limit!) || 50;
+            // const skip = (page - 1) * limit;
+            // const trials = await Trial.find({scout: query.userId}).skip(skip).limit(limit).sort({createdAt: -1})
+            // const total = await Trial.countDocuments({scout: query.userId})
+            // return { result: {
+            //     totalPages: Math.ceil(total / limit),
+            //     currentPage: page,
+            //     total,
+            //     trials
+            // } };
+            const page = parseInt(query.page) || 1;
             const limit = parseInt(query.limit) || 50;
             const skip = (page - 1) * limit;
-            const trials = yield index_1.Trial.find({ scout: query.userId }).skip(skip).limit(limit).sort({ createdAt: -1 });
+            const trialsWithPendingCount = yield index_1.Trial.aggregate([
+                {
+                    $match: { scout: new mongoose_1.default.Types.ObjectId(query.userId) }
+                },
+                {
+                    $sort: { createdAt: -1 }
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: limit
+                },
+                {
+                    $lookup: {
+                        from: "trialapplications",
+                        localField: "_id",
+                        foreignField: "trial",
+                        as: "applications"
+                    }
+                },
+                {
+                    $addFields: {
+                        pendingApplicationsCount: {
+                            $size: {
+                                $filter: {
+                                    input: "$applications",
+                                    as: "app",
+                                    cond: { $eq: ["$$app.status", "pending"] }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        applications: 0 // exclude full applications array
+                    }
+                }
+            ]);
             const total = yield index_1.Trial.countDocuments({ scout: query.userId });
-            return { result: {
+            return {
+                result: {
                     totalPages: Math.ceil(total / limit),
                     currentPage: page,
                     total,
-                    trials
-                } };
+                    trials: trialsWithPendingCount
+                }
+            };
         });
         this.getSingleTrial = (query) => __awaiter(this, void 0, void 0, function* () {
             const trial = yield index_1.Trial.findOne({ scout: query.userId, _id: query.trial });
